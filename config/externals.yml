@@ -1,0 +1,3 @@
+active_wrapper:
+  repo: git@github.com:winton/active_wrapper.git
+  path: vendor
