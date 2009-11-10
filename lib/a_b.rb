@@ -3,7 +3,7 @@ require 'rubygems'
 gems = [
   [ 'haml', '=2.2.13' ],
   [ 'sinatra', '=0.9.4' ],
-  [ 'active_wrapper', '=0.2.0' ]
+  [ 'active_wrapper', '=0.2.1' ]
 ]
 
 gems.each do |name, version|
