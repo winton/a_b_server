@@ -1,10 +1,52 @@
-!!! 1.1
-%html
-  %head
-    = css 'blueprint/screen'
-    = css 'blueprint/print', 'print'
-    /[if IE 8]
-      = css 'blueprint/ie'
-    %title
-  %body
-    = js 'jquery'
+.span-16
+  %h2
+    %a{ :href => '#' } New A/B Test
+  .span-15.first
+    #new_test.box.hide
+      %form{ :action => '/new', :class => 'clearfix' }
+        .span-7
+          %label{ :for => 'name' } Test name
+          %br/
+          %input{ :type => 'text', :name => 'name' }
+        .span-7.last
+          %label{ :for => 'ticket_url' } Ticket URL
+          %br/
+          %input{ :type => 'text', :name => 'ticket_url' }
+        .span-10
+          %label{ :for => 'variants' } Variant names (comma separated)
+          %br/
+          %input{ :type => 'text', :name => 'variants' }
+        .buttons.span-4.last
+          %input{ :type => 'submit', :value => 'Create' }
+          %input{ :type => 'submit', :value => 'Cancel', :class => 'cancel' }
+#search.span-8.last
+  %input.span-5{ :type => 'text' }/
+  %input{ :type => 'submit', :value => 'Search' }
+%hr.space
+.table.span-8
+  .title.clearfix
+    .span-5
+      %h3 Test 1
+    .span-1.edit
+      %a{ :href => '#' } Ticket
+    .span-1.edit
+      %a{ :href => '#' } Edit
+    .span-1.last x
+  .rows
+    .header.clearfix
+      .span-2 Name
+      .span-3 Visitors/Suggested
+      .span-1 Conf
+      .span-1.last Rate
+    .row.clearfix
+      .span-2 Mungus
+      .span-3 18,009/253,122
+      .span-1 .134
+      .span-1 .956
+      .span-1.last x
+    .row.clearfix
+      .span-2 Turducken
+      .span-3 1/3
+      .span-1 .333
+      .span-1 .956
+      .span-1.last x
