@@ -1,0 +1,51 @@
+@import application.sass
+
+#new_test
+  input[type=text]
+    width: 99%
+  input[type=submit]
+    margin-top: 2em
+  .buttons
+    text-align: right
+
+#search input
+  font-size: 1.2em
+
+.table
+  .title
+    .edit
+      display: none
+      font-size: .9em
+      text-align: right
+  
+    &:hover .edit
+      display: block
+  
+    &:hover .last
+      display: block
+  
+    .last
+      +delete_link
+
+  .rows
+    .header div
+      border-bottom: 2px solid #{!color_light}
+      color = !color_light
+
+    .row  
+      &:hover .last
+        display: block
+  
+      & > div
+        display: block
+        font-family = !font_mono
+        font-size: 1.1em
+        text-align: right
+  
+        &:first-child, &.last
+          font-family = !font_sans
+          font-size: .9em
+          text-align: left
+    
+        &.last
+          +delete_link
