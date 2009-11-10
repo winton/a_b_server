@@ -19,7 +19,7 @@ GEM_SPEC = Gem::Specification.new do |s|
   s.author = "Winton Welsh"
   s.email = "mail@wintoni.us"
   s.homepage = "http://github.com/winton/#{GEM_NAME}"
-  s.summary = ""
+  s.summary = "A/B test data aggregator as a Sinatra web service"
   # == CONFIGURE ==
   s.add_dependency('cucumber', '=0.3.93')
   s.add_dependency('haml', '=2.2.2')
