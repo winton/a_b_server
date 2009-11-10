@@ -14,6 +14,6 @@ every 1.minute do
   when 'development'
     command "curl http://localhost:#{@port}/cron"
   else
-    command "curl http://gem_template.com/#{key}"
+    command "curl http://a_b.com/#{key}"
   end
 end

@@ -2,7 +2,7 @@ $testing = true
 $root = File.expand_path(File.dirname(__FILE__) + "/../../")
 $:.unshift "#{$root}/lib"
 
-require 'gem_template'
+require 'a_b'
 
 gems = [
   [ 'rack-test', '=0.4.0' ],

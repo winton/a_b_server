@@ -1,4 +1,4 @@
-GEM_NAME = 'gem_template'
+GEM_NAME = 'a_b'
 GEM_FILES = FileList['**/*'] - FileList[
   '*.gem',
   '*.log',

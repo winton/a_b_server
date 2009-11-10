@@ -23,6 +23,6 @@ require 'secret_key'
 class Application < Sinatra::Base
 end
 
-Dir["#{File.dirname(__FILE__)}/gem_template/**/*.rb"].each do |path|
+Dir["#{File.dirname(__FILE__)}/a_b/**/*.rb"].each do |path|
   require path
 end

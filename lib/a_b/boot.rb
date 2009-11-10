@@ -7,7 +7,7 @@ Application.class_eval do
   set :public, "#{root}/public"
   set :logging, true
   set :static, true
-  set :views, "#{root}/lib/gem_template/view"
+  set :views, "#{root}/lib/a_b/view"
     
   # Database, logging, and email
   $db, $log, $mail = ActiveWrapper.setup(
