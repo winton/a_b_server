@@ -2,12 +2,17 @@ class ABTest < ActiveRecord::Base
   
   set_table_name :a_b_tests
   has_many :variants, :class_name => 'ABVariant', :foreign_key => 'a_b_test_id', :dependent => :destroy
+  named_scope :control, :conditions => { :control => true }
   
   validates_uniqueness_of :name
   
   after_save :destroy_variants
   after_save :create_variants
   after_save :set_control
+  
+  def control
+    self.variants.find_by_control true
+  end
   
   def variants=(names)
     names = names.split(',').collect(&:strip).uniq
@@ -35,8 +40,8 @@ class ABTest < ActiveRecord::Base
   end
   
   def set_control
-    if control = self.variants.find_by_control(true)
-      control.update_attribute(:control, false)
+    if self.control
+      self.control.update_attribute(:control, false)
     end
     if name = self.variants.find_by_name(@control)
       name.update_attribute(:control, true)

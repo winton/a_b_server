@@ -5,12 +5,16 @@ class ABVariant < ActiveRecord::Base
   validates_uniqueness_of :name
   
   def confidence
-    0.0
+    if compute_confidence?
+      cumulative_normal_distribution(z_score(self.test.control))
+    else
+      'n/a'
+    end
   end
   
   def conversion_rate
     if conversions > 0
-      1.0 * visitors / conversions
+      1.0 * conversions / visitors
     else
       0.0
     end
@@ -60,8 +64,17 @@ class ABVariant < ActiveRecord::Base
     end
   end
   
+  def compute_confidence?
+    self.test.control && self != self.test.control &&
+    self.visitors > 0
+  end
+  
   def pretty(num)
-    sprintf("%.3f", num)[1..-1]
+    if num.respond_to?(:strip)
+      num
+    else
+      sprintf("%.3f", num)[1..-1]
+    end
   end
   
   def z_score(control)
@@ -71,13 +84,17 @@ class ABVariant < ActiveRecord::Base
     v1 = control.visitors
     v2 = self.visitors
     
-    if v1 == 0 || v2 == 0
+    puts cr1
+    puts cr2
+    puts v1
+    puts v2
+    
+    if v1 == 0.0 || v2 == 0.0
       0.0
     else
-      numerator = cr1 - cr2
-      frac1 = cr1 * (1 - cr1) / v1
-      frac2 = cr2 * (1 - cr1) / v2
-      numerator / ((frac1 + frac2) ** 0.5)
+      z = cr2 - cr1
+      s = (cr2 * (1 - cr2)) / v2 + (cr1 * (1 - cr1)) / v1
+      z / Math.sqrt(s)
     end
   end
 end

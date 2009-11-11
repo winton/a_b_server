@@ -40,7 +40,7 @@ jQuery(function($) {
 	function tooltip() {
 		var x = 10, y = 20, title;
 		$("a.tooltip").hover(
-			function(e) {											  
+			function(e) {												
 				title = this.title;
 				this.title = "";
 				$("body").append("<p id='tooltip' class='notice'>" + title + "</p>");
@@ -48,7 +48,7 @@ jQuery(function($) {
 					.css("top", (e.pageY - x) + "px")
 					.css("left", (e.pageX + y) + "px")
 					.fadeIn("fast");
-	    },
+			},
 			function() {
 				this.title = title;
 				$("#tooltip").remove();

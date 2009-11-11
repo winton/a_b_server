@@ -18,7 +18,7 @@
         .span-10
           %label{ :for => 'test[variants]' }
             Variant names
-            (<a class="tooltip" title="Variant names are comma separated.<br/>Variant names should be unique across all tests.<br/>The first variant is the control.">More info</a>)
+            (<a class="tooltip" title="#{variant_tooltip}">More info</a>)
           %br/
           %input{ :type => 'text', :name => 'test[variants]' }
         .buttons.span-4.last
