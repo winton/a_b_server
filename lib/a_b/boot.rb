@@ -2,6 +2,7 @@ Application.class_eval do
   
   # Sinatra
   enable :raise_errors
+  enable :sessions
   set :environment, $testing ? :test : environment
   set :root, File.expand_path("#{File.dirname(__FILE__)}/../../")
   set :public, "#{root}/public"
@@ -19,4 +20,7 @@ Application.class_eval do
   if $mail.config
     ActionMailer::Base.raise_delivery_errors = true
   end
+  
+  # Rack flash
+  use Rack::Flash, :accessorize => %w(error notice success)
 end

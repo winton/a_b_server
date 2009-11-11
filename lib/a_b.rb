@@ -3,7 +3,8 @@ require 'rubygems'
 gems = [
   [ 'haml', '=2.2.13' ],
   [ 'sinatra', '=0.9.4' ],
-  [ 'active_wrapper', '=0.2.1' ]
+  [ 'active_wrapper', '=0.2.1' ],
+  [ 'rack-flash', '=0.1.1' ]
 ]
 
 gems.each do |name, version|
@@ -17,6 +18,7 @@ end
 require 'haml'
 require 'sinatra/base'
 require 'active_wrapper'
+require 'rack-flash'
 
 class Application < Sinatra::Base
 end

@@ -1,7 +1,8 @@
 Application.class_eval do
   
-  get '/css/index.css' do
-    headers 'Content-Type' => 'text/css; charset=utf-8'
-    sass :index
+  before do
+    @css = %w(index)
+    @js = %w(index)
+    @title = 'A/B Test Results'
   end
 end
