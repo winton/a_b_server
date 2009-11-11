@@ -15,6 +15,7 @@
           %label{ :for => 'test[ticket_url]' } Ticket URL
           %br/
           %input{ :type => 'text', :name => 'test[ticket_url]' }
+        %hr.space
         .span-10
           %label{ :for => 'test[variants]' }
             Variant names
@@ -27,8 +28,9 @@
 
 #search.span-8.last
   - unless @tests.empty?
-    %input.span-5{ :type => 'text' }/
-    %input{ :type => 'submit', :value => 'Search' }
+    %form
+      %input.span-5{ :type => 'text' }/
+      %input{ :type => 'submit', :value => 'Search' }
 
 - if @success || @error
   .span-23.first
@@ -40,11 +42,13 @@
 %hr.space
 
 - @tests.each_with_index do |test, index|
-  .table.span-8{ :class => index % 3 == 0 ? 'last' : nil }[test]
+  .table.span-8{ :class => table_class(test, index) }[test]
+    .data.hide
+      = table_json(test)
     .title.clearfix
-      .span-5
+      .span-5.search
         %h3= test.name
-      .span-1.edit
+      .span-1.ticket
         %a{ :href => test.ticket_url } Ticket
       .span-1.edit
         %a{ :href => '#' } Edit
@@ -56,13 +60,35 @@
         .span-1 Conf
         .span-1.last Rate
       - test.variants.each do |variant|
-        .row.clearfix[variant]
+        .row.clearfix.search[variant]
           .span-2
             - if variant.control?
               %strong= variant.name
             - else
               = variant.name
-          .span-3= "#{variant.visitors_with_commas}/#{variant.suggested_visitors_with_commas}"
+          .span-3= "#{variant.visitors_with_commas} / #{variant.suggested_visitors_with_commas}"
           .span-1= variant.pretty_confidence
           .span-1= variant.pretty_conversion_rate
           .span-1.last x
+
+%textarea.hide#edit_template
+  .span-7.first.edit_container
+    .box.clearfix
+      %form{ :action => '/tests/:id/update', :method => 'post' }
+        %p
+          %label{ :for => 'test[name]' } Test name
+          %br/
+          %input{ :type => 'text', :name => 'test[name]' }
+        %p
+          %label{ :for => 'test[ticket_url]' } Ticket URL
+          %br/
+          %input{ :type => 'text', :name => 'test[ticket_url]' }
+        %p
+          %label{ :for => 'test[variants]' }
+            Variant names
+            (<a class="tooltip" title="#{variant_tooltip}">More info</a>)
+          %br/
+          %input{ :type => 'text', :name => 'test[variants]' }
+        .buttons
+          %input{ :type => 'submit', :value => 'Create', :class => 'submit' }
+          %input{ :type => 'submit', :value => 'Cancel', :class => 'cancel' }

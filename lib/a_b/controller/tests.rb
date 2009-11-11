@@ -1,12 +1,23 @@
 Application.class_eval do
   
-  get '/tests/destroy/:id' do
+  get '/tests/:id/destroy' do
     @test = ABTest.find params[:id]
     if @test
       @test.destroy
       flash[:success] = 'Test deleted successfully.'
     else
       flash[:error] = 'Could not delete test.'
+    end
+    redirect '/'
+  end
+  
+  post '/tests/:id/update' do
+    @test = ABTest.find params[:id]
+    if @test
+      @test.update_attributes params[:test]
+      flash[:success] = 'Test updated successfully.'
+    else
+      flash[:error] = 'Could not update test.'
     end
     redirect '/'
   end

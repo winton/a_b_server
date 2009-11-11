@@ -29,7 +29,12 @@ class ABVariant < ActiveRecord::Base
   end
   
   def suggested_visitors
-    0
+    size = sample_size(conversion_rate)
+    if conversion_rate == 0 || size < 100
+      100
+    else
+      commafy sample_size(conversion_rate)
+    end
   end
   
   def suggested_visitors_with_commas
@@ -75,6 +80,11 @@ class ABVariant < ActiveRecord::Base
     else
       sprintf("%.3f", num)[1..-1]
     end
+  end
+  
+  def sample_size(rate)
+    # conﬁdence level is 95% and the desired power is 80%
+    (16 * (rate * (1 - rate)) / (0.05 ** 2)).to_i
   end
   
   def z_score(control)

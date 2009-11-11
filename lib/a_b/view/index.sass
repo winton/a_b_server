@@ -1,24 +1,29 @@
 @import application.sass
 
-#new_test
+=form
   input[type=text]
     width: 99%
-  input[type=submit]
-    margin-top: 2em
   .buttons
     text-align: right
+
+#new_test, .edit_container
+  +form
+
+#new_test input[type=submit]
+  margin-top: 2em
 
 #search input
   font-size: 1.2em
 
 .table
   .title
-    .edit
+    .edit, .ticket
       display: none
       font-size: .9em
       text-align: right
+      +form
   
-    &:hover .edit
+    &:hover .edit, &:hover .ticket
       display: block
   
     &:hover .last

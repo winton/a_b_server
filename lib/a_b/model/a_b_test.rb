@@ -2,7 +2,6 @@ class ABTest < ActiveRecord::Base
   
   set_table_name :a_b_tests
   has_many :variants, :class_name => 'ABVariant', :foreign_key => 'a_b_test_id', :dependent => :destroy
-  named_scope :control, :conditions => { :control => true }
   
   validates_uniqueness_of :name
   
@@ -12,6 +11,12 @@ class ABTest < ActiveRecord::Base
   
   def control
     self.variants.find_by_control true
+  end
+  
+  def variant_names
+    names = self.variants.collect &:name
+    names.delete self.control.name
+    names.unshift self.control.name
   end
   
   def variants=(names)

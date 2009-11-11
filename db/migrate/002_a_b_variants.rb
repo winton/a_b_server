@@ -8,8 +8,9 @@ class ABVariants < ActiveRecord::Migration
       t.integer :a_b_test_id
       t.timestamps
     end
-    add_index :a_b_variants, :name
     add_index :a_b_variants, :a_b_test_id
+    add_index :a_b_variants, :control
+    add_index :a_b_variants, :name
   end
 
   def self.down
