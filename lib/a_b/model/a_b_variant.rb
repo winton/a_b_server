@@ -1,6 +1,9 @@
 class ABVariant < ActiveRecord::Base
+  
   set_table_name :a_b_variants
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'a_b_test_id'
+  
+  after_destroy :save_test
   
   validates_uniqueness_of :name
   
@@ -12,12 +15,20 @@ class ABVariant < ActiveRecord::Base
     end
   end
   
+  def confidence_ok?
+    cumulative_normal_distribution(z_score(self.test.control)) >= 0.95
+  end
+  
   def conversion_rate
     if conversions > 0
       1.0 * conversions / visitors
     else
       0.0
     end
+  end
+  
+  def conversion_rate_ok?
+    conversion_rate > self.test.control.conversion_rate
   end
   
   def pretty_confidence
@@ -29,12 +40,16 @@ class ABVariant < ActiveRecord::Base
   end
   
   def suggested_visitors
-    size = sample_size(conversion_rate)
+    size = sample_size(self.test.control)
     if conversion_rate == 0 || size < 100
       100
     else
-      commafy sample_size(conversion_rate)
+      commafy size
     end
+  end
+  
+  def suggested_visitors_ok?
+    visitors > sample_size(self.test.control)
   end
   
   def suggested_visitors_with_commas
@@ -51,7 +66,7 @@ class ABVariant < ActiveRecord::Base
     num.to_s.gsub(/(\d)(?=\d{3}+(?:\.|$))(\d{3}\..*)?/,'\1,\2')
   end
   
-  def cumulative_normal_distribution(x)
+  def cumulative_normal_distribution(z)
     b1 =  0.319381530
     b2 = -0.356563782
     b3 =  1.781477937
@@ -60,16 +75,17 @@ class ABVariant < ActiveRecord::Base
     p  =  0.2316419
     c  =  0.39894228
 
-    if x >= 0.0
-      t = 1.0 / ( 1.0 + p * x )
-      (1.0 - c * Math.exp( -x * x / 2.0 ) * t * ( t * ( t * ( t * ( t * b5 + b4 ) + b3 ) + b2 ) + b1 ))
+    if z >= 0.0
+      t = 1.0 / (1.0 + p * z)
+      (1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
     else
-      t = 1.0 / ( 1.0 - p * x )
-      ( c * Math.exp( -x * x / 2.0 ) * t * ( t *( t * ( t * ( t * b5 + b4 ) + b3 ) + b2 ) + b1 ))
+      t = 1.0 / (1.0 - p * z)
+      (c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
     end
   end
   
   def compute_confidence?
+    self.test &&
     self.test.control && self != self.test.control &&
     self.visitors > 0
   end
@@ -82,9 +98,19 @@ class ABVariant < ActiveRecord::Base
     end
   end
   
-  def sample_size(rate)
+  def sample_size(control)
     # conﬁdence level is 95% and the desired power is 80%
-    (16 * (rate * (1 - rate)) / (0.05 ** 2)).to_i
+    variance = control.conversion_rate * (1 - control.conversion_rate)
+    sensitivity = (self.conversion_rate - control.conversion_rate) ** 2
+    if sensitivity != 0
+      (16 * variance / sensitivity).to_i
+    else
+      0
+    end
+  end
+  
+  def save_test
+    self.test.save if self.test
   end
   
   def z_score(control)
@@ -93,11 +119,6 @@ class ABVariant < ActiveRecord::Base
 
     v1 = control.visitors
     v2 = self.visitors
-    
-    puts cr1
-    puts cr2
-    puts v1
-    puts v2
     
     if v1 == 0.0 || v2 == 0.0
       0.0

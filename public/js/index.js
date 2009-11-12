@@ -54,7 +54,7 @@ jQuery(function($) {
 		var inputs = $('input[type=text]', container);
 		$(inputs.get(0)).val(data.name);
 		$(inputs.get(1)).val(data.ticket_url);
-		$(inputs.get(2)).val(data.variant_names);
+		$(inputs.get(2)).val(data.variant_names.join(', '));
 		// Bind tooltips
 		tooltip(container);
 		// Bind form
@@ -62,12 +62,10 @@ jQuery(function($) {
 		$('.cancel', container).click(function() {
 			$('.edit_container', container).remove();
 			rows.show();
+			return false;
 		});
 		return false;
 	});
-	
-	// Edit form
-	
 	
 	// Focus first input
 	$('input:visible').get(0).focus();
@@ -89,26 +87,30 @@ jQuery(function($) {
 	}
 	
 	function tooltip(el) {
-		var x = 10, y = 20, title;
-		$("a.tooltip", el).hover(
-			function(e) {												
-				title = this.title;
-				this.title = "";
-				$("body").append("<p id='tooltip' class='notice'>" + title + "</p>");
+		var x = 5, y = 15, el, html;
+		$(".tooltip", el).hover(
+			function(e) {
+				html = $(this).data('title');
+				$("#tooltip").remove();
+				if (!html) {
+					html = $('#tooltip_' + $(this).attr('title')).val();
+					$(this).data('title', html);
+					$(this).attr('title', '');
+				}
+				$("body").append("<div id='tooltip' class='notice'>" + html + "</div>");
 				$("#tooltip")
-					.css("top", (e.pageY - x) + "px")
-					.css("left", (e.pageX + y) + "px")
+					.css("top", (e.pageY + y) + "px")
+					.css("left", (e.pageX + x) + "px")
 					.fadeIn("fast");
 			},
 			function() {
-				this.title = title;
 				$("#tooltip").remove();
 			}
 		);
-		$("a.tooltip", el).mousemove(function(e) {
+		$(".tooltip", el).mousemove(function(e) {
 			$("#tooltip")
-				.css("top", (e.pageY - x) + "px")
-				.css("left", (e.pageX + y) + "px");
+				.css("top", (e.pageY + y) + "px")
+				.css("left", (e.pageX + x) + "px");
 		});
 	}
 	

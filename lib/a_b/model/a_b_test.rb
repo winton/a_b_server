@@ -1,7 +1,7 @@
 class ABTest < ActiveRecord::Base
   
   set_table_name :a_b_tests
-  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'a_b_test_id', :dependent => :destroy
+  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'a_b_test_id', :dependent => :delete_all
   
   validates_uniqueness_of :name
   
@@ -13,6 +13,10 @@ class ABTest < ActiveRecord::Base
     self.variants.find_by_control true
   end
   
+  def sorted_variants
+    self.variants.find(:all, :order => 'control desc, conversions / visitors desc, visitors desc')
+  end
+  
   def variant_names
     names = self.variants.collect &:name
     names.delete self.control.name
@@ -20,8 +24,8 @@ class ABTest < ActiveRecord::Base
   end
   
   def variants=(names)
-    names = names.split(',').collect(&:strip).uniq
-    current_names = variants.collect(&:name).collect(&:strip).uniq
+    names = names.gsub(/[^,\w]/, '').split(',').uniq
+    current_names = variants.collect(&:name).uniq
     @control = names.first
     @new_variant_names = names - current_names
     @removed_variant_names = current_names - names
@@ -45,12 +49,16 @@ class ABTest < ActiveRecord::Base
   end
   
   def set_control
-    if self.control
-      self.control.update_attribute(:control, false)
-    end
-    if name = self.variants.find_by_name(@control)
-      name.update_attribute(:control, true)
-    elsif !self.variants.empty?
+    if @control
+      if self.control
+        self.control.update_attribute(:control, false)
+      end
+      if name = self.variants.find_by_name(@control)
+        name.update_attribute(:control, true)
+      elsif !self.variants.empty?
+        self.variants.first.update_attribute(:control, true)
+      end
+    elsif !self.control && !self.variants.empty?
       self.variants.first.update_attribute(:control, true)
     end
   end

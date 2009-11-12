@@ -6,7 +6,7 @@
     %a{ :href => '#' } New A/B Test
   .span-15.first
     #new_test.box{ :class => @tests.empty? ? nil : 'hide' }
-      %form{ :action => '/tests/new', :method => 'post', :class => 'clearfix' }
+      %form{ :action => '/tests/create', :method => 'post', :class => 'clearfix' }
         .span-7
           %label{ :for => 'test[name]' } Test name
           %br/
@@ -19,7 +19,7 @@
         .span-10
           %label{ :for => 'test[variants]' }
             Variant names
-            (<a class="tooltip" title="#{variant_tooltip}">More info</a>)
+            (<a class="tooltip" title="variant_names">more info</a>)
           %br/
           %input{ :type => 'text', :name => 'test[variants]' }
         .buttons.span-4.last
@@ -56,20 +56,55 @@
     .rows
       .header.clearfix
         .span-2 Name
-        .span-3 Visitors/Suggested
-        .span-1 Conf
-        .span-1.last Rate
-      - test.variants.each do |variant|
+        .span-3.tooltip{ :title => 'visitors_suggested' } Visitors/Suggested
+        .span-1.tooltip{ :title => 'conf' } Conf
+        .span-1.last.tooltip{ :title => 'rate' } Rate
+      - test.sorted_variants.each do |variant|
         .row.clearfix.search[variant]
           .span-2
             - if variant.control?
               %strong= variant.name
             - else
               = variant.name
-          .span-3= "#{variant.visitors_with_commas} / #{variant.suggested_visitors_with_commas}"
-          .span-1= variant.pretty_confidence
-          .span-1= variant.pretty_conversion_rate
+          .span-3
+            %span{ :class => variant.suggested_visitors_ok? ? 'green' : nil }
+              = variant.visitors_with_commas
+              \/
+              = variant.suggested_visitors_with_commas
+          .span-1
+            %span{ :class => variant.confidence_ok? ? 'green' : nil }
+              = variant.pretty_confidence
+          .span-1
+            %span{ :class => variant.conversion_rate_ok? ? 'green' : nil }
+              = variant.pretty_conversion_rate
           .span-1.last x
+  - if table_class(test, index)
+    %hr.space
+    %hr.space
+
+%textarea.hide#tooltip_variant_names
+  %b Variant names
+  %ul
+    %li This field is a comma separated list of variant names.
+    %li The first variant is the control.
+    %li Variant names must be unique across all tests.
+    %li Variant names must only consist of letters, numbers, and underscores.
+
+%textarea.hide#tooltip_visitors_suggested
+  %b Visitors
+  Number of exposures for this variant.
+  %hr.space
+  %b Suggested Visitors
+  Number of exposures necessary to trust that the amount of change between the control and the
+  variant is significantly different.
+
+%textarea.hide#tooltip_conf
+  %b Confidence
+  A variant is statistically better than the control if confidence is greater than or equal to 0.95.
+
+%textarea.hide#tooltip_rate
+  %b Conversion Rate
+  The percentage of users who converted in decimal form.
 
 %textarea.hide#edit_template
   .span-7.first.edit_container
@@ -86,9 +121,9 @@
         %p
           %label{ :for => 'test[variants]' }
             Variant names
-            (<a class="tooltip" title="#{variant_tooltip}">More info</a>)
+            (<a class="tooltip" title="variant_names">more info</a>)
           %br/
           %input{ :type => 'text', :name => 'test[variants]' }
         .buttons
-          %input{ :type => 'submit', :value => 'Create', :class => 'submit' }
+          %input{ :type => 'submit', :value => 'Update', :class => 'submit' }
           %input{ :type => 'submit', :value => 'Cancel', :class => 'cancel' }

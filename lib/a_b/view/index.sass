@@ -1,4 +1,4 @@
-@import application.sass
+@import layout.sass
 
 =form
   input[type=text]
@@ -36,8 +36,13 @@
     .header div
       border-bottom: 2px solid #{!color_light}
       color = !color_light
+      cursor: default
 
-    .row  
+    .row
+      span.green
+        color: #1F7F00
+        font-weight: bold
+      
       &:hover .last
         display: block
   

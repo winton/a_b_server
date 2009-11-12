@@ -3,7 +3,7 @@ Application.class_eval do
   get '/' do
     @error = flash[:error]
     @success = flash[:success]
-    @tests = ABTest.find :all, :order => 'updated_at'
+    @tests = ABTest.find :all, :order => 'updated_at desc'
     haml :index, :layout => :layout
   end
   

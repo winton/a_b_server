@@ -22,7 +22,7 @@ Application.class_eval do
     redirect '/'
   end
   
-  post '/tests/new' do
+  post '/tests/create' do
     @test = ABTest.create params[:test]
     if @test.id
       flash[:success] = 'Test created successfully.'
