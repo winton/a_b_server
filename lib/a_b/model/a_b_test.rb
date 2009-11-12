@@ -17,6 +17,10 @@ class ABTest < ActiveRecord::Base
     self.variants.find(:all, :order => 'control desc, conversions / visitors desc, visitors desc')
   end
   
+  def token
+    Token.last.token
+  end
+  
   def variant_names
     names = self.variants.collect &:name
     names.delete self.control.name

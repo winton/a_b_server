@@ -23,4 +23,8 @@ Application.class_eval do
   
   # Rack flash
   use Rack::Flash, :accessorize => %w(error notice success)
+  
+  # Generate token
+  require File.dirname(__FILE__) + '/model/token'
+  $token = Token.generate!
 end

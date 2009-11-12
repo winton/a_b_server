@@ -4,6 +4,7 @@ Application.class_eval do
     restrict
     ABTest.find(:all).to_json(
       :include => :variants,
+      :methods => :token,
       :only => [ :name, :visitors ]
     )
   end
