@@ -2,13 +2,13 @@ Application.class_eval do
   
   get '/sessions/new' do
     @css = %w(log_in)
+    @error = flash[:error]
     haml :log_in, :layout => :layout
   end
   
   post '/sessions/create' do
     @user_session = UserSession.new(params[:session])
     if @user_session.save
-      flash[:success] = "Logged in successfully."
       redirect '/'
     else
       flash[:error] = "Log in failed."
@@ -18,7 +18,6 @@ Application.class_eval do
   
   get '/sessions/destroy' do
     current_user_session.destroy
-    flash[:success] = "Logged out successfully."
     redirect '/sessions/new'
   end
   
