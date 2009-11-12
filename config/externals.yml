@@ -1,3 +1,6 @@
-active_wrapper:
-  repo: git@github.com:winton/active_wrapper.git
+# active_wrapper:
+#   repo: git@github.com:winton/active_wrapper.git
+#   path: vendor
+authlogic:
+  repo: git@github.com:winton/authlogic.git
   path: vendor

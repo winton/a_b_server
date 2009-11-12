@@ -1,6 +1,8 @@
 Application.class_eval do
   
   get '/' do
+    restrict
+    @css = @js = %w(index)
     @error = flash[:error]
     @success = flash[:success]
     @tests = ABTest.find :all, :order => 'updated_at desc'

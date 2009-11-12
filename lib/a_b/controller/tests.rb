@@ -1,6 +1,15 @@
 Application.class_eval do
   
+  get '/tests' do
+    restrict
+    ABTest.find(:all).to_json(
+      :include => :variants,
+      :only => [ :name, :visitors ]
+    )
+  end
+  
   get '/tests/:id/destroy' do
+    restrict
     @test = ABTest.find params[:id]
     if @test
       @test.destroy
@@ -12,6 +21,7 @@ Application.class_eval do
   end
   
   post '/tests/:id/update' do
+    restrict
     @test = ABTest.find params[:id]
     if @test
       @test.update_attributes params[:test]
@@ -23,6 +33,7 @@ Application.class_eval do
   end
   
   post '/tests/create' do
+    restrict
     @test = ABTest.create params[:test]
     if @test.id
       flash[:success] = 'Test created successfully.'

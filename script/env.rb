@@ -1,4 +1,19 @@
 require 'rubygems'
+
+gems = [
+  [ 'active_wrapper', '=0.2.1' ],
+  [ 'authlogic', '=2.1.3' ]
+]
+
+gems.each do |name, version|
+  begin
+    gem name, version
+  rescue Exception
+    $:.unshift "#{File.dirname(__FILE__)}/../vendor/#{name}/lib"
+  end
+end
+
+require 'authlogic'
 require 'active_wrapper'
 
 $root = File.expand_path("#{File.dirname(__FILE__)}/../")
