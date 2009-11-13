@@ -1,14 +1,5 @@
 Application.class_eval do
   
-  get '/tests' do
-    restrict
-    ABTest.find(:all).to_json(
-      :include => :variants,
-      :methods => :token,
-      :only => [ :name, :visitors ]
-    )
-  end
-  
   get '/tests/:id/destroy' do
     restrict
     @test = ABTest.find params[:id]

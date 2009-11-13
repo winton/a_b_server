@@ -1,7 +1,7 @@
 Application.class_eval do
   
   get '/variants/:id/destroy' do
-    restrict
+    restricts
     @variant = ABVariant.find params[:id]
     if @variant
       @variant.destroy

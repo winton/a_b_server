@@ -9,10 +9,10 @@ gems = [
 ]
 
 gems.each do |name, version|
-  begin
+  if File.exists?(path = "#{File.dirname(__FILE__)}/../vendor/#{name}/lib")
+    $:.unshift path
+  else
     gem name, version
-  rescue Exception
-    $:.unshift "#{File.dirname(__FILE__)}/../vendor/#{name}/lib"
   end
 end
 

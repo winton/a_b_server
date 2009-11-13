@@ -22,7 +22,6 @@ GEM_SPEC = Gem::Specification.new do |s|
   s.summary = "A/B test data aggregator as a Sinatra web service"
   # == CONFIGURE ==
   s.add_dependency('active_wrapper', '=0.2.1')
-  s.add_dependency('authlogic', '=2.1.3')
   s.add_dependency('cucumber', '=0.4.3')
   s.add_dependency('haml', '=2.2.13')
   s.add_dependency('rack', '=1.0.1')
