@@ -11,7 +11,7 @@ class Token < ActiveRecord::Base
   end
   
   def self.generate!
-    if self.last.created_at < Time.now.utc - 60 * 60
+    if !self.last or (self.last.created_at < Time.now.utc - 60 * 60)
       token = self.create(:token => Authlogic::Random.hex_token).token
     else
       token = self.last.token
