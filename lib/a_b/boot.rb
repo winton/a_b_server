@@ -26,5 +26,5 @@ Application.class_eval do
   
   # Generate token
   require File.dirname(__FILE__) + '/model/token'
-  $token = Token.generate!
+  Token.generate!
 end
