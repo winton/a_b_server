@@ -27,7 +27,4 @@ Application.class_eval do
   # Generate token
   require File.dirname(__FILE__) + '/model/token'
   Token.generate!
-  
-  # Authlogic
-  Authlogic::Session::Params::Config.params_key = 'token'
 end
