@@ -1,26 +1,28 @@
 Application.class_eval do
   
   get '/boot.json' do
+    content_type :json
     restrict
     {
       :user_token => Token.cached,
       :tests => ABTest.find(:all)
     }.to_json(
       :include => :variants,
-      :only => [ :name, :visitors ]
+      :only => [ :user_token, :tests, :variants, :name, :visitors ]
     )
   end
   
   get '/convert.js' do
-    if valid_token? && variant = ABVariant.find_by_name(params[:variant])
-      variant.increment(:conversions)
-      variant.increment(:visitors)
-      variant.save
+    return nil unless valid_token?
+    if variant = ABVariant.find_by_name(params[:variant])
+      variant.increment!(:conversions)
     end
+    'true'
   end
   
   get '/visit.js' do
-    if valid_token? && variants = ABVariant.find_all_by_name(params[:variants])
+    return nil unless valid_token?
+    if params[:variants] && variants = ABVariant.find_all_by_name(params[:variants])
       variants.each do |variant|
         variant.increment!(:visitors)
       end
