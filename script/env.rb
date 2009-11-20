@@ -20,7 +20,7 @@ $root = File.expand_path("#{File.dirname(__FILE__)}/../")
 
 $db, $log, $mail = ActiveWrapper.setup(
   :base => $root,
-  :env => 'development',
+  :env => ENV['ENV'],
   :stdout => false
 )
 $db.establish_connection
