@@ -4,6 +4,7 @@
 *.log
 config/database.yml
 config/deploy.rb
+config/hoptoad.txt
 config/mail.yml
 coverage
 log

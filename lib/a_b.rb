@@ -5,7 +5,8 @@ gems = [
   [ 'sinatra', '=0.9.4' ],
   [ 'active_wrapper', '=0.2.1' ],
   [ 'rack-flash', '=0.1.1' ],
-  [ 'authlogic', '=2.1.3' ]
+  [ 'authlogic', '=2.1.3' ],
+  [ 'rack_hoptoad', '=0.0.3' ]
 ]
 
 gems.each do |name, version|
@@ -22,6 +23,7 @@ require 'sinatra/base'
 require 'active_wrapper'
 require 'rack-flash'
 require 'authlogic'
+require 'rack_hoptoad'
 
 class Application < Sinatra::Base
 end

@@ -26,6 +26,7 @@ GEM_SPEC = Gem::Specification.new do |s|
   s.add_dependency('haml', '=2.2.13')
   s.add_dependency('rack', '=1.0.1')
   s.add_dependency('rack-flash', '=0.1.1')
+  s.add_dependency('rack_hoptoad', '=0.0.3')
   s.add_dependency('rack-test', '=0.5.1')
   s.add_dependency('rspec', '=1.2.9')
   s.add_dependency('shotgun', '=0.4')

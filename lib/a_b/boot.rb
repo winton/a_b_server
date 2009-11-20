@@ -25,6 +25,11 @@ Application.class_eval do
   use Rack::Flash, :accessorize => %w(error notice success)
   
   # Generate token
-  require File.dirname(__FILE__) + '/model/token'
+  require "#{root}/lib/a_b/model/token"
   Token.generate!
+  
+  # Hoptoad notifier
+  if File.exists?(hoptoad = "#{root}/config/hoptoad.txt")
+    use Rack::HoptoadNotifier, File.read(hoptoad)
+  end
 end
