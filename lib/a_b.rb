@@ -28,6 +28,6 @@ require 'rack_hoptoad'
 class Application < Sinatra::Base
 end
 
-Dir["#{File.dirname(__FILE__)}/a_b/**/*.rb"].each do |path|
+Dir["#{File.dirname(__FILE__)}/a_b/**/*.rb"].sort.each do |path|
   require path
 end
