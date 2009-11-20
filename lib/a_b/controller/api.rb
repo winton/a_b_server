@@ -14,19 +14,11 @@ Application.class_eval do
   
   get '/convert.js' do
     return nil unless valid_token?
-    if variant = ABVariant.find_by_name(params[:variant])
-      variant.increment!(:conversions)
-    end
-    'true'
+    increment :conversions
   end
   
   get '/visit.js' do
     return nil unless valid_token?
-    if params[:variants] && variants = ABVariant.find_all_by_name(params[:variants])
-      variants.each do |variant|
-        variant.increment!(:visitors)
-      end
-    end
-    redirect '/js/visit.js'
+    increment :visitors
   end
 end
