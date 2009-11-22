@@ -11,7 +11,12 @@ Application.class_eval do
     end
     
     def valid_token?
-      Digest::SHA256.hexdigest(params[:session_id] + Token.cached) == params[:token]
+      valid = false
+      Token.cached.each do |token|
+        valid = Digest::SHA256.hexdigest(params[:session_id] + token) == params[:token]
+        break if valid
+      end
+      valid
     end
   end
 end

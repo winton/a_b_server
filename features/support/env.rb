@@ -23,6 +23,10 @@ require 'spec/mocks'
 require 'test/unit'
 require 'webrat'
 
+Before do
+  $db.migrate_reset
+end
+
 World do
   def app
     Application

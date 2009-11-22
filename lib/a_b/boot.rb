@@ -2,7 +2,6 @@ Application.class_eval do
   
   # Sinatra
   enable :raise_errors
-  enable :sessions
   set :environment, $testing ? :test : environment
   set :root, File.expand_path("#{File.dirname(__FILE__)}/../../")
   set :public, "#{root}/public"
@@ -21,12 +20,11 @@ Application.class_eval do
     ActionMailer::Base.raise_delivery_errors = true
   end
   
+  # Rack session
+  use Rack::Session::Cookie
+  
   # Rack flash
   use Rack::Flash, :accessorize => %w(error notice success)
-  
-  # Generate token
-  require "#{root}/lib/a_b/model/token"
-  Token.generate!
   
   # Hoptoad notifier
   if File.exists?(hoptoad = "#{root}/config/hoptoad.txt")

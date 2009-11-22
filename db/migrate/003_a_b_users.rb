@@ -20,6 +20,6 @@ class ABUsers < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :users
+    drop_table :a_b_users
   end
 end

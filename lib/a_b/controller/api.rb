@@ -4,7 +4,7 @@ Application.class_eval do
     content_type :json
     restrict
     {
-      :user_token => Token.cached,
+      :user_token => Token.cached.first,
       :tests => ABTest.find(:all)
     }.to_json(
       :include => :variants,
