@@ -26,6 +26,15 @@ describe Token do
     Token.cached.length.should == 2
   end
   
+  it "should only cache the last two tokens" do
+    Token.send :generate
+    Token.send :generate
+    Token.send :generate
+    
+    Token.count.should == 3
+    Token.cached.length.should == 2
+  end
+  
   it "should generate a new token every hour" do
     Token.cached.length.should == 1
     
