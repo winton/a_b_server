@@ -2,7 +2,7 @@ Application.class_eval do
   helpers do
     
     def increment(attribute)
-      if params[:variants] && variants = ABVariant.find_all_by_name(params[:variants])
+      if params[attribute] && variants = ABVariant.find_all_by_name(params[attribute])
         variants.each do |variant|
           variant.increment! attribute
         end

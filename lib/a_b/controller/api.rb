@@ -8,17 +8,13 @@ Application.class_eval do
       :tests => ABTest.find(:all)
     }.to_json(
       :include => :variants,
-      :only => [ :user_token, :tests, :variants, :name, :visitors ]
+      :only => [ :user_token, :tests, :variants, :name, :visits ]
     )
   end
   
-  get '/convert.js' do
+  get '/increment.js' do
     return nil unless valid_token?
     increment :conversions
-  end
-  
-  get '/visit.js' do
-    return nil unless valid_token?
-    increment :visitors
+    increment :visits
   end
 end

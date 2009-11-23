@@ -56,7 +56,7 @@
     .rows
       .header.clearfix
         .span-2 Name
-        .span-3.tooltip{ :title => 'visitors_suggested' } Visitors/Suggested
+        .span-3.tooltip{ :title => 'visits_suggested' } Visits/Suggested
         .span-1.tooltip{ :title => 'conf' } Conf
         .span-1.last.tooltip{ :title => 'rate' } Rate
       - test.sorted_variants.each do |variant|
@@ -67,10 +67,10 @@
             - else
               = variant.name
           .span-3
-            %span{ :class => variant.suggested_visitors_ok? ? 'green' : nil }
-              = variant.visitors_with_commas
+            %span{ :class => variant.suggested_visits_ok? ? 'green' : nil }
+              = variant.visits_with_commas
               \/
-              = variant.suggested_visitors_with_commas
+              = variant.suggested_visits_with_commas
           .span-1
             %span{ :class => variant.confidence_ok? ? 'green' : nil }
               = variant.pretty_confidence
@@ -90,11 +90,11 @@
     %li Variant names must be unique across all tests.
     %li Variant names must only consist of letters, numbers, and underscores.
 
-%textarea.hide#tooltip_visitors_suggested
-  %b Visitors
+%textarea.hide#tooltip_visits_suggested
+  %b Visits
   Number of exposures for this variant.
   %hr.space
-  %b Suggested Visitors
+  %b Suggested Visits
   Number of exposures necessary to trust that the amount of change between the control and the
   variant is significantly different.
 

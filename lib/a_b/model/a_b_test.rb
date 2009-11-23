@@ -14,7 +14,7 @@ class ABTest < ActiveRecord::Base
   end
   
   def sorted_variants
-    self.variants.find(:all, :order => 'control desc, conversions / visitors desc, visitors desc')
+    self.variants.find(:all, :order => 'control desc, conversions / visits desc, visits desc')
   end
   
   def variant_names

@@ -21,7 +21,7 @@ class ABVariant < ActiveRecord::Base
   
   def conversion_rate
     if conversions > 0
-      1.0 * conversions / visitors
+      1.0 * conversions / visits
     else
       0.0
     end
@@ -39,7 +39,7 @@ class ABVariant < ActiveRecord::Base
     pretty conversion_rate
   end
   
-  def suggested_visitors
+  def suggested_visits
     size = sample_size(self.test.control)
     if conversion_rate == 0 || size < 100
       100
@@ -48,16 +48,16 @@ class ABVariant < ActiveRecord::Base
     end
   end
   
-  def suggested_visitors_ok?
-    visitors > sample_size(self.test.control)
+  def suggested_visits_ok?
+    visits > sample_size(self.test.control)
   end
   
-  def suggested_visitors_with_commas
-    commafy suggested_visitors
+  def suggested_visits_with_commas
+    commafy suggested_visits
   end
   
-  def visitors_with_commas
-    commafy visitors
+  def visits_with_commas
+    commafy visits
   end
   
   private
@@ -87,7 +87,7 @@ class ABVariant < ActiveRecord::Base
   def compute_confidence?
     self.test &&
     self.test.control && self != self.test.control &&
-    self.visitors > 0
+    self.visits > 0
   end
   
   def pretty(num)
@@ -117,8 +117,8 @@ class ABVariant < ActiveRecord::Base
     cr1 = control.conversion_rate
     cr2 = self.conversion_rate
 
-    v1 = control.visitors
-    v2 = self.visitors
+    v1 = control.visits
+    v2 = self.visits
     
     if v1 == 0.0 || v2 == 0.0
       0.0

@@ -4,7 +4,7 @@ class ABVariants < ActiveRecord::Migration
       t.string :name
       t.boolean :control, :default => false
       t.integer :conversions, :default => 0
-      t.integer :visitors, :default => 0
+      t.integer :visits, :default => 0
       t.integer :a_b_test_id
       t.timestamps
     end

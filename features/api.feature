@@ -14,16 +14,16 @@ Feature: API
     And respond with variant names with visit counts
     And respond with a JSON-P security token
   
-  Scenario: An authorized application performs a GET request on /convert.js
+  Scenario: An authorized application increments conversions
     Given the application provides an authorized session id/token combination
-    And the application provides a list of variant names
+    And the application provides a list of variant names to convert
     And test data exists
-    When the application requests /convert.js (GET)
+    When the application requests /increment.js (GET)
     Then increment conversions for each variant
   
-  Scenario: An authorized application performs a GET request on /visit.js
+  Scenario: An authorized application increments visits
     Given the application provides an authorized session id/token combination
-    And the application provides a list of variant names
+    And the application provides a list of variant names to visit
     And test data exists
-    When the application requests /visit.js (GET)
-    Then increment visitors for each variant
+    When the application requests /increment.js (GET)
+    Then increment visits for each variant

@@ -4,9 +4,9 @@ end
 
 Then /^respond with variant names with visit counts$/ do
   @json['tests'][0]['variants'].should == [
-    {"name"=>"v1", "visitors"=>0},
-    {"name"=>"v2", "visitors"=>0},
-    {"name"=>"v3", "visitors"=>0}
+    {"name"=>"v1", "visits"=>0},
+    {"name"=>"v2", "visits"=>0},
+    {"name"=>"v3", "visits"=>0}
   ]
 end
 
@@ -19,7 +19,7 @@ Then /^increment conversions for each variant$/ do
   conversions.should == Array.new(3, 1)
 end
 
-Then /^increment visitors for each variant$/ do
-  visitors = ABVariant.find(:all).collect &:visitors
-  visitors.should == Array.new(3, 1)
+Then /^increment visits for each variant$/ do
+  visits = ABVariant.find(:all).collect &:visits
+  visits.should == Array.new(3, 1)
 end
