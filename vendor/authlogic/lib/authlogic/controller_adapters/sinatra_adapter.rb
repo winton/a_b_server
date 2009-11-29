@@ -48,8 +48,8 @@ module Authlogic
         module Implementation
           def self.included(klass)
             klass.send :before do
-              controller = Controller.new(request, response)
-              Authlogic::Session::Base.controller = Adapter.new(controller)
+              controller = Authlogic::ControllerAdapters::SinatraAdapter::Controller.new(request, response)
+              Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::SinatraAdapter::Adapter.new(controller)
             end
           end
         end

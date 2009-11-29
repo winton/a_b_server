@@ -5,7 +5,9 @@ Application.class_eval do
     @css = @js = %w(index)
     @error = flash[:error]
     @success = flash[:success]
+    puts 'a'
     @tests = ABTest.find :all, :order => 'updated_at desc'
+    puts 'b'
     haml :index, :layout => :layout
   end
   

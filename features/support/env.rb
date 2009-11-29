@@ -5,9 +5,9 @@ $:.unshift "#{$root}/lib"
 require 'a_b'
 
 gems = [
-  [ 'rack-test', '=0.5.1' ],
+  [ 'rack-test', '=0.5.3' ],
   [ 'rspec', '=1.2.9' ],
-  [ 'webrat', '=0.5.3' ]
+  [ 'webrat', '=0.6.0' ]
 ]
 
 gems.each do |name, version|

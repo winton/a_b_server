@@ -1,9 +1,9 @@
 require 'rubygems'
 
 gems = [
-  [ 'cucumber', '=0.4.3' ],
+  [ 'cucumber', '=0.4.4' ],
   [ 'rspec', '=1.2.9' ],
-  [ 'active_wrapper', '=0.2.1' ]
+  [ 'active_wrapper', '=0.2.2' ]
 ]
 
 gems.each do |name, version|
