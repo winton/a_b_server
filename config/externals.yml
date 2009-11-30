@@ -5,5 +5,5 @@ authlogic:
   repo: git@github.com:winton/authlogic.git
   path: vendor
 rack_hoptoad:
-  repo: git@github.com:winton/rack_hoptoad.git
+  repo: git://github.com/atmos/rack_hoptoad.git
   path: vendor
