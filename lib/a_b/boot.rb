@@ -28,6 +28,6 @@ Application.class_eval do
   
   # Hoptoad notifier
   if File.exists?(hoptoad = "#{root}/config/hoptoad.txt")
-    use Rack::HoptoadNotifier, File.read(hoptoad).strip
+    use Rack::Lilypad, File.read(hoptoad).strip
   end
 end

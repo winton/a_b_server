@@ -1,9 +1,10 @@
 .DS_Store
+.sass-cache
 *.gem
 *.gemspec
 *.log
 config/database.yml
-config/deploy.rb
+config/deploy
 config/hoptoad.txt
 config/mail.yml
 coverage
