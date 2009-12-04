@@ -2,8 +2,8 @@ window.A_B = new function() {
 	
 	var $ = jQuery;
 	var conversions = { 'conversions': {}, 'visits': {} };
-	var selections = {};
-	var session_id, tests, token, url, selections;
+	var converted = { 'conversions': {}, 'visits': {} };
+	var session_id, tests, token, url;
 	
 	$.extend(this, {
 		convert: convert,
@@ -21,15 +21,15 @@ window.A_B = new function() {
 	// Public functions
 	
 	function convert(test_or_variant, visit) {
-		var variant = selections[test_or_variant] || test_or_variant;
+		var variant = conversions[test_or_variant] || test_or_variant;
 		var pair = test_variant_pair(variant);
 		var type = visit ? 'visits' : 'conversions';
 		if (!pair || !session_id || !token || !url)
 			return;
-		else if (conversions[type][pair[1].name])
+		else if (converted[type][pair[1].name])
 			return;
 		else
-			conversions[type][pair[1].name] = true;
+			converted[type][pair[1].name] = true;
 		var params = [
 			'session_id=' + session_id,
 			'token=' + token,
@@ -39,13 +39,13 @@ window.A_B = new function() {
 	}
 	
 	function setup(options) {
-		selections = options.selections;
+		conversions = options.conversions;
 		session_id = options.session_id;
 		tests = options.tests;
 		token = options.token;
 		url = options.url;
-		// Visit selections
-		$.each(selections, function(test, variant) {
+		// Visit conversions
+		$.each(conversions, function(test, variant) {
 			visit(variant);
 		});
 	}
@@ -59,15 +59,15 @@ window.A_B = new function() {
 	function select_variant(variant) {
 		var test = test_variant_pair(variant)[0];
 		if (!test)
-    	return [ selections, false ];
-    if (!selections[test['name']]) {
+    	return [ conversions, false ];
+    if (!conversions[test['name']]) {
       variants = test.variants.sort(function(a, b) {
 				return (a.visits < b.visits);
 			});
       variants[0].visits += 1;
-      selections[test.name] = variants[0].name;
+      conversions[test.name] = variants[0].name;
     }
-    return (selections[test['name']] == variant);
+    return (conversions[test['name']] == variant);
   }
 	
 	function test_variant_pair(variant) {
