@@ -1,7 +1,7 @@
 require 'rubygems'
 
 gems = [
-  [ 'active_wrapper', '=0.2.1' ],
+  [ 'active_wrapper', '=0.2.2' ],
   [ 'authlogic', '=2.1.3' ]
 ]
 
