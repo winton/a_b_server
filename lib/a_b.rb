@@ -1,6 +1,7 @@
 require 'rubygems'
 
 gems = [
+  [ 'rspec', '=1.2.9'],
   [ 'haml', '=2.2.14' ],
   [ 'sinatra', '=0.9.4' ],
   [ 'active_wrapper', '=0.2.2' ],
