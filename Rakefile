@@ -23,7 +23,7 @@ require 'gemspec'
 
 ActiveWrapper::Tasks.new(
   :base => File.dirname(__FILE__),
-  :env => ENV['ENV']
+  :env => ENV['RACK_ENV']
 )
 
 desc "Generate gemspec"
