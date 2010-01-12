@@ -38,15 +38,8 @@ Application.class_eval do
     end
   end
 
-  # ABPlugin config for spec controller
-  if User.first
-    ABPlugin.cached_at = Time.now
-    ABPlugin.tests = JSON ABTest.find(:all).to_json(
-      :include => :variants,
-      :only => [ :tests, :variants, :name, :visits ]
-    )
-    ABPlugin.token = User.first.persistence_token
-    ABPlugin.url = 'http://127.0.0.1:3000'
-    ABPlugin.user_token = Token.cached.first
+  # Stop ABPlugin from booting
+  if environment == :development
+    ABPlugin.disable_boot = true
   end
 end

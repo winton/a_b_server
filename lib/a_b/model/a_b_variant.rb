@@ -49,7 +49,11 @@ class ABVariant < ActiveRecord::Base
   end
   
   def suggested_visits_ok?
-    visits > sample_size(self.test.control)
+    if suggested_visits == 100
+      false
+    else
+      visits > sample_size(self.test.control)
+    end
   end
   
   def suggested_visits_with_commas
@@ -93,6 +97,8 @@ class ABVariant < ActiveRecord::Base
   def pretty(num)
     if num.respond_to?(:strip)
       num
+    elsif num >= 1
+      sprintf("%.2f", num)
     else
       sprintf("%.3f", num)[1..-1]
     end

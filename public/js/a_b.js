@@ -7,30 +7,10 @@ window.A_B = new function() {
 	// Global methods
 	
 	window.a_b_convert = function(test_or_variant, fn) {
-		a_b('convert', test_or_variant, fn);
+		a_b_select(test_or_variant, fn, 'convert');
 	};
 	
-	window.a_b_visit = function(test_or_variant, fn) {
-		a_b('visit', test_or_variant, fn);
-	};
-	
-	// Public class methods
-	
-	$.extend(this, { setup: setup });
-	
-	function setup(options) {
-		conversions = options.conversions;
-		selections = clone(options.visits);
-		session_id = options.session_id;
-		tests = options.tests;
-		token = options.token;
-		url = options.url;
-		visits = options.visits;
-	}
-	
-	// Private class methods
-	
-	function a_b(type, test_or_variant, fn) {
+	window.a_b_select = function(test_or_variant, fn, type) {
 		if (!active()) return;
 		
 		var test_variant = select(test_or_variant);
@@ -38,22 +18,54 @@ window.A_B = new function() {
 		var variant = test_variant[1];
 		
 		if (test_or_variant == test || test_or_variant == variant) {
-			this[type](variant);
+			if (type) {
+				eval(type)(variant);
+				delayedRequest();
+			}
 			if (fn) fn(test, variant);
-			delayedRequest();
 		}
-	}
+	};
+	
+	window.a_b_visit = function(test_or_variant, fn) {
+		a_b_select(test_or_variant, fn, 'visit');
+	};
+	
+	// Public class methods
+	
+	$.extend(this, {
+		active: active,
+		setup: setup,
+		value: value
+	});
 	
 	function active() {
-		return (conversions && session_id && tests && token && url && visits);
+		return (
+			conversions &&
+			selections &&
+			session_id &&
+			tests &&
+			token &&
+			url &&
+			visits
+		);
 	}
 	
-	function clone(hash) {
-		var x = {};
-		for (i in hash)
-			x[i] = hash[i];
-		return x;
+	function setup(options) {
+		conversions = options.conversions;
+		selections = options.selections;
+		session_id = options.session_id;
+		tests = options.tests;
+		token = options.token;
+		url = options.url;
+		visits = options.visits;
+		if (!testing) delayedRequest();
 	}
+	
+	function value(name) {
+		return eval(name);
+	}
+	
+	// Private class methods
 	
 	function convert(test_or_variant) {
 		var test_variant = selected_variant(test_or_variant);
@@ -68,33 +80,42 @@ window.A_B = new function() {
 		return true;
 	}
 	
-	function delay(time, callback) {
-		jQuery.fx.step.fake_step_method = function() {};
-		return this.animate({ fake_step_method: 1 }, time, callback);
-	}
-	
 	function delayedRequest() {
 		if (queued) return;
 		queued = true;
-		delay(500, function() {
+		
+		setTimeout(function() {
 			queued = false;
 			
 			var params = {
+				conversions: [],
 				session_id: session_id,
-				token: token
-			};
-			var variant = function(test, variant) {
-				return variant;
+				token: token,
+				visits: []
 			};
 			
-			params.conversions = $.map(conversions, variant).join(',');
-			params.visits = $.map(visits, variant).join(',');
+			$.each(conversions, function(test, variant) {
+				params.conversions.push(variant);
+			});
+			$.each(visits, function(test, variant) {
+				params.visits.push(variant);
+			});
 			
 			conversions = {};
 			visits = {};
 			
-			$.getJSON(url + '/increment.js', params);
-		});
+			if (params.conversions.length || params.visits.length) {
+				params.conversions = params.conversions.join(',');
+				params.visits = params.visits.join(',');
+
+				$.ajax({
+					data: params,
+					dataType: 'jsonp',
+					type: 'GET',
+					url: url + '/increment.js'
+				});
+			}
+		}, 500);
 	}
 	
 	function find_test(test_or_variant) {
@@ -138,7 +159,7 @@ window.A_B = new function() {
 	
 	function variant_names() {
 		var variants = function(t) {
-		 $.map(t.variants, function(v) { return v.name; });
+			return $.map(t.variants, function(v) { return v.name; });
 		}
 		if (arguments.length)
 			return variants(arguments[0]);

@@ -11,6 +11,7 @@ module ABPlugin
       return unless ABPlugin.active?
       options = {
         :conversions => @a_b_conversions || {},
+        :selections => @a_b_selections || {},
         :session_id => ABPlugin.session_id,
         :tests => ABPlugin.tests,
         :token => Digest::SHA256.hexdigest(ABPlugin.session_id + ABPlugin.user_token),

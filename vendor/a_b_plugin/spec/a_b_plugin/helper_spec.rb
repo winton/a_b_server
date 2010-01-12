@@ -96,13 +96,16 @@ module ABPlugin
         
         it "should call A_B.config with the correct parameters" do
           conversions = nil
+          selections = nil
           visits = nil
           @instance.instance_eval do
             conversions = @a_b_conversions
+            selections = @a_b_selections
             visits = @a_b_visits
           end
           @setup_params.should == {
             "conversions" => conversions,
+            "selections" => selections,
             "session_id" => @session_id,
             "tests" => @tests,
             "token" => Digest::SHA256.hexdigest(@session_id + @user_token),
