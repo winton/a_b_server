@@ -8,6 +8,7 @@ require File.dirname(__FILE__) + "/a_b_plugin/adapters/sinatra" if defined?(Sina
 module ABPlugin
   
   mattr_accessor :cached_at
+  mattr_accessor :disable_boot
   mattr_accessor :session_id
   mattr_accessor :tests
   mattr_accessor :token
@@ -39,15 +40,17 @@ module ABPlugin
     end
     
     def reload
-      begin
-        @@cached_at = Time.now
-        boot = ABPlugin::API.boot @@token, @@url
-        @@tests = boot['tests']
-        @@user_token = boot['user_token']
-      rescue Exception => e
-        @@cached_at = Time.now - 50 * 60 # Try again in 10 minutes
-        @@tests = nil
-        @@user_token = nil
+      unless @@disable_boot
+        begin
+          @@cached_at = Time.now
+          boot = ABPlugin::API.boot @@token, @@url
+          @@tests = boot['tests']
+          @@user_token = boot['user_token']
+        rescue Exception => e
+          @@cached_at = Time.now - 50 * 60 # Try again in 10 minutes
+          @@tests = nil
+          @@user_token = nil
+        end
       end
     end
     

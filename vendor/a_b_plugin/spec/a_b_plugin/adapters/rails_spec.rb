@@ -11,11 +11,6 @@ describe ABPlugin::Adapters::Rails do
   [ :controller, :helper ].each do |type|
     
     describe type do
-      it "should respond to a_b" do
-        get "/#{type}/respond_to/a_b"
-        last_response.body.should == '1'
-      end
-      
       it "should respond to a_b_convert" do
         get "/#{type}/respond_to/a_b_convert"
         last_response.body.should == '1'
@@ -23,6 +18,11 @@ describe ABPlugin::Adapters::Rails do
 
       it "should respond to a_b_script_tag" do
         get "/#{type}/respond_to/a_b_script_tag"
+        last_response.body.should == '1'
+      end
+      
+      it "should respond to a_b_select" do
+        get "/#{type}/respond_to/a_b_select"
         last_response.body.should == '1'
       end
       
