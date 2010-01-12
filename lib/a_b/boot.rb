@@ -30,4 +30,21 @@ Application.class_eval do
   if File.exists?(hoptoad = "#{root}/config/hoptoad.txt")
     use Rack::Lilypad, File.read(hoptoad).strip
   end
+  
+  # Require controllers, helpers, and models
+  %w(controller helper model).each do |dir|
+    Dir["#{File.dirname(__FILE__)}/#{dir}/*.rb"].sort.each do |path|
+      require path
+    end
+  end
+
+  # ABPlugin config
+  ABPlugin.cached_at = Time.now
+  ABPlugin.tests = JSON ABTest.find(:all).to_json(
+    :include => :variants,
+    :only => [ :tests, :variants, :name, :visits ]
+  )
+  ABPlugin.token = User.first.persistence_token
+  ABPlugin.url = 'http://127.0.0.1:3000'
+  ABPlugin.user_token = Token.cached.first
 end

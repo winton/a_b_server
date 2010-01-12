@@ -1,0 +1,8 @@
+.DS_Store
+*.gem
+*.gemspec
+coverage
+pkg
+spec/fixtures/rails/log/*
+spec/fixtures/rails/tmp/*
+tmp

@@ -4,19 +4,19 @@ window.A_B = new function() {
 	var conversions, session_id, selections, tests, token, url, visits;
 	var queued = false;
 	
-	$.extend(this, {
-		setup: setup
-	});
+	// Global methods
 	
-	// Public methods
-	
-	function a_b_convert(test_or_variant, fn) {
+	window.a_b_convert = function(test_or_variant, fn) {
 		a_b('convert', test_or_variant, fn);
-	}
+	};
 	
-	function a_b_visit(test_or_variant, fn) {
+	window.a_b_visit = function(test_or_variant, fn) {
 		a_b('visit', test_or_variant, fn);
-	}
+	};
+	
+	// Public class methods
+	
+	$.extend(this, { setup: setup });
 	
 	function setup(options) {
 		conversions = options.conversions;
@@ -28,7 +28,7 @@ window.A_B = new function() {
 		visits = options.visits;
 	}
 	
-	// Private methods
+	// Private class methods
 	
 	function a_b(type, test_or_variant, fn) {
 		if (!active()) return;
@@ -78,21 +78,28 @@ window.A_B = new function() {
 		queued = true;
 		delay(500, function() {
 			queued = false;
+			
 			var params = {
 				session_id: session_id,
 				token: token
 			};
-			var variant = function(test, variant) { return variant; };
+			var variant = function(test, variant) {
+				return variant;
+			};
+			
 			params.conversions = $.map(conversions, variant).join(',');
 			params.visits = $.map(visits, variant).join(',');
+			
 			conversions = {};
 			visits = {};
+			
 			$.getJSON(url + '/increment.js', params);
 		});
 	}
 	
 	function find_test(test_or_variant) {
 		if (!tests) return;
+		
 		return $.grep(tests, function(t) {
 			return (
 				t.name == test_or_variant ||
@@ -109,6 +116,7 @@ window.A_B = new function() {
 			var variants = test.variants.sort(function(a, b) {
 				return (a.visits < b.visits);
 			});
+			
 			if (variants[0]) {
 				variants[0].visits += 1;
 				selections[test.name] = variants[0].name;
@@ -152,6 +160,7 @@ window.A_B = new function() {
 
 Array.prototype.flatten = function() {
 	var flat = [];
+	
 	for (var i = 0, l = this.length; i < l; i++) {
 		var type = Object.prototype.toString
 			.call(this[i])
@@ -160,10 +169,12 @@ Array.prototype.flatten = function() {
 			.split(']')
 			.shift()
 			.toLowerCase();
+		
 		if (type)
 			flat = flat.concat(/^(array|collection|arguments|object)$/.test(type) ?
 				flatten.call(this[i]) :
 				this[i]);
 	}
+	
 	return flat;
 };

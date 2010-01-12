@@ -6,7 +6,8 @@ gems = [
   [ 'sinatra', '=0.9.4' ],
   [ 'rack-flash', '=0.1.1' ],
   [ 'authlogic', '=2.1.3' ],
-  [ 'lilypad', '=0.3.0' ]
+  [ 'lilypad', '=0.3.0' ],
+  [ 'a_b_plugin' ]
 ]
 
 gems.each do |name, version|
@@ -18,16 +19,16 @@ gems.each do |name, version|
 end
 
 require 'haml'
+require 'json'
 require 'sass'
 require 'sinatra/base'
 require 'active_wrapper'
 require 'rack-flash'
 require 'authlogic'
-require 'rack/lilypad'
+require 'lilypad'
+require 'a_b_plugin'
 
 class Application < Sinatra::Base
 end
 
-Dir["#{File.dirname(__FILE__)}/a_b/**/*.rb"].sort.each do |path|
-  require path
-end
+require "#{File.dirname(__FILE__)}/a_b/boot"

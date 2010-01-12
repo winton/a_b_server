@@ -1,7 +1,7 @@
 Application.class_eval do
   
   get '/spec' do
-    #restrict
+    restrict
     haml :spec, :layout => false
   end
 end

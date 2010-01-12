@@ -3,7 +3,7 @@ Application.class_eval do
     
     def increment(attribute)
       return unless params[attribute]
-      ABVariant.find_all_by_name(params[attribute]).each do |variant|
+      ABVariant.find_all_by_name(params[attribute].split(',')).each do |variant|
         variant.increment! attribute
       end
     end
