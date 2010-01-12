@@ -24,7 +24,7 @@ class ABTest < ActiveRecord::Base
   end
   
   def variants=(names)
-    names = names.gsub(/[^,\w]/, '').split(',').uniq
+    names = names.split(',').collect(&:strip).uniq
     current_names = variants.collect(&:name).uniq
     @control = names.first
     @new_variant_names = names - current_names
