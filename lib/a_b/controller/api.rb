@@ -16,5 +16,6 @@ Application.class_eval do
     return nil unless valid_token?
     increment :conversions
     increment :visits
+    nil
   end
 end

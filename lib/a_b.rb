@@ -1,12 +1,12 @@
 require 'rubygems'
 
 gems = [
-  [ 'haml', '=2.2.14' ],
-  [ 'sinatra', '=0.9.4' ],
+  [ 'haml', '=2.2.16' ],
   [ 'active_wrapper', '=0.2.2' ],
+  [ 'sinatra', '=0.9.4' ],
   [ 'rack-flash', '=0.1.1' ],
   [ 'authlogic', '=2.1.3' ],
-  [ 'lilypad', '=0.2.4' ]
+  [ 'lilypad', '=0.3.0' ]
 ]
 
 gems.each do |name, version|

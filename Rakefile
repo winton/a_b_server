@@ -1,7 +1,7 @@
 require 'rubygems'
 
 gems = [
-  [ 'cucumber', '=0.4.4' ],
+  [ 'cucumber', '=0.6.1' ],
   [ 'rspec', '=1.2.9' ],
   [ 'active_wrapper', '=0.2.2' ]
 ]
@@ -68,7 +68,6 @@ end
 
 desc "Run specs"
 Spec::Rake::SpecTask.new do |t|
-  t.rcov = true
   t.spec_opts = ["--format", "specdoc", "--colour"]
   t.spec_files = FileList["spec/**/*_spec.rb"]
 end
