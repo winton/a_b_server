@@ -18,7 +18,7 @@ end
 
 Given /^the application provides a list of variant names to (.+)$/ do |convert_or_visit|
   @params ||= {}
-  variants = %w(v1 v2 v3)
+  variants = "v1,v2,v3"
   case convert_or_visit
   when 'convert'
     @params.merge!(:conversions => variants)
