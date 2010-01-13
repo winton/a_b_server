@@ -17,7 +17,7 @@ module ABPlugin
       end
       
       def a_b_plugin_before_filter
-        session_id = self.request.env["rack.request.cookie_hash"]["rack.session"][0..19] rescue nil
+        session_id = self.request.env["rack.request.cookie_hash"]["_session_id"][0..19] rescue nil
         ABPlugin.session_id = session_id
       end
     end

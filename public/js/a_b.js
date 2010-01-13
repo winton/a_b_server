@@ -2,12 +2,16 @@ window.A_B = new function() {
 	
 	var $ = jQuery;
 	var conversions, session_id, selections, tests, token, url, visits;
-	var queued = false;
+	var queue = $({});
 	
 	// Global methods
 	
-	window.a_b_convert = function(test_or_variant, fn) {
-		a_b_select(test_or_variant, fn, 'convert');
+	window.a_b_convert = function(test_or_variant, fn, force) {
+		if (force && active()) {
+			convert(test_or_variant);
+			delayedRequest();
+		} else
+			a_b_select(test_or_variant, fn, 'convert');
 	};
 	
 	window.a_b_select = function(test_or_variant, fn, type) {
@@ -58,7 +62,7 @@ window.A_B = new function() {
 		token = options.token;
 		url = options.url;
 		visits = options.visits;
-		if (!testing) delayedRequest();
+		if (!window.testing) delayedRequest();
 	}
 	
 	function value(name) {
@@ -67,55 +71,54 @@ window.A_B = new function() {
 	
 	// Private class methods
 	
-	function convert(test_or_variant) {
-		var test_variant = selected_variant(test_or_variant);
-		if (!test_variant) return;
-	
-		var test = test_variant[0];
-		var variant = test_variant[1];
+	function convert(variant) {
+		var test = find_test(variant);
+		if (!test) return;
 		
 		conversions[test.name] = variant;
-		visits[test.name] = variant;
-		
 		return true;
 	}
 	
 	function delayedRequest() {
-		if (queued) return;
-		queued = true;
-		
-		setTimeout(function() {
-			queued = false;
-			
-			var params = {
-				conversions: [],
-				session_id: session_id,
-				token: token,
-				visits: []
-			};
-			
-			$.each(conversions, function(test, variant) {
-				params.conversions.push(variant);
-			});
-			$.each(visits, function(test, variant) {
-				params.visits.push(variant);
-			});
-			
-			conversions = {};
-			visits = {};
-			
-			if (params.conversions.length || params.visits.length) {
-				params.conversions = params.conversions.join(',');
-				params.visits = params.visits.join(',');
+		queue.queue(function() {
+			setTimeout(function() {
+				queue.dequeue();
+				
+				var params = {
+					conversions: [],
+					session_id: session_id,
+					token: token,
+					visits: []
+				};
 
-				$.ajax({
-					data: params,
-					dataType: 'jsonp',
-					type: 'GET',
-					url: url + '/increment.js'
+				$.each(conversions, function(test, variant) {
+					params.conversions.push(variant);
 				});
-			}
-		}, 500);
+				$.each(visits, function(test, variant) {
+					params.visits.push(variant);
+				});
+
+				conversions = {};
+				visits = {};
+				
+				if (params.conversions.length || params.visits.length) {
+					params.conversions = params.conversions.join(',');
+					params.visits = params.visits.join(',');
+					
+					if (!params.conversions.length)
+						delete params.conversions;
+					if (!params.visits.length)
+						delete params.visits;
+
+					$.ajax({
+						data: params,
+						dataType: 'jsonp',
+						type: 'GET',
+						url: url + '/increment.js'
+					});
+				}
+			}, 500);
+		});
 	}
 	
 	function find_test(test_or_variant) {
@@ -146,12 +149,6 @@ window.A_B = new function() {
 
 		return [ test.name, selections[test.name] ];
 	}
-	
-	function selected_variant(test_or_variant) {
-		var test = find_test(test_or_variant);
-		if (!test) return;
-		return [ test, selections[test['name']] ];
-	}
 
 	function test_names() {
 		return $.map(tests, function(t) { return t.name; });
@@ -167,12 +164,9 @@ window.A_B = new function() {
 			return $.map(tests, function(t) { return variants(t); }).flatten();
 	}
 	
-	function visit(test_or_variant) {
-		var test_variant = selected_variant(test_or_variant);
-		if (!test_variant) return;
-		
-		var test = test_variant[0];
-		var variant = test_variant[1];
+	function visit(variant) {
+		var test = find_test(variant);
+		if (!test) return;
 		
 		visits[test.name] = variant;
 		return true;

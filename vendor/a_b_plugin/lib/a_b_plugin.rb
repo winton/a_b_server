@@ -21,13 +21,11 @@ module ABPlugin
       @@cached_at && @@session_id && @@tests && @@token && @@url && @@user_token
     end
     
-    def convert(test_or_variant, conversions, selections, visits)
-      test, variant = selected_variant(test_or_variant, selections)
-      return unless test && variant
+    def convert(variant, conversions, selections, visits)
+      test = find_test(variant)
+      return unless test
       conversions ||= {}
       conversions[test['name']] = variant
-      visits ||= {}
-      visits[test['name']] = variant
       [ conversions, selections, visits ]
     end
     
@@ -79,12 +77,6 @@ module ABPlugin
       ]
     end
     
-    def selected_variant(test_or_variant, selections)
-      test = find_test(test_or_variant)
-      return unless test
-      [ test, selections[test['name']] ]
-    end
-    
     def test_names
       @@tests.collect { |t| t['name'] }
     end
@@ -100,9 +92,9 @@ module ABPlugin
       end
     end
     
-    def visit(test_or_variant, conversions, selections, visits)
-      test, variant = selected_variant(test_or_variant, selections)
-      return unless test && variant
+    def visit(variant, conversions, selections, visits)
+      test = find_test(variant)
+      return unless test
       visits ||= {}
       visits[test['name']] = variant
       [ conversions, selections, visits ]
