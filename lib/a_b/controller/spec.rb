@@ -16,7 +16,7 @@ Application.class_eval do
         :include => :variants,
         :only => [ :tests, :variants, :name, :visits ]
       )
-      ABPlugin.token = User.first.persistence_token
+      ABPlugin.token = User.first.single_access_token
       ABPlugin.url = 'http://127.0.0.1:9393'
       ABPlugin.user_token = Token.cached.first
       

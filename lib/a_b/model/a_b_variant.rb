@@ -89,8 +89,10 @@ class ABVariant < ActiveRecord::Base
   end
   
   def compute_confidence?
+    !z_score(self.test.control).nan? &&
     self.test &&
-    self.test.control && self != self.test.control &&
+    self.test.control &&
+    self != self.test.control &&
     self.visits > 0
   end
   
