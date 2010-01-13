@@ -19,42 +19,17 @@ module ABPlugin
         @visits = {}
       end
       
-      it "should add an entry to the conversions and visits hash if selected (given a test)" do
-        ABPlugin.convert('Test', @conversions, @selections, @visits)
-        @conversions.should == { "Test" => "v1" }
-        @visits.should == { "Test" => "v1" }
-      end
-      
-      it "should add an entry to the conversions and visits hash if selected (given a variant)" do
+      it "should add an entry to the conversions hash if selected (given a variant)" do
         ABPlugin.convert('v1', @conversions, @selections, @visits)
         @conversions.should == { "Test" => "v1" }
-        @visits.should == { "Test" => "v1" }
-      end
-    end
-    
-    describe :reload do
-      
-      before(:each) do
-        ABPlugin.token = @token
-        ABPlugin.url = @url
-        ABPlugin.session_id = @session_id
-      end
-      
-      it "should call API.boot" do
-        API.should_receive(:boot).with(@token, @url)
-        ABPlugin.reload
-      end
-      
-      it "should set class variables based on the response" do
-        Time.stub!(:now).and_return($time_now)
-        ABPlugin.reload
-        ABPlugin.cached_at.should == $time_now
-        ABPlugin.tests.should == @tests
-        ABPlugin.user_token = @user_token
       end
     end
     
     describe :reload? do
+      
+      before(:each) do
+        ABPlugin.cached_at = $time_now
+      end
       
       it "should return true if it has been an hour since the last cache" do
         Time.stub!(:now).and_return($time_now + 60 * 60)
@@ -112,12 +87,6 @@ module ABPlugin
         @conversions = {}
         @selections = { 'Test' => 'v1' }
         @visits = {}
-      end
-      
-      it "should add an entry to the visits hash if selected (given a test)" do
-        ABPlugin.visit('Test', @conversions, @selections, @visits)
-        @conversions.should == {}
-        @visits.should == { "Test" => "v1" }
       end
       
       it "should add an entry to the visits hash if selected (given a variant)" do

@@ -37,9 +37,4 @@ Application.class_eval do
       require path
     end
   end
-
-  # Stop ABPlugin from booting
-  if environment == :development
-    ABPlugin.disable_boot = true
-  end
 end

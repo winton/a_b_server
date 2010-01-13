@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require "#{File.expand_path(File.dirname(__FILE__) + "/../lib/a_b_plugin")}"
+
+case File.extname(ARGV[0])
+when '.yml'
+  yaml = YAML::load(File.open(ARGV[0]))
+  yaml = yaml[ENV['RAILS_ENV']] || yaml[ENV['RACK_ENV']]
+  if yaml && yaml['token'] && yaml['url']
+    boot = ABPlugin::API.boot yaml['token'], yaml['url']
+    File.open(File.dirname(ARGV[0]) + '/a_b_data.yml', 'w') do |f|
+      f.write(boot.to_yaml)
+    end
+  end
+# when '.js' 
+end

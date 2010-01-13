@@ -25,19 +25,17 @@ module ABPlugin
           block_ran.should == true
         end
 
-        it "should add an entry to the conversions and visits hash if selected (given a test)" do
+        it "should add an entry to the conversions hash if selected (given a test)" do
           @instance.send(:a_b_convert, 'Test')
           @instance.instance_eval do
             @a_b_conversions.should == { "Test" => "v1" }
-            @a_b_visits.should == { "Test" => "v1" }
           end
         end
         
-        it "should add an entry to the conversions and visits hash if selected (given a variant)" do
+        it "should add an entry to the conversions hash if selected (given a variant)" do
           @instance.send(:a_b_convert, 'v1')
           @instance.instance_eval do
             @a_b_conversions.should == { "Test" => "v1" }
-            @a_b_visits.should == { "Test" => "v1" }
           end
         end
       end
@@ -81,7 +79,6 @@ module ABPlugin
           ABPlugin.stub!(:active?).and_return(true)
           ABPlugin.session_id = @session_id
           ABPlugin.tests = @tests
-          ABPlugin.token = @token
           ABPlugin.user_token = @user_token
           ABPlugin.url = @url
           @instance = ABPlugin::HelperInstance.new
@@ -99,9 +96,9 @@ module ABPlugin
           selections = nil
           visits = nil
           @instance.instance_eval do
-            conversions = @a_b_conversions
-            selections = @a_b_selections
-            visits = @a_b_visits
+            conversions = @a_b_conversions || {}
+            selections = @a_b_selections || {}
+            visits = @a_b_visits || {}
           end
           @setup_params.should == {
             "conversions" => conversions,

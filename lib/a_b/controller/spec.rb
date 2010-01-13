@@ -11,12 +11,10 @@ Application.class_eval do
       ABTest.create :name => 'Test2', :variants => 'v4, v5, v6'
       
       # ABPlugin config
-      ABPlugin.cached_at = Time.now
       ABPlugin.tests = JSON ABTest.find(:all).to_json(
         :include => :variants,
         :only => [ :tests, :variants, :name, :visits ]
       )
-      ABPlugin.token = User.first.single_access_token
       ABPlugin.url = 'http://127.0.0.1:9393'
       ABPlugin.user_token = Token.cached.first
       

@@ -1,3 +1,5 @@
+require 'yaml'
+
 require File.dirname(__FILE__) + "/a_b_plugin/core_ext/array"
 require File.dirname(__FILE__) + "/a_b_plugin/core_ext/module"
 require File.dirname(__FILE__) + "/a_b_plugin/api"
@@ -8,17 +10,16 @@ require File.dirname(__FILE__) + "/a_b_plugin/adapters/sinatra" if defined?(Sina
 module ABPlugin
   
   mattr_accessor :cached_at
-  mattr_accessor :disable_boot
+  mattr_accessor :config
   mattr_accessor :session_id
   mattr_accessor :tests
-  mattr_accessor :token
   mattr_accessor :url
   mattr_accessor :user_token
   
   class <<self
     
     def active?
-      @@cached_at && @@session_id && @@tests && @@token && @@url && @@user_token
+      @@session_id && @@tests && @@url && @@user_token
     end
     
     def convert(variant, conversions, selections, visits)
@@ -38,17 +39,19 @@ module ABPlugin
     end
     
     def reload
-      unless @@disable_boot
-        begin
-          @@cached_at = Time.now
-          boot = ABPlugin::API.boot @@token, @@url
-          @@tests = boot['tests']
-          @@user_token = boot['user_token']
-        rescue Exception => e
-          @@cached_at = Time.now - 50 * 60 # Try again in 10 minutes
-          @@tests = nil
-          @@user_token = nil
-        end
+      if @@config
+        data = File.dirname(@@config) + "/a_b_data.yml"
+      end
+      if @@config && File.exists?(@@config) && File.exists?(data)
+        config = YAML::load(File.open(@@config))
+        config = defined?(RACK_ENV) ? config[RACK_ENV] : config[RAILS_ENV]
+        data = YAML::load(File.open(data))
+        @@cached_at = Time.now
+        @@tests = data['tests']
+        @@user_token = data['user_token']
+        @@url = config['url']
+      else
+        @@cached_at = Time.now - 50 * 60 # Try again in 10 minutes
       end
     end
     

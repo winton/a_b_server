@@ -41,7 +41,7 @@ describe ABPlugin::Adapters::Rails do
         get "/#{type}/respond_to/a_b"
       end
       
-      it "should try to reload after every request" do
+      it "should try to reload before every request" do
         ABPlugin.should_receive(:reload?).and_return(true)
         ABPlugin.should_receive(:reload)
         get "/#{type}/respond_to/a_b"

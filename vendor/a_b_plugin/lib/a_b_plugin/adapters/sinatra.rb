@@ -3,14 +3,10 @@ module ABPlugin
     module Sinatra
     
       def self.included(klass)
-        # Use after filter if Sinatra 1.0
-        klass.send klass.respond_to?(:after) ? :after : :before do
-          ABPlugin.reload if ABPlugin.reload?
-        end
-        
         klass.send :before do
           session_id = env["rack.request.cookie_hash"]["rack.session"][0..19] rescue nil
           ABPlugin.session_id = session_id
+          ABPlugin.reload if ABPlugin.reload?
         end
       end
     end

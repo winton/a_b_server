@@ -5,8 +5,9 @@ gems = [
   [ 'active_wrapper', '=0.2.2' ],
   [ 'sinatra', '=0.9.4' ],
   [ 'rack-flash', '=0.1.1' ],
-  [ 'authlogic', '=2.1.3' ],
   [ 'lilypad', '=0.3.0' ],
+  # Vendored
+  [ 'authlogic' ],
   [ 'a_b_plugin' ]
 ]
 
