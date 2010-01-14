@@ -4,8 +4,8 @@ module ABPlugin
     
       def self.included(klass)
         klass.send :before do
-          session_id = env["rack.request.cookie_hash"]["rack.session"][0..19] rescue nil
-          ABPlugin.session_id = session_id
+          session[:a_b_id] ||= ABPlugin.generate_token
+          ABPlugin.session_id = session[:a_b_id]
           ABPlugin.session = session
           if ABPlugin.session
             @a_b_selections = ABPlugin.session[:a_b]

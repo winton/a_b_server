@@ -12,8 +12,8 @@ module ABPlugin
       private
       
       def a_b_plugin_before_filter
-        session_id = session[:session_id][0..9] rescue nil
-        ABPlugin.session_id = session_id
+        session[:a_b_id] ||= ABPlugin.generate_token
+        ABPlugin.session_id = session[:a_b_id]
         ABPlugin.session = session
         if ABPlugin.session
           @a_b_selections = ABPlugin.session[:a_b]

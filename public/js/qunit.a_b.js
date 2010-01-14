@@ -14,7 +14,7 @@ test("should be true", function() {
 module("A_B.setup");
 test("should receive the correct values", function() {
 	same(A_B.value('conversions'), {"Test":"v1"});
-	same(A_B.value('tests'), [{"name":"Test","variants":[{"name":"v1","visits":1},{"name":"v2","visits":0},{"name":"v3","visits":0}]},{"name":"Test2","variants":[{"name":"v4","visits":0},{"name":"v5","visits":0},{"name":"v6","visits":0}]}]);
+	same(A_B.value('tests'), [{"name":"Test","variants":[{"name":"v1","visits":0},{"name":"v2","visits":0},{"name":"v3","visits":0}]},{"name":"Test2","variants":[{"name":"v4","visits":0},{"name":"v5","visits":0},{"name":"v6","visits":0}]}]);
 	same(A_B.value('visits'), {"Test":"v1"});
 });
 

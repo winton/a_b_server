@@ -37,7 +37,7 @@ describe ABPlugin::Adapters::Sinatra do
       end
       
       it "should set the session id before every request" do
-        ABPlugin.should_receive(:session_id=).with(nil)
+        ABPlugin.should_receive(:session_id=)
         get "/#{type}/respond_to/a_b"
       end
       
