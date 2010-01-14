@@ -8,11 +8,7 @@ class ABVariant < ActiveRecord::Base
   validates_uniqueness_of :name
   
   def confidence
-    if compute_confidence?
-      cumulative_normal_distribution(z_score(self.test.control))
-    else
-      'n/a'
-    end
+    cumulative_normal_distribution(z_score(self.test.control))
   end
   
   def confidence_ok?
@@ -71,29 +67,27 @@ class ABVariant < ActiveRecord::Base
   end
   
   def cumulative_normal_distribution(z)
-    b1 =  0.319381530
-    b2 = -0.356563782
-    b3 =  1.781477937
-    b4 = -1.821255978
-    b5 =  1.330274429
-    p  =  0.2316419
-    c  =  0.39894228
+    begin
+      raise if z == 'n/a'
+      
+      b1 =  0.319381530
+      b2 = -0.356563782
+      b3 =  1.781477937
+      b4 = -1.821255978
+      b5 =  1.330274429
+      p  =  0.2316419
+      c  =  0.39894228
 
-    if z >= 0.0
-      t = 1.0 / (1.0 + p * z)
-      (1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
-    else
-      t = 1.0 / (1.0 - p * z)
-      (c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
+      if z >= 0.0
+        t = 1.0 / (1.0 + p * z)
+        (1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
+      else
+        t = 1.0 / (1.0 - p * z)
+        (c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
+      end
+    rescue Exception => e
+      'n/a'
     end
-  end
-  
-  def compute_confidence?
-    !z_score(self.test.control).nan? &&
-    self.test &&
-    self.test.control &&
-    self != self.test.control &&
-    self.visits > 0
   end
   
   def pretty(num)
@@ -107,12 +101,12 @@ class ABVariant < ActiveRecord::Base
   end
   
   def sample_size(control)
-    # conﬁdence level is 95% and the desired power is 80%
-    variance = control.conversion_rate * (1 - control.conversion_rate)
-    sensitivity = (self.conversion_rate - control.conversion_rate) ** 2
-    if sensitivity != 0
+    begin
+      # conﬁdence level is 95% and the desired power is 80%
+      variance = control.conversion_rate * (1 - control.conversion_rate)
+      sensitivity = (self.conversion_rate - control.conversion_rate) ** 2
       (16 * variance / sensitivity).to_i
-    else
+    rescue Exception => e
       0
     end
   end
@@ -122,18 +116,18 @@ class ABVariant < ActiveRecord::Base
   end
   
   def z_score(control)
-    cr1 = control.conversion_rate
-    cr2 = self.conversion_rate
+    begin
+      cr1 = control.conversion_rate
+      cr2 = self.conversion_rate
 
-    v1 = control.visits
-    v2 = self.visits
+      v1 = control.visits
+      v2 = self.visits
     
-    if v1 == 0.0 || v2 == 0.0
-      0.0
-    else
       z = cr2 - cr1
       s = (cr2 * (1 - cr2)) / v2 + (cr1 * (1 - cr1)) / v1
       z / Math.sqrt(s)
+    rescue Exception => e
+      'n/a'
     end
   end
 end
