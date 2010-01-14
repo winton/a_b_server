@@ -12,7 +12,8 @@ class ABVariant < ActiveRecord::Base
   end
   
   def confidence_ok?
-    cumulative_normal_distribution(z_score(self.test.control)) >= 0.95
+    c = cumulative_normal_distribution(z_score(self.test.control))
+    c != 'n/a' && c >= 0.95
   end
   
   def conversion_rate
