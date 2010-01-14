@@ -1,3 +1,7 @@
+require 'rubygems'
+gem 'httparty', '=0.5.0'
+
+require 'httparty'
 require 'yaml'
 
 require File.dirname(__FILE__) + "/a_b_plugin/core_ext/array"
@@ -11,6 +15,7 @@ module ABPlugin
   
   mattr_accessor :cached_at
   mattr_accessor :config
+  mattr_accessor :session
   mattr_accessor :session_id
   mattr_accessor :tests
   mattr_accessor :url
@@ -19,7 +24,7 @@ module ABPlugin
   class <<self
     
     def active?
-      @@session_id && @@tests && @@url && @@user_token
+      @@session && @@session_id && @@tests && @@url && @@user_token
     end
     
     def convert(variant, conversions, selections, visits)

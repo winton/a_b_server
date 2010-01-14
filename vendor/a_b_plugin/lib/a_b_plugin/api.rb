@@ -1,7 +1,3 @@
-require 'rubygems'
-gem 'httparty', '=0.5.0'
-require 'httparty'
-
 module ABPlugin
   class API
     include HTTParty

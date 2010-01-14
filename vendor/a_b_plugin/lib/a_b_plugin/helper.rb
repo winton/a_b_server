@@ -9,6 +9,9 @@ module ABPlugin
     
     def a_b_script_tag(path=nil)
       return unless ABPlugin.active?
+      if @a_b_selections
+        ABPlugin.session[:a_b] = @a_b_selections
+      end
       options = {
         :conversions => @a_b_conversions || {},
         :selections => @a_b_selections || {},
