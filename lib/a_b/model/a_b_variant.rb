@@ -36,6 +36,15 @@ class ABVariant < ActiveRecord::Base
     pretty conversion_rate
   end
   
+  def reset!
+    ABVariant.find(:all).each do |variant|
+      variant.update_attributes(
+        :conversions => 0,
+        :visits => 0
+      )
+    end
+  end
+  
   def suggested_visits
     size = sample_size(self.test.control)
     if conversion_rate == 0 || size < 100
