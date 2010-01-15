@@ -103,10 +103,15 @@ class ABVariant < ActiveRecord::Base
   def pretty(num)
     if num.respond_to?(:strip)
       num
-    elsif num >= 1
-      sprintf("%.2f", num)
+    elsif num.nan?
+      'n/a'
     else
-      sprintf("%.3f", num)[1..-1]
+      str = sprintf("%.3f", num)[1..-1]
+      if str[0..1] == '.0' && num > 0.9
+        sprintf("%.2f", num)
+      else
+        str
+      end
     end
   end
   
