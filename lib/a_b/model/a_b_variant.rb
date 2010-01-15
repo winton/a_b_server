@@ -7,6 +7,15 @@ class ABVariant < ActiveRecord::Base
   
   validates_uniqueness_of :name
   
+  def self.reset!
+    ABVariant.find(:all).each do |variant|
+      variant.update_attributes(
+        :conversions => 0,
+        :visits => 0
+      )
+    end
+  end
+  
   def confidence
     cumulative_normal_distribution(z_score(self.test.control))
   end
@@ -34,15 +43,6 @@ class ABVariant < ActiveRecord::Base
   
   def pretty_conversion_rate
     pretty conversion_rate
-  end
-  
-  def reset!
-    ABVariant.find(:all).each do |variant|
-      variant.update_attributes(
-        :conversions => 0,
-        :visits => 0
-      )
-    end
   end
   
   def suggested_visits
