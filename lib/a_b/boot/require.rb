@@ -7,7 +7,7 @@ gems = [
   [ 'lilypad', '=0.3.0' ],
   [ 'rack-flash', '=0.1.1' ],
   [ 'authlogic' ], # Vendored
-  [ 'ab_plugin' ]  # Vendored
+  [ 'a_b_plugin' ] # Vendored
 ]
 
 gems.each do |name, version|
