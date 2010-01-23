@@ -6,8 +6,8 @@ require 'a_b'
 
 gems = [
   [ 'rack-test', '=0.5.3' ],
-  [ 'rspec', '=1.2.9' ],
-  [ 'webrat', '=0.6.0' ]
+  [ 'rspec', '=1.3.0' ],
+  [ 'webrat', '=0.7.0' ]
 ]
 
 gems.each do |name, version|

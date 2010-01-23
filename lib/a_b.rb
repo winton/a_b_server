@@ -1,35 +1,27 @@
-require 'rubygems'
+# Require gems and vendored libraries
+boot = %w(require)
 
-gems = [
-  [ 'haml', '=2.2.16' ],
-  [ 'active_wrapper', '=0.2.2' ],
-  [ 'sinatra', '=0.9.4' ],
-  [ 'rack-flash', '=0.1.1' ],
-  [ 'lilypad', '=0.3.0' ],
-  # Vendored
-  [ 'authlogic' ],
-  [ 'a_b_plugin' ]
-]
+# Create Application class
+boot += %w(application)
 
-gems.each do |name, version|
-  if File.exists?(path = "#{File.dirname(__FILE__)}/../vendor/#{name}/lib")
-    $:.unshift path
-  else
-    gem name, version
-  end
+# Sinatra settings
+boot += %w(sinatra)
+
+# Rack::Flash
+boot += %w(flash)
+
+# Rack::Session
+boot += %w(session)
+
+# ActiveWrapper (database, logging, and email)
+boot += %w(active_wrapper)
+
+# Lilypad (Hoptoad notification)
+boot += %w(lilypad)
+
+# Controllers, helpers, and models
+boot += %w(controller helper model)
+
+boot.each do |file|
+  require "#{File.dirname(__FILE__)}/a_b/boot/#{file}"
 end
-
-require 'haml'
-require 'json'
-require 'sass'
-require 'sinatra/base'
-require 'active_wrapper'
-require 'rack-flash'
-require 'authlogic'
-require 'lilypad'
-require 'a_b_plugin'
-
-class Application < Sinatra::Base
-end
-
-require "#{File.dirname(__FILE__)}/a_b/boot"
