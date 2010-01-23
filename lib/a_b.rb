@@ -7,9 +7,6 @@ boot += %w(application)
 # Sinatra settings
 boot += %w(sinatra)
 
-# Rack::Flash
-boot += %w(flash)
-
 # Rack::Session
 boot += %w(session)
 
