@@ -9,10 +9,7 @@ class ABVariant < ActiveRecord::Base
   
   def self.reset!
     ABVariant.find(:all).each do |variant|
-      variant.update_attributes(
-        :conversions => 0,
-        :visits => 0
-      )
+      variant.reset!
     end
   end
   
@@ -43,6 +40,13 @@ class ABVariant < ActiveRecord::Base
   
   def pretty_conversion_rate
     pretty conversion_rate
+  end
+  
+  def reset!
+    self.update_attributes(
+      :conversions => 0,
+      :visits => 0
+    )
   end
   
   def suggested_visits
