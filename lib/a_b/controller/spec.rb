@@ -15,7 +15,7 @@ Application.class_eval do
         :include => :variants,
         :only => [ :tests, :variants, :name, :visits ]
       )
-      ABPlugin.url = 'http://127.0.0.1:9393'
+      ABPlugin.url = 'http://localhost:9393'
       ABPlugin.user_token = Token.cached.first
       
       # Controller tests

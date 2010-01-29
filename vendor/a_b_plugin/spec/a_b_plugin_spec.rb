@@ -31,13 +31,13 @@ module ABPlugin
         ABPlugin.cached_at = $time_now
       end
       
-      it "should return true if it has been an hour since the last cache" do
-        Time.stub!(:now).and_return($time_now + 60 * 60)
+      it "should return true if it has been 10 minutes since the last cache" do
+        Time.stub!(:now).and_return($time_now + 10 * 60)
         ABPlugin.reload?.should == true
       end
       
       it "should return false if it has been less than an hour since the last cache" do
-        Time.stub!(:now).and_return($time_now + 60 * 60 - 1)
+        Time.stub!(:now).and_return($time_now + 10 * 60 - 1)
         ABPlugin.reload?.should == false
       end
     end

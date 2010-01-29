@@ -63,12 +63,12 @@ module ABPlugin
         @@user_token = data['user_token']
         @@url = config['url']
       else
-        @@cached_at = Time.now - 50 * 60 # Try again in 10 minutes
+        @@cached_at = Time.now - 9 * 60 # Try again in 1 minute
       end
     end
     
     def reload?
-      @@cached_at.nil? || (Time.now - @@cached_at).to_i >= 60 * 60
+      @@cached_at.nil? || (Time.now - @@cached_at).to_i >= 10 * 60
     end
     
     def select(test_or_variant, selections)
