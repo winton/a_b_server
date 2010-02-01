@@ -25,23 +25,23 @@ Require File.dirname(__FILE__) do
       gem :sinatra
     end
     email 'mail@wintoni.us'
-    name 'gem_template'
+    name 'a_b'
     homepage "http://github.com/winton/#{name}"
     summary ""
     version '0.1.0'
   end
   
-  bin { require 'lib/gem_template' }
+  bin { require 'lib/a_b' }
   
   console do
     gem :active_wrapper
     gem :sinatra
     load_path 'vendor/authlogic/lib'
     require 'authlogic'
-    require 'lib/gem_template/boot/application'
-    require 'lib/gem_template/boot/sinatra'
-    require 'lib/gem_template/boot/active_wrapper'
-    require 'lib/gem_template/boot/model'
+    require 'lib/a_b/boot/application'
+    require 'lib/a_b/boot/sinatra'
+    require 'lib/a_b/boot/active_wrapper'
+    require 'lib/a_b/boot/model'
   end
   
   lib do
@@ -51,15 +51,15 @@ Require File.dirname(__FILE__) do
     gem :'rack-flash'
     load_path 'vendor/authlogic/lib'
     require 'authlogic'
-    require 'lib/gem_template/boot/application'
-    require 'lib/gem_template/boot/sinatra'
-    require 'lib/gem_template/boot/session'
-    require 'lib/gem_template/boot/flash'
-    require 'lib/gem_template/boot/active_wrapper'
-    require 'lib/gem_template/boot/lilypad'
-    require 'lib/gem_template/boot/controller'
-    require 'lib/gem_template/boot/helper'
-    require 'lib/gem_template/boot/model'
+    require 'lib/a_b/boot/application'
+    require 'lib/a_b/boot/sinatra'
+    require 'lib/a_b/boot/session'
+    require 'lib/a_b/boot/flash'
+    require 'lib/a_b/boot/active_wrapper'
+    require 'lib/a_b/boot/lilypad'
+    require 'lib/a_b/boot/controller'
+    require 'lib/a_b/boot/helper'
+    require 'lib/a_b/boot/model'
   end
   
   rakefile do
@@ -71,7 +71,7 @@ Require File.dirname(__FILE__) do
   
   spec_helper do
     require 'require/spec_helper'
-    require 'lib/gem_template'
+    require 'lib/a_b'
     require 'pp'
   end
 end
