@@ -2,7 +2,7 @@ require 'rubygems'
 gem 'require'
 require 'require'
 
-Require File.dirname(__FILE__) do
+Require do
   
   gem(:active_wrapper, '=0.2.3') { require 'active_wrapper' }
   gem :cucumber, '=0.6.2'
@@ -36,7 +36,9 @@ Require File.dirname(__FILE__) do
   console do
     gem :active_wrapper
     gem :sinatra
+    load_path 'vendor/a_b_plugin/lib'
     load_path 'vendor/authlogic/lib'
+    require 'a_b_plugin'
     require 'authlogic'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
@@ -49,7 +51,9 @@ Require File.dirname(__FILE__) do
     gem :sinatra
     gem :active_wrapper
     gem :'rack-flash'
+    load_path 'vendor/a_b_plugin/lib'
     load_path 'vendor/authlogic/lib'
+    require 'a_b_plugin'
     require 'authlogic'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'

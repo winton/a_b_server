@@ -1,10 +1,12 @@
-module ABPlugin
+class ABPlugin
   class API
+    
     include HTTParty
     
-    def self.boot(token, url)
-      base_uri url
-      self.get('/boot.json', :query => { :token => token })
+    def self.boot
+      return unless Config.url && Config.token
+      base_uri Config.url
+      get('/boot.json', :query => { :token => Config.token })
     end
   end
 end

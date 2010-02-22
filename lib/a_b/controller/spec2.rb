@@ -1,7 +1,7 @@
 Application.class_eval do
   
   if environment == :development
-    get '/spec' do
+    get '/spec2' do
       restrict
       
       # Setup a/b tests
@@ -14,24 +14,23 @@ Application.class_eval do
       ABPlugin::Config.root self.class.root
       
       # Controller tests
-      a_b(:test).visit
-      a_b(:test).convert
-      a_b(:test).visit do |variant|
-        @visit_test = (variant == 'v1')
+      a_b_visit('Test')
+      a_b_convert('Test')
+      a_b_visit('Test') do |test, variant|
+        @visit_test = (test == 'Test' && variant == 'v1')
       end
-      a_b(:test).convert do |variant|
-        @convert_test = (variant == 'v1')
+      a_b_convert('Test') do |test, variant|
+        @convert_test = (test == 'Test' && variant == 'v1')
       end
       
-      #haml :spec, :layout => false
-      nil
+      haml :spec, :layout => false
     end
     
-    get '/spec/conversions' do
+    get '/spec2/conversions' do
       ABVariant.find_by_name(params[:variant]).conversions.to_s
     end
     
-    get '/spec/visits' do
+    get '/spec2/visits' do
       ABVariant.find_by_name(params[:variant]).visits.to_s
     end
   end

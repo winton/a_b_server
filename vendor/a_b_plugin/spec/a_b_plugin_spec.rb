@@ -1,99 +1,151 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require 'spec_helper'
 
-$time_now = Time.now
-
-module ABPlugin
-  describe ABPlugin do
+describe ABPlugin do
+  
+  after(:each) do
+    ABPlugin.reset
+  end
+  
+  describe "with no configuration" do
+    
+    it "should only assign cached_at" do
+      ABPlugin.new
+      
+      ABPlugin.cached_at.to_s.should == (Time.now - 9 * 60).to_s
+      ABPlugin.instance.should == nil
+      ABPlugin.tests.should == nil
+      
+      ABPlugin::Config.token.should == nil
+      ABPlugin::Config.url.should == nil
+    end
+    
+    it "should not call the API" do
+      ABPlugin::API.should_not_receive(:boot)
+      ABPlugin.new
+    end
+  end
+  
+  describe "with configuration, but no configs exist" do
     
     before(:each) do
-      stub_api_boot
-      Time.stub!(:now).and_return($time_now)
-    end
-    
-    describe :convert do
-      
-      before(:each) do
-        ABPlugin.tests = @tests
-        @conversions = {}
-        @selections = { 'Test' => 'v1' }
-        @visits = {}
-      end
-      
-      it "should add an entry to the conversions hash if selected (given a variant)" do
-        ABPlugin.convert('v1', @conversions, @selections, @visits)
-        @conversions.should == { "Test" => "v1" }
+      ABPlugin do
+        root SPEC + '/does_not_exist'
       end
     end
+  
+    it "should only assign cached_at" do
+      ABPlugin.new
+
+      ABPlugin.cached_at.to_s.should == (Time.now - 9 * 60).to_s
+      ABPlugin.instance.should == nil
+      ABPlugin.tests.should == nil
+
+      ABPlugin::Config.token.should == nil
+      ABPlugin::Config.url.should == nil
+    end
+  end
+  
+  describe "when api config config exists" do
     
-    describe :reload? do
-      
-      before(:each) do
-        ABPlugin.cached_at = $time_now
-      end
-      
-      it "should return true if it has been 10 minutes since the last cache" do
-        Time.stub!(:now).and_return($time_now + 10 * 60)
-        ABPlugin.reload?.should == true
-      end
-      
-      it "should return false if it has been less than an hour since the last cache" do
-        Time.stub!(:now).and_return($time_now + 10 * 60 - 1)
-        ABPlugin.reload?.should == false
+    before(:each) do
+      ABPlugin do
+        root SPEC + '/fixtures/api_yaml'
       end
     end
+  
+    it "should only assign cached_at, token, url" do
+      ABPlugin.new
+      
+      ABPlugin.cached_at.to_s.should == (Time.now - 9 * 60).to_s
+      ABPlugin.instance.should == nil
+      ABPlugin.tests.should == nil
+      
+      ABPlugin::Config.token.should == 'token'
+      ABPlugin::Config.url.should == 'url'
+    end
+  end
+  
+  describe "when cache config exists" do
     
-    describe :select do
-      
-      before(:each) do
-        @selections = nil
-        ABPlugin.stub!(:active?).and_return(true)
-        ABPlugin.tests = @tests
-      end
-      
-      it "should pick a variant given a test" do
-        selections, variant = ABPlugin.select('Test', @selections)
-        selections.class.should == Hash
-        variant.class.should == String
-      end
-      
-      it "should pick a variant given a variant" do
-        selections, variant = ABPlugin.select('v1', @selections)
-        selections.class.should == Hash
-        variant.class.should == String
-      end
-      
-      it "should select based on the least number of visits" do
-        ABPlugin.tests.first['variants'][0]['visits'] = 0
-        ABPlugin.tests.first['variants'][1]['visits'] = 1
-        ABPlugin.tests.first['variants'][2]['visits'] = 1
-        ABPlugin.select('Test', {}).should == [ { 'Test' => 'v1' }, 'Test', 'v1' ]
-        
-        ABPlugin.tests.first['variants'][0]['visits'] = 1
-        ABPlugin.tests.first['variants'][1]['visits'] = 0
-        ABPlugin.tests.first['variants'][2]['visits'] = 1
-        ABPlugin.select('v1', {}).should == [ { 'Test' => 'v2' }, 'Test', 'v2' ]
-        
-        ABPlugin.tests.first['variants'][0]['visits'] = 1
-        ABPlugin.tests.first['variants'][1]['visits'] = 1
-        ABPlugin.tests.first['variants'][2]['visits'] = 0
-        ABPlugin.select('Test', {}).should == [ { 'Test' => 'v3' }, 'Test', 'v3' ]
+    before(:each) do
+      setup_variables
+      ABPlugin do
+        root SPEC + '/fixtures/cache_yaml'
       end
     end
     
-    describe :visit do
+    it "should only assign cached_at and tests" do
+      ABPlugin.new
+      
+      ABPlugin.cached_at.to_s.should == (Time.now - 9 * 60).to_s
+      ABPlugin.instance.should == nil
+      ABPlugin.tests.should == @tests
+      
+      ABPlugin::Config.token.should == nil
+      ABPlugin::Config.url.should == nil
+    end
+  end
+  
+  describe "when api and cache configs exist" do
+    
+    before(:each) do
+      setup_variables
+      ABPlugin do
+        api_yaml SPEC + '/fixtures/api_yaml/config/a_b/api.yml'
+        cache_yaml SPEC + '/fixtures/cache_yaml/config/a_b/cache.yml'
+      end
+    end
+    
+    it "should assign everything" do
+      ABPlugin.new
+      
+      ABPlugin.cached_at.to_s.should == Time.now.to_s
+      ABPlugin.instance.should == nil
+      ABPlugin.tests.should == @tests
+      
+      ABPlugin::Config.token.should == 'token'
+      ABPlugin::Config.url.should == 'url'
+    end
+  end
+  
+  describe "when in binary mode" do
+    describe "and api config present" do
       
       before(:each) do
-        ABPlugin.tests = @tests
-        @conversions = {}
-        @selections = { 'Test' => 'v1' }
-        @visits = {}
+        setup_variables
+        ABPlugin do
+          api_yaml SPEC + '/fixtures/api_yaml/config/a_b/api.yml'
+          binary true
+        end
       end
       
-      it "should add an entry to the visits hash if selected (given a variant)" do
-        ABPlugin.visit('v1', @conversions, @selections, @visits)
-        @conversions.should == {}
-        @visits.should == { "Test" => "v1" }
+      it "should call API.get" do
+        ABPlugin::API.should_receive(:get).with('/boot.json', :query => { :token => 'token' }).and_return(nil)
+        ABPlugin.new
       end
+    end
+    
+    describe "and api config not present" do
+      
+      before(:each) do
+        setup_variables
+        ABPlugin do
+          binary true
+        end
+      end
+      
+      it "should not call API.get" do
+        ABPlugin::API.should_not_receive(:get)
+        ABPlugin.new
+      end
+    end
+  end
+  
+  describe :load_yaml? do
+    
+    it "should be false after first attempt" do
+      ABPlugin.new
+      ABPlugin.load_yaml?.should == false
     end
   end
 end

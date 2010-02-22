@@ -9,10 +9,10 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   
   def controller_respond_to
-    render :text => private_methods.include?(params[:method].intern) ? '1' : '0'
+    render :text => private_methods.collect(&:to_s).include?(params[:method]) ? '1' : '0'
   end
   
   def helper_respond_to
-    render :inline => "<%= private_methods.include?(params[:method].intern) ? 1 : 0 %>"
+    render :inline => "<%= private_methods.collect(&:to_s).include?(params[:method]) ? 1 : 0 %>"
   end
 end
