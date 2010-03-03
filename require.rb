@@ -4,7 +4,7 @@ require 'require'
 
 Require do
   
-  gem(:active_wrapper, '=0.2.4') { require 'active_wrapper' }
+  gem(:active_wrapper, '=0.2.5') { require 'active_wrapper' }
   gem :cucumber, '=0.6.2'
   gem(:haml, '=2.2.17') { require %w(haml sass) }
   gem(:lilypad, '=0.3.0') { require 'lilypad' }
