@@ -8,5 +8,5 @@ if %w(app_master app util solo).include?(node[:instance_role])
   sudo "gem install require --no-ri --no-rdoc"
   
   # gems for app
-  sudo "rake gems:install SUDO=1 DOCS=0"
+  sudo "cd #{latest_release} && rake gems:install SUDO=1 DOCS=0"
 end

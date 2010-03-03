@@ -8,6 +8,7 @@ Require do
   gem :cucumber, '=0.6.2'
   gem(:haml, '=2.2.17') { require %w(haml sass) }
   gem(:lilypad, '=0.3.0') { require 'lilypad' }
+  gem(:rack, "1.0.1")
   gem(:'rack-flash', '=0.1.1') { require 'rack-flash' }
   gem(:rake, '=0.8.7') { require 'rake' }
   gem :require, '=0.2.2'
@@ -46,6 +47,7 @@ Require do
   
   lib do
     gem :haml
+    gem :rack, "1.0.1"
     gem :sinatra
     gem :active_wrapper
     gem :'rack-flash'
