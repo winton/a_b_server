@@ -1,6 +1,6 @@
 # chef hook for eycloud env
 
-if %w(app_master app util).include?(node[:instance_role])
+if %w(app_master app util solo).include?(node[:instance_role])
   # prerequire gems for require
   sudo "gem install active_wrapper --version='0.2.4' --no-ri --no-rdoc"
   sudo "gem install rake --version=0.8.7 --no-ri --no-rdoc"
