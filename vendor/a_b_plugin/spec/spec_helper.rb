@@ -4,6 +4,7 @@ Require.spec_helper!
 ENV['RACK_ENV'] = 'testing'
 
 Spec::Runner.configure do |config|
+  include ABPlugin::Helper
 end
 
 def setup_variables

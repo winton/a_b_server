@@ -19,7 +19,7 @@ class ABPlugin
       
       def env(env=nil)
         @env = env unless env.nil?
-        @env || ENV['RACK_ENV'] || ENV['RAILS_ENV']
+        @env || ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
       end
       
       def reset

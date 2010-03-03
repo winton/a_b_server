@@ -45,6 +45,7 @@ Require do
   end
   
   spec_helper do
+    gem :json
     require 'require/spec_helper'
     require 'pp'
     require 'rails/init'

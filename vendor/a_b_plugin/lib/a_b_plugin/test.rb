@@ -10,55 +10,61 @@ class ABPlugin
     def convert(name=nil, &block)
       return unless @test
       
-      conversion = Cookies.get(:conversions, @test)
-      visit = Cookies.get(:visits, @test)
+      conversion = variant(Cookies.get(:conversions, @test))
+      visit = variant(Cookies.get(:visits, @test))
       variant = variant(name)
       
-      if conversion && variant && conversion == variant['id']
-      # Already converted
-        block.call if block_given?
+      already_recorded = (visit && visit == conversion) || (!name && conversion)
       
-      elsif !visit || visit == variant
-      # Not yet converted
-        block.call if block_given?
-        Cookies.set(:conversions, @test, variant)
-      
-      elsif name.nil? && visit && block_given?
-      # No variant specified and test has been visited
-        block.call symbolize_name(visit['name'])
+      unless visit
+        visit = variant
       end
       
-      symbolize_name(visit['name']) if visit
+      unless conversion
+        conversion = visit
+      end
+      
+      if conversion && (!name || conversion == variant)
+        unless already_recorded
+          Cookies.set(:conversions, @test, conversion)
+          Cookies.set(:visits, @test, conversion)
+        end
+        
+        if block_given?
+          block.call(symbolize_name(conversion['name']))
+        end
+        
+        symbolize_name(conversion['name'])
+      end
     end
     
     def visit(name=nil, &block)
       return unless @test
       
-      visit = Cookies.get(:visits, @test)
+      visit = variant(Cookies.get(:visits, @test))
       variant = variant(name)
       
-      if visit && variant && visit == variant
-      # Already visited
-        block.call if block_given?
-        
-      elsif name.nil? && visit && block_given?
-      # No variant specified and test has been visited
-        block.call symbolize_name(visit['name'])
+      already_recorded = (visit && visit == variant) || (!name && visit)
       
-      else
-      # Not yet visited  
+      unless visit
         variants = @test['variants'].sort do |a, b|
           a['visits'] <=> b['visits']
         end
         visit = variants.first
-        if visit && (!variant || visit == variant)
-          block.call if block_given?
+      end
+      
+      if visit && (!name || visit == variant)
+        unless already_recorded
           visit['visits'] += 1
           Cookies.set(:visits, @test, visit)
         end
+        
+        if block_given?
+          block.call symbolize_name(visit['name'])
+        end
+        
+        symbolize_name(visit['name'])
       end
-      
-      symbolize_name(visit['name']) if visit
     end
     
     private
@@ -67,10 +73,12 @@ class ABPlugin
       name.downcase.gsub(/[^a-zA-Z0-9\s]/, '').gsub('_', '').intern
     end
     
-    def variant(name)
-      return unless name && @test
+    def variant(id_or_name)
+      return unless id_or_name && @test
       @test['variants'].detect do |t|
-        t['name'] == name || symbolize_name(t['name']) == name
+        t['id'] == id_or_name ||
+        t['name'] == id_or_name ||
+        symbolize_name(t['name']) == id_or_name
       end
     end
   end

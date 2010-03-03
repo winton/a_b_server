@@ -43,7 +43,7 @@ class ABPlugin
     end
     
     def reset
-      @cached_at = @instance = @tests = nil
+      $cookies = @cached_at = @instance = @tests = nil
       Config.reset
     end
     

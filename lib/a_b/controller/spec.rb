@@ -1,6 +1,11 @@
 Application.class_eval do
   
   if environment == :development
+    before do
+      ABPlugin::Config.root self.class.root
+      a_b
+    end
+    
     get '/spec' do
       restrict
       
@@ -10,21 +15,20 @@ Application.class_eval do
       ABTest.create :name => 'Test', :variants => 'v1, v2, v3'
       ABTest.create :name => 'Test 2', :variants => 'v4, v5, v6'
       
-      # ABPlugin config
-      ABPlugin::Config.root self.class.root
-      
-      # Controller tests
+      haml :spec, :layout => false
+    end
+    
+    get '/spec/visit' do
+      { :result => a_b(:test).visit,
+        :tests => ABPlugin.tests
+      }.to_json
+    end
+    
+    get '/spec/convert' do
       a_b(:test).visit
-      a_b(:test).convert
-      a_b(:test).visit do |variant|
-        @visit_test = (variant == 'v1')
-      end
-      a_b(:test).convert do |variant|
-        @convert_test = (variant == 'v1')
-      end
-      
-      #haml :spec, :layout => false
-      nil
+      { :result => a_b(:test).convert,
+        :tests => ABPlugin.tests
+      }.to_json
     end
     
     get '/spec/conversions' do

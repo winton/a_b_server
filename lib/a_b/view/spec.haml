@@ -1,0 +1,16 @@
+!!! 1.1
+%html
+  %head
+    = css 'qunit'
+    = js 'jquery'
+    = js 'jquery.cookie'
+    = js 'json2'
+    = js 'qunit'
+    = js 'spec'
+    %script{ :type => 'text/javascript' }
+      = "window.tests = #{ABPlugin.tests.to_json};"
+  %body
+    %h1{ :id => "qunit-header" } a_b
+    %h2{ :id => "qunit-banner" }
+    %h2{ :id => "qunit-userAgent" }
+    %ol{ :id => "qunit-tests" }

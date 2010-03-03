@@ -55,8 +55,9 @@ a_b(:my_test).convert # :my_variant
 </pre>
 
 <pre>
-a_b(:my_test).visit(:my_variant)    # true
-a_b(:my_test).convert(:my_variant)  # true
+a_b(:my_test).visit(:my_variant)        # :my_variant
+a_b(:my_test).convert(:my_variant)      # :my_variant
+a_b(:my_test).visit(:my_other_variant)  # nil (:my_variant already selected)
 </pre>
 
 <pre>
