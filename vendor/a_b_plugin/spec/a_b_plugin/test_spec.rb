@@ -18,6 +18,11 @@ describe ABPlugin::Test do
       a_b(:test).visit.should == :v1
     end
     
+    it "should return the variant name every time" do
+      a_b(:test).visit
+      a_b(:test).visit.should == :v1
+    end
+    
     it "should set cookie" do
       a_b(:test).visit
       JSON($cookies['a_b']).should == {"v"=>{"1"=>2}, "c"=>{}}
@@ -77,6 +82,11 @@ describe ABPlugin::Test do
     end
     
     it "should return the variant name" do
+      a_b(:test).convert.should == :v1
+    end
+    
+    it "should return the variant name every time" do
+      a_b(:test).convert
       a_b(:test).convert.should == :v1
     end
     
