@@ -46,17 +46,12 @@ Require do
   
   spec_helper do
     gem :json
+    gem :'rack-test'
+    gem :sinatra
     require 'require/spec_helper'
     require 'pp'
+    require 'spec/fixtures/rails/config/environment'
+    require 'spec/fixtures/sinatra'
     require 'rails/init'
-    # require 'cgi'
-    # 
-    # gem :json
-    # gem :'rack-test'
-    # gem :sinatra
-    # 
-    # require "spec/fixtures/rails/config/environment"
-    # require "rails/init"
-    # require "spec/fixtures/sinatra"
   end
 end

@@ -4,8 +4,8 @@ class ABPlugin
     
       def self.included(klass)
         ABPlugin do
-          env Rails.env
-          root Rails.root
+          env ::Rails.env
+          root ::Rails.root
         end
       end
     end

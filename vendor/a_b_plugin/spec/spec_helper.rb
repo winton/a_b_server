@@ -1,8 +1,6 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../require")
 Require.spec_helper!
 
-ENV['RACK_ENV'] = 'testing'
-
 Spec::Runner.configure do |config|
   include ABPlugin::Helper
 end

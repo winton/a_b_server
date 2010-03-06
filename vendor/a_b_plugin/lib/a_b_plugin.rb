@@ -1,9 +1,6 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../require")
 Require.lib!
 
-require File.dirname(__FILE__) + "/a_b_plugin/adapters/rails" if defined?(Rails)
-require File.dirname(__FILE__) + "/a_b_plugin/adapters/sinatra" if defined?(Sinatra)
-
 class ABPlugin
   
   def initialize(instance=nil)
@@ -62,3 +59,6 @@ end
 def ABPlugin(&block)
   ABPlugin::Config.class_eval &block
 end
+
+require File.dirname(__FILE__) + "/a_b_plugin/adapters/rails" if defined?(Rails)
+require File.dirname(__FILE__) + "/a_b_plugin/adapters/sinatra" if defined?(Sinatra)

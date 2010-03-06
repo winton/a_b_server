@@ -23,7 +23,7 @@ class ABPlugin
       end
       
       def reset
-        @api_yaml = @binary = @cache_yaml = @root = @url = @token = nil
+        @api_yaml = @binary = @cache_yaml = @env = @root = @url = @token = nil
       end
       
       def root(root=nil)

@@ -2,7 +2,13 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe ABPlugin do
   
+  before(:each) do
+    ENV['RACK_ENV'] = 'testing'
+    ABPlugin.reset
+  end
+  
   after(:each) do
+    ENV['RACK_ENV'] = nil
     ABPlugin.reset
   end
   
@@ -45,7 +51,7 @@ describe ABPlugin do
     end
   end
   
-  describe "when api config config exists" do
+  describe "when api config exists" do
     
     before(:each) do
       ABPlugin do

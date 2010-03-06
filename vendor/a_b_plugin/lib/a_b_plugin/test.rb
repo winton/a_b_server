@@ -75,10 +75,10 @@ class ABPlugin
     
     def variant(id_or_name)
       return unless id_or_name && @test
-      @test['variants'].detect do |t|
-        t['id'] == id_or_name ||
-        t['name'] == id_or_name ||
-        symbolize_name(t['name']) == id_or_name
+      @test['variants'].detect do |v|
+        v['id'] == id_or_name ||
+        v['name'] == id_or_name ||
+        symbolize_name(v['name']) == id_or_name
       end
     end
   end

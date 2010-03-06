@@ -15,4 +15,17 @@ class ApplicationController < ActionController::Base
   def helper_respond_to
     render :inline => "<%= private_methods.collect(&:to_s).include?(params[:method]) ? 1 : 0 %>"
   end
+  
+  def get_cookie
+    ABPlugin.instance = self
+    render :text => ABPlugin::Cookies::Cookie.new['c']['1']
+  end
+  
+  def set_cookie
+    ABPlugin.instance = self
+    cookie = ABPlugin::Cookies::Cookie.new
+    cookie['c'] = { 1 => 1 }
+    cookie.sync
+    render :nothing => true
+  end
 end
