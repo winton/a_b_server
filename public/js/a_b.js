@@ -107,11 +107,15 @@ window.A_B = new function() {
 		return null;
 	}
 	
+	function data() {
+		return eval('(' + cookie('a_b') + ')');
+	}
+	
 	function get(type) {
 		type = type.substring(0, 1);
-		var data = eval('(' + cookie('a_b') + ')');
+		var data = data();
 		if (data[type])
-			return data[type][test.id.to_s];
+			return data[type][test.id + ''];
 		else
 			return null;
 	}
@@ -127,10 +131,27 @@ window.A_B = new function() {
 	
 	function set(type, variant) {
 		type = type.substring(0, 1);
+		var data = data();
+		data[type][test.id + ''] = variant['id'];
+		cookie('a_b', to_json(data));
 	}
 	
 	function symbolize_name(name) {
 		return name.downcase.replace(/[^a-z0-9\s]/gi, '').replace(/_/g, '');
+	}
+	
+	function to_json(obj) {
+		var json = [ '{' ];
+		for (var name in obj) {
+			json.push("'" + name + "'");
+			json.push(':');
+			if (typeof obj[name] == 'object')
+				json.push(to_json(obj[name]));
+			else
+				json.push(obj[name]);
+		}
+		json.push('}');
+		return json.join('');
 	}
 	
 	function trim(text) {
@@ -139,7 +160,7 @@ window.A_B = new function() {
 	
 	function variant(id_or_name) {
 		if (!id_or_name || !test) return null;
-		return $.grep(test.variants, function(v) {
+		return grep(test.variants, function(v) {
 			return (
 				v.id == id_or_name ||
 				v.name == id_or_name ||
