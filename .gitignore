@@ -3,6 +3,7 @@
 *.gem
 *.gemspec
 *.log
+config/cloud_info.yml
 config/database.yml
 config/hoptoad.txt
 config/mail.yml
