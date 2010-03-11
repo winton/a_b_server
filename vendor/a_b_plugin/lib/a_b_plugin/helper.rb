@@ -10,10 +10,10 @@ class ABPlugin
         Test.new(test)
       
       elsif ABPlugin.tests && Config.url
-        "<script type='text/javascript'>A_B.setup(#{{
+        "a_b_setup(#{{
           :tests => ABPlugin.tests,
           :url => Config.url
-        }.to_json});</script>"
+        }.to_json});"
       end
     end
   end

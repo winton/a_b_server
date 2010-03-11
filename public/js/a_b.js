@@ -1,12 +1,15 @@
-window.A_B = new function() {
+new function() {
 	
 	var test, tests;
 	
 	// Public
 	
 	window.a_b = function(name) {
+		if (!tests)
+			throw('You must pass test data to a_b_setup before calling a_b');
+		
 		test = grep(tests, function(t) {
-			return (t.name == name || symbolize_name(t.name) == name);
+			return (t.name == name || symbolizeName(t.name) == name);
 		})[0];
 		
 		return {
@@ -24,9 +27,9 @@ window.A_B = new function() {
 	function convert(name, fn) {
 		if (!test) return null;
 
-		var conversion = variant(get('conversions'));
-		var visit = variant(get('visits'));
-		var variant = variant(name);
+		var conversion = findVariant(get('conversions'));
+		var visit = findVariant(get('visits'));
+		var variant = findVariant(name);
 
 		var already_recorded = (visit && visit == conversion) || (!name && conversion);
 		
@@ -43,9 +46,9 @@ window.A_B = new function() {
 			}
 			
 			if (fn)
-				fn(symbolize_name(conversion.name));
+				fn(symbolizeName(conversion.name));
 			
-			return symbolize_name(conversion.name);
+			return symbolizeName(conversion.name);
 		}
 		
 		return null;
@@ -54,19 +57,19 @@ window.A_B = new function() {
 	function visit(name, fn) {
 		if (!test) return null;
 		
-		var visit = variant(get('visits'));
-		var variant = variant(name);
+		var visit = findVariant(get('visits'));
+		var variant = findVariant(name);
 		
 		var already_recorded = (visit && visit == variant) || (!name && visit);
 		
-		if (!visit && variants.length) {
-			if (variants[0].visits) {
+		if (!visit && test.variants.length) {
+			if (typeof test.variants[0].visits != 'undefined') {
 				var variants = test.variants.sort(function(a, b) {
 					return (a.visits - b.visits);
 				});
 				visit = variants[0];
 			} else
-				visit = variants[Math.floor(Math.random() * variants.length)];
+				visit = test.variants[Math.floor(Math.random() * test.variants.length)];
 		}
 		
 		if (visit && (!name || visit == variant)) {
@@ -76,9 +79,9 @@ window.A_B = new function() {
 			}
 			
 			if (fn)
-				fn(symbolize_name(visit.name));
+				fn(symbolizeName(visit.name));
 			
-			return symbolize_name(visit.name);
+			return symbolizeName(visit.name);
 		}
 		
 		return null;
@@ -107,13 +110,9 @@ window.A_B = new function() {
 		return null;
 	}
 	
-	function data() {
-		return eval('(' + cookie('a_b') + ')');
-	}
-	
 	function get(type) {
 		type = type.substring(0, 1);
-		var data = data();
+		var data = load();
 		if (data[type])
 			return data[type][test.id + ''];
 		else
@@ -129,24 +128,29 @@ window.A_B = new function() {
 		return ret;
 	}
 	
+	function load() {
+		return eval('(' + cookie('a_b') + ')') || {};
+	}
+	
 	function set(type, variant) {
 		type = type.substring(0, 1);
-		var data = data();
+		var data = load();
+		data[type] = data[type] || {};
 		data[type][test.id + ''] = variant['id'];
-		cookie('a_b', to_json(data));
+		cookie('a_b', toJson(data));
 	}
 	
-	function symbolize_name(name) {
-		return name.downcase.replace(/[^a-z0-9\s]/gi, '').replace(/_/g, '');
+	function symbolizeName(name) {
+		return name.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/_/g, '');
 	}
 	
-	function to_json(obj) {
+	function toJson(obj) {
 		var json = [ '{' ];
 		for (var name in obj) {
-			json.push("'" + name + "'");
+			json.push('"' + name + '"');
 			json.push(':');
 			if (typeof obj[name] == 'object')
-				json.push(to_json(obj[name]));
+				json.push(toJson(obj[name]));
 			else
 				json.push(obj[name]);
 		}
@@ -158,13 +162,13 @@ window.A_B = new function() {
 		return (text || "").replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, "");
 	}
 	
-	function variant(id_or_name) {
+	function findVariant(id_or_name) {
 		if (!id_or_name || !test) return null;
 		return grep(test.variants, function(v) {
 			return (
 				v.id == id_or_name ||
 				v.name == id_or_name ||
-				symbolize_name(v.name) == id_or_name
+				symbolizeName(v.name) == id_or_name
 			);
 		})[0];
 	}
