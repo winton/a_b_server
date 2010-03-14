@@ -26,6 +26,11 @@ new function() {
 	
 	function convert(name, fn) {
 		if (!test) return null;
+		
+		if (typeof name == 'function') {
+			fn = name;
+			name = null;
+		}
 
 		var conversion = findVariant(get('conversions'));
 		var visit = findVariant(get('visits'));
@@ -40,7 +45,7 @@ new function() {
 			conversion = visit;
 		
 		if (conversion && (!name || conversion == variant)) {
-			if (already_recorded) {
+			if (!already_recorded) {
 				set('conversions', conversion);
 				set('visits', conversion);
 			}
@@ -56,6 +61,11 @@ new function() {
 	
 	function visit(name, fn) {
 		if (!test) return null;
+		
+		if (typeof name == 'function') {
+			fn = name;
+			name = null;
+		}
 		
 		var visit = findVariant(get('visits'));
 		var variant = findVariant(name);
@@ -153,7 +163,9 @@ new function() {
 				json.push(toJson(obj[name]));
 			else
 				json.push(obj[name]);
+			json.push(',');
 		}
+		json.pop();
 		json.push('}');
 		return json.join('');
 	}

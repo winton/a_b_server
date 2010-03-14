@@ -9,7 +9,11 @@
     = js 'qunit'
     = js 'spec'
     %script{ :type => 'text/javascript' }
-      = a_b
+      :erb
+        reset_a_b();
+        function reset_a_b() {
+          <%= a_b %>
+        }
   %body
     %h1{ :id => "qunit-header" } a_b
     %h2{ :id => "qunit-banner" }

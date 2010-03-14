@@ -2,19 +2,9 @@ class ABPlugin
   module Config
     class <<self
       
-      def api_yaml(api_yaml=nil)
-        @api_yaml = api_yaml unless api_yaml.nil?
-        @api_yaml || ("#{root}/config/a_b/api.yml" if root)
-      end
-      
       def binary(binary=nil)
         @binary = binary unless binary.nil?
         @binary
-      end
-      
-      def cache_yaml(cache_yaml=nil)
-        @cache_yaml = cache_yaml unless cache_yaml.nil?
-        @cache_yaml || ("#{root}/config/a_b/cache.yml" if root)
       end
       
       def env(env=nil)
@@ -23,7 +13,7 @@ class ABPlugin
       end
       
       def reset
-        @api_yaml = @binary = @cache_yaml = @env = @root = @url = @token = nil
+        @binary = @env = @root = @url = @token = @yaml = nil
       end
       
       def root(root=nil)
@@ -39,6 +29,11 @@ class ABPlugin
       def token(token=nil)
         @token = token unless token.nil?
         @token
+      end
+      
+      def yaml(yaml=nil)
+        @yaml = yaml unless yaml.nil?
+        @yaml || ("#{root}/config/a_b.yml" if root)
       end
     end
   end

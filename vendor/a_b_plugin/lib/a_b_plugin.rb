@@ -31,10 +31,11 @@ class ABPlugin
     def load_yaml
       @cached_at = Time.now
       
-      Yaml.new(Config.api_yaml).configure_api
-      @tests = Yaml.new(Config.cache_yaml)['tests']
+      yaml = Yaml.new(Config.yaml)
+      yaml.configure_api
+      @tests = yaml['tests']
       
-      unless @tests && Config.token && Config.url
+      unless @tests
         @cached_at = Time.now - 9 * 60 # Try again in 1 minute
       end
     end
@@ -45,11 +46,13 @@ class ABPlugin
     end
     
     def write_yaml
-      Yaml.new(Config.api_yaml).configure_api
+      yaml = Yaml.new(Config.yaml)
+      yaml.configure_api
       boot = API.boot
       if boot
-        File.open(Config.cache_yaml, 'w') do |f|
-          f.write(boot.to_yaml)
+        yaml['tests'] = boot['tests']
+        File.open(Config.yaml, 'w') do |f|
+          f.write(yaml.to_yaml)
         end
       end
     end

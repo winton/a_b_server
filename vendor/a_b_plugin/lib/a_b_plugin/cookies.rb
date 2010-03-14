@@ -46,6 +46,9 @@ class ABPlugin
       def sync
         return unless ABPlugin.instance
         
+        self.delete('c') if self['c'].empty?
+        self.delete('v') if self['v'].empty?
+        
         if ABPlugin.instance.respond_to?(:cookies)
           ABPlugin.instance.send(:cookies)[:a_b] = self.to_json
           

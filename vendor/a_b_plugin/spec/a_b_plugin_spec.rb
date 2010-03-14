@@ -71,19 +71,19 @@ describe ABPlugin do
     end
   end
   
-  describe "when cache config exists" do
+  describe "when tests config exists" do
     
     before(:each) do
       setup_variables
       ABPlugin do
-        root SPEC + '/fixtures/cache_yaml'
+        root SPEC + '/fixtures/tests_yaml'
       end
     end
     
     it "should only assign cached_at and tests" do
       ABPlugin.new
       
-      ABPlugin.cached_at.to_s.should == (Time.now - 9 * 60).to_s
+      ABPlugin.cached_at.to_s.should == Time.now.to_s
       ABPlugin.instance.should == nil
       ABPlugin.tests.should == @tests
       
@@ -92,13 +92,12 @@ describe ABPlugin do
     end
   end
   
-  describe "when api and cache configs exist" do
+  describe "when api and tests configs exist" do
     
     before(:each) do
       setup_variables
       ABPlugin do
-        api_yaml SPEC + '/fixtures/api_yaml/config/a_b/api.yml'
-        cache_yaml SPEC + '/fixtures/cache_yaml/config/a_b/cache.yml'
+        root SPEC + '/fixtures/both_yaml'
       end
     end
     
@@ -120,14 +119,28 @@ describe ABPlugin do
       before(:each) do
         setup_variables
         ABPlugin do
-          api_yaml SPEC + '/fixtures/api_yaml/config/a_b/api.yml'
           binary true
+          root SPEC + '/fixtures/api_yaml'
         end
       end
       
       it "should call API.get" do
         ABPlugin::API.should_receive(:get).with('/boot.json', :query => { :token => 'token' }).and_return(nil)
         ABPlugin.new
+      end
+      
+      it "should write test data to the config" do
+        data = File.read(ABPlugin::Config.yaml)
+        begin
+          ABPlugin::API.stub!(:boot).and_return({ 'tests' => @tests })
+          ABPlugin.new
+          yaml = ABPlugin::Yaml.new(ABPlugin::Config.yaml)
+          yaml['tests'].should == @tests
+        ensure
+          File.open(ABPlugin::Config.yaml, 'w') do |f|
+            f.write(data)
+          end
+        end
       end
     end
     

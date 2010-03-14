@@ -1,4 +1,6 @@
---- 
+testing:
+  token: token
+  url: url
 tests: 
 - id: 1
   name: Test

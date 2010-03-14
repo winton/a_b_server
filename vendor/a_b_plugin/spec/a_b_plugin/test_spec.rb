@@ -4,7 +4,7 @@ describe ABPlugin::Test do
   
   before(:each) do
     ABPlugin do
-      root SPEC + '/fixtures/cache_yaml'
+      root SPEC + '/fixtures/tests_yaml'
     end
   end
   
@@ -25,7 +25,7 @@ describe ABPlugin::Test do
     
     it "should set cookie" do
       a_b(:test).visit
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}, "c"=>{}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}}
     end
     
     it "should increment variant visits" do
@@ -37,7 +37,7 @@ describe ABPlugin::Test do
       a_b(:test).visit
       a_b(:test).visit
       ABPlugin.tests[0]['variants'][0]['visits'].should == 1
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}, "c"=>{}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}}
     end
     
     it "should return the variant name if variant specified and selected" do
