@@ -1,6 +1,9 @@
 new function() {
 	
-	var test, tests;
+	var disable_requests, test, tests, url;
+	
+	if (cookie('a_b_send') == '1')
+		delayedRequest();
 	
 	// Public
 	
@@ -20,24 +23,33 @@ new function() {
 	
 	window.a_b_setup = function(options) {
 		tests = options.tests;
+		url = options.url;
 	};
 	
 	// Protected
 	
-	function convert(name, fn) {
+	function convert(name, extra, fn) {
 		if (!test) return null;
 		
 		if (typeof name == 'function') {
 			fn = name;
 			name = null;
 		}
+		
+		if (typeof name == 'object') {
+			extra = name;
+			name = null;
+		}
+		
+		if (typeof extra == 'function') {
+			fn = extra;
+			extra = null;
+		}
 
 		var conversion = findVariant(get('conversions'));
 		var visit = findVariant(get('visits'));
 		var variant = findVariant(name);
 
-		var already_recorded = (visit && visit == conversion) || (!name && conversion);
-		
 		if (!visit)
 			visit = variant;
 			
@@ -45,10 +57,8 @@ new function() {
 			conversion = visit;
 		
 		if (conversion && (!name || conversion == variant)) {
-			if (!already_recorded) {
-				set('conversions', conversion);
-				set('visits', conversion);
-			}
+			set('conversions', conversion, extra);
+			set('visits', conversion, extra);
 			
 			if (fn)
 				fn(symbolizeName(conversion.name));
@@ -59,7 +69,7 @@ new function() {
 		return null;
 	}
 	
-	function visit(name, fn) {
+	function visit(name, extra, fn) {
 		if (!test) return null;
 		
 		if (typeof name == 'function') {
@@ -67,10 +77,18 @@ new function() {
 			name = null;
 		}
 		
+		if (typeof name == 'object') {
+			extra = name;
+			name = null;
+		}
+		
+		if (typeof extra == 'function') {
+			fn = extra;
+			extra = null;
+		}
+		
 		var visit = findVariant(get('visits'));
 		var variant = findVariant(name);
-		
-		var already_recorded = (visit && visit == variant) || (!name && visit);
 		
 		if (!visit && test.variants.length) {
 			if (typeof test.variants[0].visits != 'undefined') {
@@ -83,10 +101,7 @@ new function() {
 		}
 		
 		if (visit && (!name || visit == variant)) {
-			if (!already_recorded) {
-				visit.visits += 1;
-				set('visits', visit);
-			}
+			set('visits', visit, extra);
 			
 			if (fn)
 				fn(symbolizeName(visit.name));
@@ -120,9 +135,37 @@ new function() {
 		return null;
 	}
 	
+	function delayedRequest() {
+		if (disable_requests) return;
+		disable_requests = true;
+		cookie('a_b_send', 1);
+		setTimeout(function() {
+			$.ajax({
+				data: { json: cookie('a_b') },
+				dataType: 'jsonp',
+				success: function() { cookie('a_b_send', 0); },
+				type: 'GET',
+				url: url + '/a_b.js'
+			});
+			disable_requests = false;
+		}, 100);
+	}
+	
+	function findVariant(id_or_name) {
+		if (!id_or_name || !test) return null;
+		return grep(test.variants, function(v) {
+			return (
+				v.id == id_or_name ||
+				v.name == id_or_name ||
+				symbolizeName(v.name) == id_or_name
+			);
+		})[0];
+	}
+	
 	function get(type) {
-		type = type.substring(0, 1);
 		var data = load();
+		type = type.substring(0, 1);
+		
 		if (data[type])
 			return data[type][test.id + ''];
 		else
@@ -142,12 +185,24 @@ new function() {
 		return eval('(' + cookie('a_b') + ')') || {};
 	}
 	
-	function set(type, variant) {
-		type = type.substring(0, 1);
+	function set(type, variant, extra) {
 		var data = load();
+		var test_id = test.id + '';
+		type = type.substring(0, 1);
+		
 		data[type] = data[type] || {};
-		data[type][test.id + ''] = variant['id'];
+		data[type][test_id] = variant['id'];
+		
+		if (extra) {
+			data['e'] = data['e'] || {};
+			data['e'][test_id] = data['e'][test_id] || {};
+			for (attr in extra) {
+				data['e'][test_id][attr] = extra[attr];
+			}
+		}
+		
 		cookie('a_b', toJson(data));
+		delayedRequest();
 	}
 	
 	function symbolizeName(name) {
@@ -172,16 +227,5 @@ new function() {
 	
 	function trim(text) {
 		return (text || "").replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, "");
-	}
-	
-	function findVariant(id_or_name) {
-		if (!id_or_name || !test) return null;
-		return grep(test.variants, function(v) {
-			return (
-				v.id == id_or_name ||
-				v.name == id_or_name ||
-				symbolizeName(v.name) == id_or_name
-			);
-		})[0];
 	}
 };

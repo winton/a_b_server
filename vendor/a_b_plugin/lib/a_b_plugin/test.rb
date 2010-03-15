@@ -7,14 +7,17 @@ class ABPlugin
       end
     end
     
-    def convert(name=nil, &block)
+    def convert(name=nil, extra=nil, &block)
       return unless @test
+      
+      if name.respond_to?(:keys)
+        extra = name
+        name = nil
+      end
       
       conversion = variant(Cookies.get(:conversions, @test))
       visit = variant(Cookies.get(:visits, @test))
       variant = variant(name)
-      
-      already_recorded = (visit && visit == conversion) || (!name && conversion)
       
       unless visit
         visit = variant
@@ -25,10 +28,8 @@ class ABPlugin
       end
       
       if conversion && (!name || conversion == variant)
-        unless already_recorded
-          Cookies.set(:conversions, @test, conversion)
-          Cookies.set(:visits, @test, conversion)
-        end
+        Cookies.set(:conversions, @test, conversion, extra)
+        Cookies.set(:visits, @test, conversion, extra)
         
         if block_given?
           block.call(symbolize_name(conversion['name']))
@@ -38,8 +39,13 @@ class ABPlugin
       end
     end
     
-    def visit(name=nil, &block)
+    def visit(name=nil, extra=nil, &block)
       return unless @test
+      
+      if name.respond_to?(:keys)
+        extra = name
+        name = nil
+      end
       
       visit = variant(Cookies.get(:visits, @test))
       variant = variant(name)
@@ -58,10 +64,8 @@ class ABPlugin
       end
       
       if visit && (!name || visit == variant)
-        unless already_recorded
-          visit['visits'] += 1
-          Cookies.set(:visits, @test, visit)
-        end
+        visit['visits'] += 1 unless already_recorded
+        Cookies.set(:visits, @test, visit, extra)
         
         if block_given?
           block.call symbolize_name(visit['name'])

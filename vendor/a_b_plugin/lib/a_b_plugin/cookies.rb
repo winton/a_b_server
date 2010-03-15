@@ -10,18 +10,25 @@ class ABPlugin
         Cookie.new[type][test['id'].to_s]
       end
       
-      def set(type, test, variant)
+      def set(type, test, variant, extra)
         return unless type && test && variant
         
         type = type.to_s[0..0]
         
         cookie = Cookie.new
         cookie[type][test['id'].to_s] = variant['id']
+        if extra
+          cookie['e'][test['id'].to_s] ||= {}
+          cookie['e'][test['id'].to_s].merge!(extra)
+        end
         cookie.sync
       end
     end
     
     class Cookie < Hash
+      
+      TYPES = %w(c v e)
+      # conversions, visits, extras
       
       def initialize
         return unless ABPlugin.instance
@@ -39,15 +46,17 @@ class ABPlugin
         
         self.replace(JSON cookie) if cookie
         
-        self['c'] ||= {}
-        self['v'] ||= {}
+        TYPES.each do |type|
+          self[type] ||= {}
+        end
       end
       
       def sync
         return unless ABPlugin.instance
         
-        self.delete('c') if self['c'].empty?
-        self.delete('v') if self['v'].empty?
+        TYPES.each do |type|
+          self.delete(type) if self[type].empty?
+        end
         
         if ABPlugin.instance.respond_to?(:cookies)
           ABPlugin.instance.send(:cookies)[:a_b] = self.to_json

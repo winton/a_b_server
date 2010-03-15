@@ -54,6 +54,13 @@ test("should not call a block for a specific variant if the variant is not selec
 	});
 });
 
+test("should accept a hash with extra boolean values", function() {
+	a_b('test').visit('v1', { e: true });
+	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "e": { "1": { "e": true } } });
+	a_b('test').visit({ e2: true });
+	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
+});
+
 module('convert', {
 	setup: function() {
 		setup();
@@ -108,4 +115,11 @@ test("should not call a block for a specific variant if the variant is not selec
 	a_b('test').convert('v2', function() {
 		ok(false);
 	});
+});
+
+test("should accept a hash with extra boolean values", function() {
+	a_b('test').convert('v1', { e: true });
+	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true } } });
+	a_b('test').convert({ e2: true });
+	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
 });
