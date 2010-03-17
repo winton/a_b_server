@@ -7,6 +7,7 @@ config/cloud_info.yml
 config/database.yml
 config/deploy
 config/hoptoad.txt
+config/newrelic.yml
 config/mail.yml
 coverage
 log

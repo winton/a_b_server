@@ -13,6 +13,7 @@ Require do
   gem(:rake, '=0.8.7') { require 'rake' }
   gem :require, '=0.2.2'
   gem :rspec, '=1.3.0'
+  gem(:newrelic_rpm, '=2.10.6') { require 'newrelic_rpm' }
   gem(:sinatra, '=0.9.4') { require 'sinatra/base' }
   
   gemspec do
@@ -49,6 +50,7 @@ Require do
     gem :haml
     gem :rack, "1.0.1"
     gem :sinatra
+    gem :newrelic_rpm
     gem :active_wrapper
     gem :'rack-flash'
     load_path 'vendor/authlogic/lib'
