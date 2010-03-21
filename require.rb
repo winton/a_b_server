@@ -37,9 +37,7 @@ Require do
     gem :active_wrapper
     gem :sinatra
     load_path 'vendor/a_b_plugin/lib'
-    load_path 'vendor/authlogic/lib'
     require 'a_b_plugin'
-    require 'authlogic'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
     require 'lib/a_b/boot/active_wrapper'
@@ -52,9 +50,7 @@ Require do
     gem :active_wrapper
     gem :'rack-flash'
     load_path 'vendor/a_b_plugin/lib'
-    load_path 'vendor/authlogic/lib'
     require 'a_b_plugin'
-    require 'authlogic'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
     require 'lib/a_b/boot/session'

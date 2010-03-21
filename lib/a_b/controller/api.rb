@@ -11,10 +11,15 @@ Application.class_eval do
     )
   end
   
-  get '/increment.js' do
-    return nil unless valid_token?
-    increment :conversions
-    increment :visits
-    nil
+  get '/a_b.js' do
+    content_type 'application/javascript'
+    data = JSON(params[:j])
+    identifier = data.delete('i')
+    ABRequest.create(
+      :data => data,
+      :identifier => identifier,
+      :ip => request.ip
+    )
+    "#{params[:callback]}();"
   end
 end

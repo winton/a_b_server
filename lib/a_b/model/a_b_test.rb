@@ -1,7 +1,7 @@
 class ABTest < ActiveRecord::Base
   
-  set_table_name :a_b_tests
-  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'a_b_test_id', :dependent => :delete_all
+  set_table_name :tests
+  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'test_id', :dependent => :delete_all
   
   validates_uniqueness_of :name
   

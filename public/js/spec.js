@@ -1,3 +1,10 @@
+function cookieToJson() {
+	var data = JSON.parse($.cookie('a_b'));
+	delete data.i; // request id
+	delete data.s; // sent flag
+	return data;
+}
+
 function setup() {
 	reset_a_b();
 	$.cookie('a_b', null);
@@ -16,13 +23,13 @@ test('should return the variant name every time', function() {
 
 test('should set cookie', function() {
 	a_b('test').visit();
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 } });
+	same(cookieToJson(), { "v": { "1": 2 } });
 });
 
 test("should maintain state if called more than once", function() {
 	a_b('test').visit();
 	a_b('test').visit();
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 } });
+	same(cookieToJson(), { "v": { "1": 2 } });
 });
 
 test("should return the variant name if variant specified and selected", function() {
@@ -56,9 +63,9 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').visit('v1', { e: true });
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "e": { "1": { "e": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "e": { "1": { "e": true } } });
 	a_b('test').visit({ e2: true });
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
 });
 
 module('convert', {
@@ -79,13 +86,13 @@ test("should return the variant name every time", function() {
 
 test("should set cookie", function() {
 	a_b('test').convert();
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "c": { "1": 2 } });
+	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 } });
 });
 
 test("should maintain state if called more than once", function() {
 	a_b('test').convert();
 	a_b('test').convert();
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "c": { "1": 2 } });
+	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 } });
 });
 
 test("should return the variant name if variant specified and selected", function() {
@@ -119,7 +126,7 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').convert('v1', { e: true });
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true } } });
 	a_b('test').convert({ e2: true });
-	same(JSON.parse($.cookie('a_b')), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
 });

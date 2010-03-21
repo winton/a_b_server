@@ -2,7 +2,7 @@ new function() {
 	
 	var disable_requests, test, tests, url;
 	
-	if (cookie('a_b_send') == '1')
+	if (load().s)
 		delayedRequest();
 	
 	// Public
@@ -138,12 +138,11 @@ new function() {
 	function delayedRequest() {
 		if (disable_requests) return;
 		disable_requests = true;
-		cookie('a_b_send', 1);
 		setTimeout(function() {
 			$.ajax({
-				data: { json: cookie('a_b') },
+				data: { j: jsonForRequest() },
 				dataType: 'jsonp',
-				success: function() { cookie('a_b_send', 0); },
+				success: sent,
 				type: 'GET',
 				url: url + '/a_b.js'
 			});
@@ -181,6 +180,12 @@ new function() {
 		return ret;
 	}
 	
+	function jsonForRequest() {
+		var data = load();
+		delete data.s;
+		return toJson(data);
+	}
+	
 	function load() {
 		return eval('(' + cookie('a_b') + ')') || {};
 	}
@@ -190,19 +195,33 @@ new function() {
 		var test_id = test.id + '';
 		type = type.substring(0, 1);
 		
+		// Request id
+		data.i = data.i || (Math.random() + '').substring(2);
+		
+		// Conversion or visit
 		data[type] = data[type] || {};
 		data[type][test_id] = variant['id'];
 		
+		// Extra variables
 		if (extra) {
-			data['e'] = data['e'] || {};
-			data['e'][test_id] = data['e'][test_id] || {};
+			data.e = data.e || {};
+			data.e[test_id] = data.e[test_id] || {};
 			for (attr in extra) {
-				data['e'][test_id][attr] = extra[attr];
+				data.e[test_id][attr] = extra[attr];
 			}
 		}
 		
+		// Send flag
+		data.s = 1;
+		
 		cookie('a_b', toJson(data));
 		delayedRequest();
+	}
+	
+	function sent() {
+		var data = load();
+		delete data.s;
+		cookie('a_b', toJson(data));
 	}
 	
 	function symbolizeName(name) {
