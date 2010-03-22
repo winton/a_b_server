@@ -1,9 +1,11 @@
 class ABVariant < ActiveRecord::Base
   
   set_table_name :variants
-  belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
   
   after_destroy :save_test
+  
+  belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
+  belongs_to :user, :through => :test
   
   validates_uniqueness_of :name
   

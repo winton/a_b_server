@@ -4,6 +4,7 @@ class Requests < ActiveRecord::Migration
       t.string :data, :limit => 1024
       t.string :identifier
       t.string :ip
+      t.boolean :processed, :default => false
       t.timestamps
     end
   end

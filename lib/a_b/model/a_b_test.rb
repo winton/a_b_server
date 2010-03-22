@@ -1,13 +1,16 @@
 class ABTest < ActiveRecord::Base
   
   set_table_name :tests
-  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'test_id', :dependent => :delete_all
-  
-  validates_uniqueness_of :name
   
   after_save :destroy_variants
   after_save :create_variants
   after_save :set_control
+  
+  belongs_to :user
+  
+  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'test_id', :dependent => :delete_all
+  
+  validates_uniqueness_of :name
   
   def control
     self.variants.find_by_control true
