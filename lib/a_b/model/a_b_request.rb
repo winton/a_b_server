@@ -6,8 +6,9 @@ class ABRequest < ActiveRecord::Base
   class <<self
   
     def process!
+      conditions, lock_id = take_lock
+      
       begin
-        conditions, lock_id = take_lock
         counts_by_user_id = {}
         times_by_user_id = {}
         
@@ -29,6 +30,7 @@ class ABRequest < ActiveRecord::Base
           
           # If not over limit, execute
           if user.limit_per_minute.nil? || counts_by_user_id[user.id] < user.limit_per_minute
+            
             # Update time and count
             counts_by_user_id[user.id] ||= 0
             counts_by_user_id[user.id] += 1
@@ -56,6 +58,7 @@ class ABRequest < ActiveRecord::Base
         end
         
         Lock.release lock_id
+        
       rescue Exception => e
         Lock.release lock_id, e
         say "Lock #{lock_id} failed!"
@@ -69,6 +72,7 @@ class ABRequest < ActiveRecord::Base
     def take_lock
       connection.execute "LOCK TABLE locks LOW_PRIORITY WRITE"
       conditions = Lock.exclude_conditions
+      
       first_id = self.first(
         :select => :id,
         :conditions => conditions
@@ -77,8 +81,11 @@ class ABRequest < ActiveRecord::Base
         :select => :id,
         :conditions => conditions
       )
-      lock = Lock.take first_id, last_id
-      [ conditions, lock.id ]
+      
+      lock_id = Lock.take first_id, last_id
+      raise("Couldn't create lock") unless lock_id
+      
+      [ conditions, lock_id ]
     ensure
       connection.execute "UNLOCK TABLES"
     end

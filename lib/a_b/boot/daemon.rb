@@ -13,7 +13,7 @@ class ABDaemon
         puts opts
         exit 1
       end
-      opts.on('-n', '--number_of_workers=workers', "Number of unique workers to spawn") do |worker_count|
+      opts.on('-n', '--number=workers', "Number of unique workers to spawn") do |worker_count|
         @worker_count = worker_count.to_i rescue 1
       end
     end
@@ -23,7 +23,7 @@ class ABDaemon
 
   def daemonize
     ObjectSpace.each_object(File) do |file|
-      @files_to_reopen << file unless file.closed?
+      @files_to_reopen.push(file) if file.path.include?('.log')
     end
     
     worker_count.times do |worker_index|
@@ -39,6 +39,7 @@ class ABDaemon
   
   def run(name = nil)
     Dir.chdir(Application.root)
+    ActiveRecord::Base.connection.reconnect!
     
     # Re-open file handles
     @files_to_reopen.each do |file|
@@ -49,21 +50,19 @@ class ABDaemon
       end
     end
     
-    ActiveRecord::Base.connection.reconnect!
-    
-    $log.info "*** Starting #{name}"
+    ABRequest.say "Starting #{name}"
 
     trap('TERM') { $log.info 'Exiting...'; $exit = true }
     trap('INT')  { $log.info 'Exiting...'; $exit = true }
     
     loop do
       realtime = Benchmark.realtime { ABRequest.process! }
-      $log.info "Processed #{name} in %.4f s" % [ realtime ]
+      ABRequest.say("Finished #{name} in %.4f s" % [ realtime ])
       break if $exit
     end
-    
+
   rescue => e
-    $log.fatal e
+    ABRequest.say [ e.message, e.backtrace ].join("\n")
     STDERR.puts e.message
     exit 1
   end
