@@ -10,11 +10,11 @@ class Lock < ActiveRecord::Base
       "host:#{Socket.gethostname} pid:#{Process.pid}" rescue "pid:#{Process.pid}"
     end
     
-    def release(id, exception=nil)
+    def release(id, e=nil)
       lock = self.find id
-      if exception
+      if e
         lock.update_attributes(
-          :error => [ e.message, e.backtrace ].join("\n")
+          :error => [ e.message, e.backtrace ].join("\n"),
           :failed_at => Time.now.utc
         )
       else
@@ -29,7 +29,7 @@ class Lock < ActiveRecord::Base
     def unlocked_conditions
       unlocked = self.all(
         :conditions => { :failed_at => nil },
-        :select => %w(start end)
+        :select => 'start, end'
       )
       conditions = unlocked.collect do |lock|
         "(id < #{lock.start} AND id > #{lock.end})"

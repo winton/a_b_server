@@ -6,7 +6,7 @@ class Locks < ActiveRecord::Migration
       t.integer :end
       t.string :error, :limit => 2048
       t.datetime :failed_at
-      t.timestamp
+      t.timestamps
     end
   end
 

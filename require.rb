@@ -18,6 +18,7 @@ Require do
     author 'Winton Welsh'
     dependencies do
       gem :active_wrapper
+      gem :daemons
       gem :haml
       gem :lilypad
       gem :require
