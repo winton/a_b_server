@@ -6,6 +6,7 @@ Require do
   
   gem(:active_wrapper, '=0.2.3') { require 'active_wrapper' }
   gem :cucumber, '=0.6.2'
+  gem(:daemons, '=1.0.10') { require %w(daemons optparse) }
   gem(:haml, '=2.2.17') { require %w(haml sass) }
   gem(:lilypad, '=0.3.0') { require 'lilypad' }
   gem(:rake, '=0.8.7') { require 'rake' }
@@ -44,6 +45,7 @@ Require do
   
   daemon do
     gem :active_wrapper
+    gem :daemons
     gem :sinatra
     load_path 'vendor/a_b_plugin/lib'
     require 'a_b_plugin'

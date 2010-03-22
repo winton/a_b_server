@@ -1,6 +1,3 @@
-require 'daemons'
-require 'optparse'
-
 class ABDaemon
   
   def initialize(args)
