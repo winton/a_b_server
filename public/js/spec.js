@@ -63,9 +63,9 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').visit('v1', { e: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "e": { "1": { "e": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "e": { "2": { "e": true } } });
 	a_b('test').visit({ e2: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "e": { "2": { "e": true, "e2": true } } });
 });
 
 module('convert', {
@@ -126,7 +126,7 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').convert('v1', { e: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "2": { "e": true } } });
 	a_b('test').convert({ e2: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "1": { "e": true, "e2": true } } });
+	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "2": { "e": true, "e2": true } } });
 });

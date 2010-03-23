@@ -7,6 +7,7 @@ class ABRequest < ActiveRecord::Base
   
     def process!
       conditions, lock_id = take_lock
+      return unless lock_id
       
       begin
         counts_by_user_id = {}
@@ -36,18 +37,35 @@ class ABRequest < ActiveRecord::Base
             counts_by_user_id[user.id] += 1
             times_by_user_id[user.id] = request.created_at
             
-            # Increment conversions and visits
-            request.data['c'].each do |test_id, variant_id|
-              variant = ABVariant.find(variant_id)
-              next unless variant
-              variant.increment! :conversions
+            # Increment conversions, visits, and extras
+            variants = {}
+            
+            %w(c v e).each do |type|
+              request.data[type].each do |test_id, variant_id|
+                if type == 'e'
+                  variant_id, hash = test_id, variant_id
+                end
+                
+                variant = variants[variant_id] || ABVariant.find(variant_id)
+                next unless variant
+                variants[variant_id] = variant
+                
+                case type
+                when 'c' then
+                  variant.increment :conversions
+                when 'v' then
+                  variant.increment :visits
+                when 'e' then
+                  variant.extras ||= {}
+                  hash.each do |key, value|
+                    variant.extras[key] ||= 0
+                    variant.extras[key] += value ? 1 : -1
+                  end
+                end
+              end
             end
             
-            request.data['v'].each do |test_id, variant_id|
-              variant = ABVariant.find(variant_id)
-              next unless variant
-              variant.increment! :visits
-            end
+            variants.each { |variant_id, variant| variant.save }
             
             # Finish up
             request.update_attribute :processed, true
@@ -70,20 +88,23 @@ class ABRequest < ActiveRecord::Base
     end
     
     def take_lock
-      connection.execute "LOCK TABLE locks LOW_PRIORITY WRITE"
-      conditions = Lock.exclude_conditions
+      connection.execute "LOCK TABLE locks LOW_PRIORITY WRITE, requests READ LOCAL"
+      conditions = Lock.unlocked_conditions
       
-      first_id = self.first(
+      first = self.first(
         :select => :id,
         :conditions => conditions
       )
-      last_id = self.last(
+      last = self.last(
         :select => :id,
         :conditions => conditions
       )
       
-      lock_id = Lock.take first_id, last_id
-      raise("Couldn't create lock") unless lock_id
+      if first && last
+        lock_id = Lock.take first.id, last.id
+      else
+        lock_id = nil
+      end
       
       [ conditions, lock_id ]
     ensure

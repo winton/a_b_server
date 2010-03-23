@@ -6,6 +6,10 @@ describe Lock do
     Lock.delete_all
   end
   
+  after(:all) do
+    Lock.delete_all
+  end
+  
   describe :release do
     
     before(:each) do
@@ -54,7 +58,7 @@ describe Lock do
     
     it "should return the correct conditions" do
       conditions = Lock.unlocked_conditions
-      conditions.should == "(id < 1 AND id > 2) AND (id < 3 AND id > 4)"
+      conditions.should == "(id NOT BETWEEN 1 AND 2) AND (id NOT BETWEEN 3 AND 4)"
     end
   end
 end

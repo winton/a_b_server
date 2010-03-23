@@ -32,9 +32,13 @@ class Lock < ActiveRecord::Base
         :select => 'start, end'
       )
       conditions = unlocked.collect do |lock|
-        "(id < #{lock.start} AND id > #{lock.end})"
+        if lock.start && lock.end
+          "(id NOT BETWEEN #{lock.start} AND #{lock.end})"
+        else
+          nil
+        end
       end
-      conditions.join ' AND '
+      conditions.compact.join ' AND '
     end
   end
 end

@@ -4,6 +4,7 @@ class ABVariant < ActiveRecord::Base
   
   after_destroy :save_test
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
+  serialize :extras
   validates_uniqueness_of :name
   
   def self.reset!

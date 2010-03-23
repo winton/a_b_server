@@ -205,9 +205,9 @@ new function() {
 		// Extra variables
 		if (extra) {
 			data.e = data.e || {};
-			data.e[test_id] = data.e[test_id] || {};
+			data.e[variant['id']] = data.e[variant['id']] || {};
 			for (attr in extra) {
-				data.e[test_id][attr] = extra[attr];
+				data.e[variant['id']][attr] = extra[attr];
 			}
 		}
 		

@@ -5,6 +5,7 @@ class Variants < ActiveRecord::Migration
       t.boolean :control, :default => false
       t.integer :conversions, :default => 0
       t.integer :visits, :default => 0
+      t.string :extras, :limit => 2048
       t.integer :test_id
       t.timestamps
     end

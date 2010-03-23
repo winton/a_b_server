@@ -18,8 +18,8 @@ class ABPlugin
         cookie = Cookie.new
         cookie[type][test['id'].to_s] = variant['id']
         if extra
-          cookie['e'][test['id'].to_s] ||= {}
-          cookie['e'][test['id'].to_s].merge!(extra)
+          cookie['e'][variant['id'].to_s] ||= {}
+          cookie['e'][variant['id'].to_s].merge!(extra)
         end
         cookie.sync
       end
