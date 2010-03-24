@@ -2,15 +2,52 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe ABRequest do
   
-  before(:each) do
-    ABRequest.delete_all
+  describe :increment do
+    
+    before(:each) do
+      create_request
+    end
+    
+    after(:each) do
+      destroy_request
+    end
+    
+    it 'should increment conversions, visits, and extras' do
+      ABRequest.increment(@request)
+      @variant.reload
+      @variant.conversions.should == 1
+      @variant.visits.should == 1
+      @variant.extras.should == { 'e' => 1 }
+      
+      ABRequest.increment(@request)
+      @variant.reload
+      @variant.conversions.should == 2
+      @variant.visits.should == 2
+      @variant.extras.should == { 'e' => 2 }
+    end
   end
   
-  after(:all) do
-    ABRequest.delete_all
-  end
-  
-  describe :process! do
+  describe :limit_ip do
+    
+    before(:each) do
+      @old_ip_limit = IP::LIMIT_PER_DAY
+      IP::LIMIT_PER_DAY = 1
+      create_request
+    end
+    
+    after(:each) do
+      IP::LIMIT_PER_DAY = @old_ip_limit
+      destroy_request
+      IP.delete_all
+    end
+    
+    it 'should start limiting once limit has been reached' do
+      ABRequest.limit_ip(@request).should == false
+      ip = IP.first
+      ip.ip.should == '127.0.0.1'
+      ip.count.should == 1
+      ABRequest.limit_ip(@request).should == true
+    end
   end
   
   describe :take_lock do
@@ -22,6 +59,7 @@ describe ABRequest do
     end
     
     after(:each) do
+      ABRequest.delete_all
       Lock.delete_all
     end
     
@@ -36,6 +74,21 @@ describe ABRequest do
       lock = Lock.find pair[1]
       lock.start.should == @request2.id
       lock.end.should == @request2.id
+    end
+  end
+  
+  describe :user do
+    
+    before(:each) do
+      create_request
+    end
+    
+    after(:each) do
+      destroy_request
+    end
+    
+    it 'should find the user from the request' do
+      ABRequest.user(@request).should == @user
     end
   end
 end
