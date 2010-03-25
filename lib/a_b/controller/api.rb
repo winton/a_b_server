@@ -3,7 +3,7 @@ Application.class_eval do
   get('/') {}
   
   get '/a_b.js' do
-    content_type :javascript
+    content_type :js
     data = JSON params[:j]
     identifier = data.delete 'i'
     ABRequest.create(
