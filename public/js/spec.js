@@ -130,3 +130,38 @@ test("should accept a hash with extra boolean values", function() {
 	a_b('test').convert({ e2: true });
 	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "2": { "e": true, "e2": true } } });
 });
+
+var called, requested, timer;
+module('delayedRequest', {
+	setup: function() {
+		setup();
+		called = 0;
+		requested = 0;
+		// This should resemble delayedRequest without the json-p call
+		A_B.overwriteFunction('delayedRequest', function() {
+			called += 1;
+			clearTimeout(timer);
+			timer = setTimeout(function() { requested += 1; }, 10);
+		});
+	}
+});
+
+test("should be called when the data structure changes", function() {
+	expect(1);
+	a_b('test').visit('v1');
+	a_b('test').visit('v2');
+	a_b('test').convert('v1');
+	a_b('test').convert('v2');
+	equals(called, 2);
+});
+
+test("should only send one request after a number of simultaneous calls", function() {
+	expect(1);
+	stop();
+	a_b('test').visit('v1');
+	a_b('test').convert('v1');
+	setTimeout(function() {
+		start();
+		equals(requested, 1);
+	}, 100);
+});

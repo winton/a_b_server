@@ -1,9 +1,6 @@
-new function() {
+window.A_B = new function() {
 	
-	var disable_requests, test, tests, url;
-	
-	if (load().s)
-		delayedRequest();
+	var test, tests, timer, url;
 	
 	// Public
 	
@@ -24,7 +21,10 @@ new function() {
 	window.a_b_setup = function(options) {
 		tests = options.tests;
 		url = options.url;
+		if (load().s) delayedRequest();
 	};
+	
+	$.extend(this, { overwriteFunction: overwriteFunction });
 	
 	// Protected
 	
@@ -136,10 +136,9 @@ new function() {
 	}
 	
 	function delayedRequest() {
-		if (disable_requests) return;
-		disable_requests = true;
-		setTimeout(function() {
-			disable_requests = false;
+		// Don't forget to modify the tests if you modify this code
+		clearTimeout(timer);
+		timer = setTimeout(function() {
 			$.ajax({
 				data: { j: jsonForRequest() },
 				dataType: 'jsonp',
@@ -147,7 +146,7 @@ new function() {
 				type: 'GET',
 				url: url + '/a_b.js'
 			});
-		}, 100);
+		}, 10);
 	}
 	
 	function equiv(a, b) {
@@ -386,6 +385,11 @@ new function() {
 	
 	function load() {
 		return eval('(' + cookie('a_b') + ')') || {};
+	}
+	
+	function overwriteFunction(name, fn) {
+		fn = fn || function() {};
+		eval(name + ' = fn');
 	}
 	
 	function set(type, variant, extra) {
