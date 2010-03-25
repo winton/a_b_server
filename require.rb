@@ -61,11 +61,11 @@ Require do
   end
   
   lib do
+    gem :active_wrapper
     gem :haml
     gem :rack, "1.0.1"
     gem :sinatra
     gem :newrelic_rpm
-    gem :active_wrapper
     load_path 'vendor/a_b_plugin/lib'
     require 'a_b_plugin'
     require 'vendor/acts_as_archive/init'
@@ -79,10 +79,7 @@ Require do
   end
   
   rakefile do
-    gem(:active_wrapper) do
-      require 'active_wrapper'
-      require 'active_wrapper/tasks'
-    end
+    gem :active_wrapper { require 'active_wrapper/tasks' }
     gem(:rake) { require 'rake/gempackagetask' }
     gem(:rspec) { require 'spec/rake/spectask' }
     gem :sinatra
