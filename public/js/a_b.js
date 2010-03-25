@@ -441,7 +441,7 @@ window.A_B = new function() {
 			if (typeof obj[name] == 'object')
 				json.push(toJson(obj[name]));
 			else if (name == 'i')
-				json.push('"' + toJson(obj[name]) + '"');
+				json.push('"' + obj[name] + '"');
 			else
 				json.push(obj[name]);
 			json.push(',');
