@@ -2,6 +2,7 @@ class ABDaemon
   
   def initialize(args)
     @files_to_reopen = []
+    @sleep = 5
     @worker_count = 1
     
     opts = OptionParser.new do |opts|
@@ -13,6 +14,9 @@ class ABDaemon
       opts.on('-n', '--number=workers', "Number of unique workers to spawn") do |worker_count|
         @worker_count = worker_count.to_i rescue 1
       end
+      opts.on('-s', '--sleep=seconds', "Time to sleep between runs") do |seconds|
+        @sleep = seconds.to_i rescue 5
+      end
     end
     
     @args = opts.parse!(args)
@@ -23,21 +27,23 @@ class ABDaemon
       @files_to_reopen.push(file) if file.path.include?('.log')
     end
     
-    worker_count.times do |worker_index|
-      name = worker_count == 1 ? "a_b_daemon" : "a_b_daemon.#{worker_index}"
+    pids = "#{Application.root}/tmp/pids"
+    FileUtils.mkdir_p(pids)
+    
+    @worker_count.times do |worker_index|
+      name = @worker_count == 1 ? "a_b_daemon" : "a_b_daemon.#{worker_index}"
       options = {
         :ARGV => @args,
-        :dir => "#{Application.root}/tmp/pids",
+        :dir => pids,
         :dir_mode => :normal
       }
-      Daemons.run_proc(name, options) { |*args| run name }
+      Daemons.run_proc(name, options) do |*args|
+        run name
+      end
     end
   end
   
   def run(name = nil)
-    Dir.chdir(Application.root)
-    ActiveRecord::Base.connection.reconnect!
-    
     # Re-open file handles
     @files_to_reopen.each do |file|
       begin
@@ -47,6 +53,9 @@ class ABDaemon
       end
     end
     
+    Dir.chdir(Application.root)
+    ActiveRecord::Base.connection.reconnect!
+    
     ABRequest.say "Starting #{name}"
 
     trap('TERM') { $log.info 'Exiting...'; $exit = true }
@@ -55,6 +64,8 @@ class ABDaemon
     loop do
       realtime = Benchmark.realtime { ABRequest.process! }
       ABRequest.say("Finished #{name} in %.4f s" % [ realtime ])
+      break if $exit
+      sleep @sleep
       break if $exit
     end
 

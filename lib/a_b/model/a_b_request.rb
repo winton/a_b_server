@@ -1,6 +1,8 @@
 class ABRequest < ActiveRecord::Base
   
   set_table_name :requests
+  
+  acts_as_archive
   serialize :data
   
   class <<self
@@ -65,7 +67,6 @@ class ABRequest < ActiveRecord::Base
           
           increment(request)
           
-          # Finish up
           request.update_attribute :processed, true
           request.destroy # acts_as_archive destroy
         end
@@ -84,31 +85,42 @@ class ABRequest < ActiveRecord::Base
     end
   
     def say(text)
-      $log.info "#{Time.now.strftime('%FT%T%z')}: #{text}"
+      $log.info "#{Time.now.strftime('%FT%T%z')}: #{text}\n\n"
     end
     
     def take_lock
-      connection.execute "LOCK TABLE locks LOW_PRIORITY WRITE, requests READ LOCAL"
-      conditions = Lock.unlocked_conditions
+      # Doing this weird two-run thing so we only take locks when necessary
+      2.times do |iteration|
+        begin
+          if iteration == 1
+            connection.execute "LOCK TABLE locks LOW_PRIORITY WRITE, requests READ LOCAL"
+          end
+          
+          conditions = Lock.unlocked_conditions
+          
+          first = self.first(
+            :select => :id,
+            :conditions => conditions
+          )
+          last = self.last(
+            :select => :id,
+            :conditions => conditions
+          )
       
-      first = self.first(
-        :select => :id,
-        :conditions => conditions
-      )
-      last = self.last(
-        :select => :id,
-        :conditions => conditions
-      )
+          if first && last
+            next if iteration == 0
+            lock_id = Lock.take first.id, last.id
+          else
+            lock_id = nil
+          end
       
-      if first && last
-        lock_id = Lock.take first.id, last.id
-      else
-        lock_id = nil
+          return [ conditions, lock_id ]
+        ensure
+          if iteration == 1
+            connection.execute "UNLOCK TABLES"
+          end
+        end
       end
-      
-      [ conditions, lock_id ]
-    ensure
-      connection.execute "UNLOCK TABLES"
     end
     
     def user(request)

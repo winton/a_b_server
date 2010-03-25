@@ -7,6 +7,7 @@ class Requests < ActiveRecord::Migration
       t.boolean :processed, :default => false
       t.timestamps
     end
+    ActsAsArchive.update ::ABRequest
   end
 
   def self.down
