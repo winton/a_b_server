@@ -8,43 +8,25 @@ describe ABPlugin::Adapters::Rails do
     ActionController::Dispatcher.new
   end
   
+  it "should set ABPlugin::Config.env" do
+    ABPlugin::Config.env.should == 'development'
+  end
+  
+  it "should set ABPlugin::Config.root" do
+    ABPlugin::Config.root.to_s.include?('spec/fixtures/rails').should == true
+  end
+  
   [ :controller, :helper ].each do |type|
     
     describe type do
-      it "should respond to a_b_convert" do
-        get "/#{type}/respond_to/a_b_convert"
-        last_response.body.should == '1'
-      end
-
-      it "should respond to a_b_script_tag" do
-        get "/#{type}/respond_to/a_b_script_tag"
-        last_response.body.should == '1'
-      end
-      
-      it "should respond to a_b_select" do
-        get "/#{type}/respond_to/a_b_select"
-        last_response.body.should == '1'
-      end
-      
-      it "should respond to a_b_visit" do
-        get "/#{type}/respond_to/a_b_visit"
+      it "should respond to a_b" do
+        get "/#{type}/respond_to/a_b"
         last_response.body.should == '1'
       end
 
       it "should not respond to this_should_fail" do
         get "/#{type}/respond_to/this_should_fail"
         last_response.body.should == '0'
-      end
-      
-      it "should set the session id before every request" do
-        ABPlugin.should_receive(:session_id=)
-        get "/#{type}/respond_to/a_b"
-      end
-      
-      it "should try to reload before every request" do
-        ABPlugin.should_receive(:reload?).and_return(true)
-        ABPlugin.should_receive(:reload)
-        get "/#{type}/respond_to/a_b"
       end
     end
   end

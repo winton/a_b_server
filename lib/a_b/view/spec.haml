@@ -3,15 +3,19 @@
   %head
     = css 'qunit'
     = js 'jquery'
+    = js 'a_b'
+    = js 'jquery.cookie'
+    = js 'json2'
     = js 'qunit'
-    = js 'qunit.a_b'
-    = a_b_script_tag '/js/a_b.js'
+    = js 'spec'
     %script{ :type => 'text/javascript' }
-      var Tests = {};
-      = "Tests.convert = #{@convert_test};"
-      = "Tests.visit = #{@visit_test};"
+      :erb
+        reset_a_b();
+        function reset_a_b() {
+          <%= a_b %>
+        }
   %body
-    %h1{ :id => "qunit-header" } QUnit example
+    %h1{ :id => "qunit-header" } a_b
     %h2{ :id => "qunit-banner" }
     %h2{ :id => "qunit-userAgent" }
     %ol{ :id => "qunit-tests" }

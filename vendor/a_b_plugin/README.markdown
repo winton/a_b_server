@@ -50,11 +50,28 @@ Before using the examples below, create a test and some variants from the <code>
 ### Ruby
 
 <pre>
-a_b_visit('my variant') do
-  # Record a visit and execute code if this variant is selected
+a_b(:my_test).visit   # :my_variant
+a_b(:my_test).convert # :my_variant
+</pre>
+
+<pre>
+a_b(:my_test).visit(:my_variant)        # :my_variant
+a_b(:my_test).convert(:my_variant)      # :my_variant
+a_b(:my_test).visit(:my_other_variant)  # nil (:my_variant already selected)
+</pre>
+
+<pre>
+a_b(:my_test).visit do |variant|
 end
-a_b_convert('my variant') # Record a conversion if this variant is selected
-a_b_convert('my test')    # Record a conversion for the selected variant of this test
+a_b(:my_test).convert do |variant|
+end
+</pre>
+
+<pre>
+a_b(:my_test).visit(:my_variant) do
+end
+a_b(:my_test).convert(:my_variant) do
+end
 </pre>
 
 You can use the <code>a\_b</code> method in the controller or the view.
@@ -62,11 +79,27 @@ You can use the <code>a\_b</code> method in the controller or the view.
 ### Javascript
 
 <pre>
-a_b_visit('my variant', function() {
-  # Record a visit and execute code if this variant is selected
+a_b('my_test').visit();   # 'my_variant'
+a_b('my_test').convert(); # 'my_variant'
+</pre>
+
+<pre>
+a_b('my_test').visit('my_variant');   # true
+a_b('my_test').convert('my_variant'); # true
+</pre>
+
+<pre>
+a_b('my_test').visit(function(variant) {
 });
-a_b_convert('my variant'); # Record a conversion if this variant is selected
-a_b_convert('my test');    # Record a conversion for the selected variant of this test
+a_b('my_test').convert(function(variant) {
+});
+</pre>
+
+<pre>
+a_b('my_test').visit('my_variant', function(variant) {
+});
+a_b('my_test').convert('my_variant', function(variant) {
+});
 </pre>
 
 That's it!

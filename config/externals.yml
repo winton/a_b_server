@@ -1,8 +1,8 @@
 a_b_plugin:
   repo: git@github.com:winton/a_b_plugin.git
   path: vendor
-authlogic:
-  repo: git@github.com:winton/authlogic.git
+acts_as_archive:
+  repo: git@github.com:winton/acts_as_archive.git
   path: vendor
 deploy:
   repo: git@github.com:br/a_b_deploy.git

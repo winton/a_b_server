@@ -1,0 +1,16 @@
+testing:
+  token: token
+  url: url
+tests: 
+- id: 1
+  name: Test
+  variants: 
+  - id: 2
+    name: v1
+    visits: 0
+  - id: 3
+    name: v2
+    visits: 0
+  - id: 4
+    name: v3
+    visits: 0

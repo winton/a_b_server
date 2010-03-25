@@ -1,21 +1,66 @@
 Application.class_eval do
   
+  get('/') {}
+  
+  get '/a_b.js' do
+    data = JSON params[:j]
+    identifier = data.delete 'i'
+    ABRequest.create(
+      :data => data,
+      :identifier => identifier,
+      :ip => request.ip
+    )
+    "#{params[:callback]}();"
+  end
+  
   get '/boot.json' do
-    content_type :json
     restrict
-    {
-      :user_token => Token.cached.first,
-      :tests => ABTest.find(:all)
-    }.to_json(
+    { :tests => ABTest.find(:all) }.to_json(
       :include => :variants,
-      :only => [ :user_token, :tests, :variants, :name, :visits ]
+      :only => [ :id, :tests, :variants, :name, :visits ]
     )
   end
   
-  get '/increment.js' do
-    return nil unless valid_token?
-    increment :conversions
-    increment :visits
-    nil
+  get '/tests/:id/destroy.json' do
+    restrict
+    @test = ABTest.find params[:id]
+    if @test
+      @test.destroy
+      true.to_json
+    else
+      false.to_json
+    end
+  end
+  
+  post '/tests/:id/update.json' do
+    restrict
+    @test = ABTest.find params[:id]
+    if @test
+      @test.update_attributes params[:test]
+      true.to_json
+    else
+      false.to_json
+    end
+  end
+  
+  post '/tests/create.json' do
+    restrict
+    @test = ABTest.create params[:test]
+    if @test.id
+      true.to_json
+    else
+      false.to_json
+    end
+  end
+  
+  get '/variants/:id/destroy.json' do
+    restrict
+    @variant = ABVariant.find params[:id]
+    if @variant
+      @variant.destroy
+      true.to_json
+    else
+      false.to_json
+    end
   end
 end

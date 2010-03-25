@@ -1,11 +1,10 @@
 class ABVariant < ActiveRecord::Base
   
-  set_table_name :a_b_variants
-  belongs_to :test, :class_name => 'ABTest', :foreign_key => 'a_b_test_id'
+  set_table_name :variants
   
   after_destroy :save_test
-  
-  validates_uniqueness_of :name
+  belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
+  serialize :extras
   
   def self.reset!
     ABVariant.find(:all).each do |variant|
