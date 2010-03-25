@@ -79,7 +79,10 @@ Require do
   end
   
   rakefile do
-    gem(:active_wrapper) { require 'active_wrapper/tasks' }
+    gem(:active_wrapper) do
+      require 'active_wrapper'
+      require 'active_wrapper/tasks'
+    end
     gem(:rake) { require 'rake/gempackagetask' }
     gem(:rspec) { require 'spec/rake/spectask' }
     gem :sinatra
