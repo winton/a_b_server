@@ -69,7 +69,7 @@ class ABRequest < ActiveRecord::Base
       begin
         self.find_each(:conditions => conditions) do |request|
           unless limit_ip(request)
-            next unless user = user(request)
+            #next unless user = user(request)
             increment(request)
             request.update_attribute :processed, true
           end
