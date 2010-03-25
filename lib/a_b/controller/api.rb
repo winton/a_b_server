@@ -6,11 +6,11 @@ Application.class_eval do
     content_type :js
     data = JSON params[:j]
     identifier = data.delete 'i'
-    ABRequest.create(
-      :data => data,
-      :identifier => identifier,
-      :ip => request.ip
-    )
+    req = ABRequest.find_by_identifier_and_ip(identifier, request.ip)
+    req ||= ABRequest.new(:identifier => identifier, :ip => request.ip)
+    req.increment :count
+    req.data = data
+    req.save
     "#{params[:callback]}();"
   end
   
