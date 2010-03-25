@@ -78,7 +78,7 @@ class ABPlugin
     private
     
     def symbolize_name(name)
-      name.downcase.gsub(/[^a-zA-Z0-9\s]/, '').gsub('_', '').intern
+      name.downcase.gsub(/[^a-zA-Z0-9\s]/, '').gsub(/\s+/, '_').intern
     end
     
     def variant(id_or_name)

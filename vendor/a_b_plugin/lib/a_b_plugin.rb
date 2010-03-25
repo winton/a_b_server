@@ -50,9 +50,9 @@ class ABPlugin
       yaml.configure_api
       boot = API.boot
       if boot
-        yaml['tests'] = boot['tests']
+        yaml.data['tests'] = boot['tests']
         File.open(Config.yaml, 'w') do |f|
-          f.write(yaml.to_yaml)
+          f.write(yaml.data.to_yaml)
         end
       end
     end

@@ -379,6 +379,12 @@ window.A_B = new function() {
 	
 	function jsonForRequest() {
 		var data = load();
+		// Request id
+		if (!data.i) {
+			data.i = (Math.random() + '').substring(2);
+			cookie('a_b', toJson(data));
+		}
+		// Remove sent flag, unnecessary for request
 		delete data.s;
 		return toJson(data);
 	}
@@ -396,9 +402,6 @@ window.A_B = new function() {
 		var data = load();
 		var test_id = test.id + '';
 		type = type.substring(0, 1);
-		
-		// Request id
-		data.i = data.i || (Math.random() + '').substring(2);
 		
 		// Conversion or visit
 		data[type] = data[type] || {};
@@ -427,7 +430,7 @@ window.A_B = new function() {
 	}
 	
 	function symbolizeName(name) {
-		return name.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/_/g, '');
+		return name.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_');
 	}
 	
 	function toJson(obj) {
@@ -437,6 +440,8 @@ window.A_B = new function() {
 			json.push(':');
 			if (typeof obj[name] == 'object')
 				json.push(toJson(obj[name]));
+			else if (name == 'i')
+				json.push('"' + toJson(obj[name]) + '"');
 			else
 				json.push(obj[name]);
 			json.push(',');

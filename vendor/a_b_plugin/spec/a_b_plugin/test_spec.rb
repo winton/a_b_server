@@ -25,7 +25,7 @@ describe ABPlugin::Test do
     
     it "should set cookie" do
       a_b(:test).visit
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"s"=>1}
     end
     
     it "should increment variant visits" do
@@ -37,7 +37,7 @@ describe ABPlugin::Test do
       a_b(:test).visit
       a_b(:test).visit
       ABPlugin.tests[0]['variants'][0]['visits'].should == 1
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"s"=>1}
     end
     
     it "should return the variant name if variant specified and selected" do
@@ -76,9 +76,9 @@ describe ABPlugin::Test do
     
     it "should accept a hash with extra boolean values" do
       a_b(:test).visit(:v1, :e => true)
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"e"=>{"2"=>{"e"=>true}}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"e"=>{"2"=>{"e"=>true}},"s"=>1}
       a_b(:test).visit(:e2 => true)
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"e"=>{"2"=>{"e"=>true,"e2"=>true}}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"e"=>{"2"=>{"e"=>true,"e2"=>true}},"s"=>1}
     end
   end
   
@@ -99,13 +99,13 @@ describe ABPlugin::Test do
     
     it "should set cookie" do
       a_b(:test).convert
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}, "c"=>{"1"=>2}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}, "c"=>{"1"=>2},"s"=>1}
     end
     
     it "should maintain state if called more than once" do
       a_b(:test).convert
       a_b(:test).convert
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}, "c"=>{"1"=>2}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2}, "c"=>{"1"=>2},"s"=>1}
     end
     
     it "should return the variant name if variant specified and selected" do
@@ -144,9 +144,9 @@ describe ABPlugin::Test do
     
     it "should accept a hash with extra boolean values" do
       a_b(:test).convert(:v1, :e => true)
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"c"=>{"1"=>2},"e"=>{"2"=>{"e"=>true}}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"c"=>{"1"=>2},"e"=>{"2"=>{"e"=>true}},"s"=>1}
       a_b(:test).convert(:e2 => true)
-      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"c"=>{"1"=>2},"e"=>{"2"=>{"e"=>true,"e2"=>true}}}
+      JSON($cookies['a_b']).should == {"v"=>{"1"=>2},"c"=>{"1"=>2},"e"=>{"2"=>{"e"=>true,"e2"=>true}},"s"=>1}
     end
   end
 end

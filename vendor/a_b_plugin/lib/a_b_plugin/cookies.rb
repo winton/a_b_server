@@ -21,7 +21,7 @@ class ABPlugin
           cookie['e'][variant['id'].to_s] ||= {}
           cookie['e'][variant['id'].to_s].merge!(extra)
         end
-        cookie.sync
+        cookie.sync unless cookie == Cookie.new
       end
     end
     
@@ -53,6 +53,9 @@ class ABPlugin
       
       def sync
         return unless ABPlugin.instance
+        
+        # Tell javascript to send request
+        self['s'] = 1
         
         TYPES.each do |type|
           self.delete(type) if self[type].empty?
