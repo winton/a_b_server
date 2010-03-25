@@ -3,6 +3,7 @@ Application.class_eval do
   get('/') {}
   
   get '/a_b.js' do
+    content_type :javascript
     data = JSON params[:j]
     identifier = data.delete 'i'
     ABRequest.create(
@@ -14,6 +15,7 @@ Application.class_eval do
   end
   
   get '/boot.json' do
+    content_type :json
     restrict
     { :tests => ABTest.find(:all) }.to_json(
       :include => :variants,
@@ -22,6 +24,7 @@ Application.class_eval do
   end
   
   get '/tests/:id/destroy.json' do
+    content_type :json
     restrict
     @test = ABTest.find params[:id]
     if @test
@@ -33,6 +36,7 @@ Application.class_eval do
   end
   
   post '/tests/:id/update.json' do
+    content_type :json
     restrict
     @test = ABTest.find params[:id]
     if @test
@@ -44,6 +48,7 @@ Application.class_eval do
   end
   
   post '/tests/create.json' do
+    content_type :json
     restrict
     @test = ABTest.create params[:test]
     if @test.id
@@ -54,6 +59,7 @@ Application.class_eval do
   end
   
   get '/variants/:id/destroy.json' do
+    content_type :json
     restrict
     @variant = ABVariant.find params[:id]
     if @variant
