@@ -2,14 +2,18 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe ABRequest do
   
+  before(:all) do
+    cleanup
+  end
+  
+  after(:each) do
+    cleanup
+  end
+  
   describe :increment do
     
     before(:each) do
       create_request
-    end
-    
-    after(:each) do
-      destroy_request
     end
     
     it 'should increment conversions, visits, and extras' do
@@ -37,8 +41,6 @@ describe ABRequest do
     
     after(:each) do
       IP::LIMIT_PER_DAY = @old_ip_limit
-      destroy_request
-      IP.delete_all
     end
     
     it 'should start limiting once limit has been reached' do
@@ -59,11 +61,6 @@ describe ABRequest do
       @request2 = ABRequest.create
     end
     
-    after(:each) do
-      ABRequest.delete_all
-      Lock.delete_all
-    end
-    
     it 'should return conditions and a lock id' do
       pair = ABRequest.take_lock
       pair[0].should == "(id NOT BETWEEN #{@request.id} AND #{@request.id})"
@@ -82,10 +79,6 @@ describe ABRequest do
     
     before(:each) do
       create_request
-    end
-    
-    after(:each) do
-      destroy_request
     end
     
     it 'should find the user from the request' do

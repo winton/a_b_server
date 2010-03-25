@@ -24,8 +24,12 @@ def create_request
   )
 end
 
-def destroy_request
-  @user.destroy
-  @request.destroy
+def cleanup
+  IP.delete_all
+  Lock.delete_all
+  ABRequest.delete_all
+  ABTest.delete_all
+  User.delete_all
+  ABVariant.delete_all
   ABRequest.reset
 end

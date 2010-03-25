@@ -2,12 +2,12 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Lock do
   
-  before(:each) do
-    Lock.delete_all
+  before(:all) do
+    cleanup
   end
   
-  after(:all) do
-    Lock.delete_all
+  after(:each) do
+    cleanup
   end
   
   describe :release do
