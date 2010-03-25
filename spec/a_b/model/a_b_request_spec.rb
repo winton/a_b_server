@@ -46,6 +46,7 @@ describe ABRequest do
       ip = IP.first
       ip.ip.should == '127.0.0.1'
       ip.count.should == 1
+      ip.date.to_s.should == Date.parse(@request.created_at.strftime('%Y/%m/%d')).to_s
       ABRequest.limit_ip(@request).should == true
     end
   end

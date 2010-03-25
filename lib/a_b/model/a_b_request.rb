@@ -39,20 +39,25 @@ class ABRequest < ActiveRecord::Base
     end
     
     def limit_ip(request)
-      @ips ||= {}
+      date = request.created_at.strftime('%Y/%m/%d')
       
-      ip = @ips[request.ip] || IP.find_or_create_by_ip(request.ip,
-        :conditions => [ "created_at >= ?", Date.today ]
+      @ips ||= {}
+      @ips[date] ||= {}
+      
+      ip = @ips[date][request.ip] || IP.find_or_create_by_ip(
+        request.ip,
+        :conditions => [ "date = ?", Date.parse(date) ]
       )
       
-      @ips[request.ip] = ip
+      @ips[date][request.ip] = ip
       
-      if ip.count >= IP::LIMIT_PER_DAY
-        true
-      else
-        ip.increment! :count
-        false
+      unless ip.date
+        ip.date = Date.parse(date)
       end
+      
+      ip.increment! :count
+      
+      (ip.count - 1) >= IP::LIMIT_PER_DAY
     end
   
     def process!
@@ -62,12 +67,11 @@ class ABRequest < ActiveRecord::Base
       
       begin
         self.find_each(:conditions => conditions) do |request|
-          next if limit_ip(request)
-          next unless user = user(request)
-          
-          increment(request)
-          
-          request.update_attribute :processed, true
+          unless limit_ip(request)
+            next unless user = user(request)
+            increment(request)
+            request.update_attribute :processed, true
+          end
           request.destroy # acts_as_archive destroy
         end
         
