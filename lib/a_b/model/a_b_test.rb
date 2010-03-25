@@ -7,10 +7,7 @@ class ABTest < ActiveRecord::Base
   after_save :set_control
   
   belongs_to :user
-  
   has_many :variants, :class_name => 'ABVariant', :foreign_key => 'test_id', :dependent => :delete_all
-  
-  validates_uniqueness_of :name
   
   def control
     self.variants.find_by_control true

@@ -8,13 +8,6 @@ Application.class_eval do
     
     get '/spec' do
       restrict
-      
-      # Setup a/b tests
-      ABRequest.delete_all
-      ABTest.delete_all
-      ABVariant.delete_all
-      ABTest.create :name => 'Test', :variants => 'v1, v2, v3'
-      
       haml :spec, :layout => false
     end
   end

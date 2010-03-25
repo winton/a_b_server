@@ -3,13 +3,11 @@ Application.class_eval do
   get '/a_b.js' do
     data = JSON params[:j]
     identifier = data.delete 'i'
-    if variant
-      ABRequest.create(
-        :data => data,
-        :identifier => identifier,
-        :ip => request.ip
-      )
-    end
+    ABRequest.create(
+      :data => data,
+      :identifier => identifier,
+      :ip => request.ip
+    )
     "#{params[:callback]}();"
   end
   

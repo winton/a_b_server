@@ -16,7 +16,7 @@ class ABRequest < ActiveRecord::Base
             variant_id, hash = test_id, variant_id
           end
           
-          variant = @variants[variant_id] || ABVariant.find(variant_id)
+          variant = @variants[variant_id] || ABVariant.find_by_id(variant_id)
           next unless variant
           @variants[variant_id] = variant
           
@@ -129,7 +129,7 @@ class ABRequest < ActiveRecord::Base
     
     def user(request)
       test = request.data['c'] || request.data['v']
-      test = ABTest.find test.keys.first
+      test = ABTest.find_by_id test.keys.first
       if test
         test.user
       else
