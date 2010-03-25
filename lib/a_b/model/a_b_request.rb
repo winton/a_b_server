@@ -55,7 +55,8 @@ class ABRequest < ActiveRecord::Base
         ip.date = Date.parse(date)
       end
       
-      ip.increment! :count
+      ip.count += request.count
+      ip.save
       
       (ip.count - 1) >= IP::LIMIT_PER_DAY
     end

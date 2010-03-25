@@ -15,6 +15,7 @@ def create_request
     :test_id => @test.id
   )
   @request = ABRequest.create(
+    :count => 1,
     :data => {
       'c' => { @test.id => @variant.id },
       'v' => { @test.id => @variant.id },
