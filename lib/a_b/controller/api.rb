@@ -1,5 +1,7 @@
 Application.class_eval do
   
+  get('/') {}
+  
   get '/a_b.js' do
     data = JSON params[:j]
     identifier = data.delete 'i'
