@@ -2,7 +2,9 @@
 
 def do_symlinks(folder)
   normal_symlinks = %w(
+    config/database.yml
     config/newrelic.yml
+    config/lilypad.txt
   )
   commands = []
   commands << normal_symlinks.map do |path|
