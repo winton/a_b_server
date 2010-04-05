@@ -1,13 +1,12 @@
 function cookieToJson() {
-	var data = JSON.parse($.cookie('a_b'));
-	delete data.i; // request id
-	delete data.s; // sent flag
+	var data = JSON.parse($.cookie('a_b_s'));
 	return data;
 }
 
 function setup() {
 	reset_a_b();
 	$.cookie('a_b', null);
+	$.cookie('a_b_s', null);
 }
 
 module('visit', { setup: setup });
@@ -22,14 +21,15 @@ test('should return the variant name every time', function() {
 });
 
 test('should set cookie', function() {
+	console.log('should set cookie');
 	a_b('test').visit();
-	same(cookieToJson(), { "v": { "1": 2 } });
+	same(cookieToJson(), { "v": [2] });
 });
 
 test("should maintain state if called more than once", function() {
 	a_b('test').visit();
 	a_b('test').visit();
-	same(cookieToJson(), { "v": { "1": 2 } });
+	same(cookieToJson(), { "v": [2] });
 });
 
 test("should return the variant name if variant specified and selected", function() {
@@ -63,9 +63,9 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').visit('v1', { e: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "e": { "2": { "e": true } } });
+	same(cookieToJson(), { "v": [2], "e2": ["e"] });
 	a_b('test').visit({ e2: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "e": { "2": { "e": true, "e2": true } } });
+	same(cookieToJson(), { "v": [2], "e2": ["e", "e2"] });
 });
 
 module('convert', {
@@ -86,13 +86,13 @@ test("should return the variant name every time", function() {
 
 test("should set cookie", function() {
 	a_b('test').convert();
-	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 } });
+	same(cookieToJson(), { "v": [2], "c": [2] });
 });
 
 test("should maintain state if called more than once", function() {
 	a_b('test').convert();
 	a_b('test').convert();
-	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 } });
+	same(cookieToJson(), { "v": [2], "c": [2] });
 });
 
 test("should return the variant name if variant specified and selected", function() {
@@ -126,42 +126,42 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').convert('v1', { e: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "2": { "e": true } } });
+	same(cookieToJson(), { "v": [2], "c": [2], "e2": ["e"] });
 	a_b('test').convert({ e2: true });
-	same(cookieToJson(), { "v": { "1": 2 }, "c": { "1": 2 }, "e": { "2": { "e": true, "e2": true } } });
+	same(cookieToJson(), { "v": [2], "c": [2], "e2": ["e", "e2"] });
 });
 
-var called, requested, timer;
-module('delayedRequest', {
-	setup: function() {
-		setup();
-		called = 0;
-		requested = 0;
-		// This should resemble delayedRequest without the json-p call
-		A_B.overwriteFunction('delayedRequest', function() {
-			called += 1;
-			clearTimeout(timer);
-			timer = setTimeout(function() { requested += 1; }, 10);
-		});
-	}
-});
-
-test("should be called when the data structure changes", function() {
-	expect(1);
-	a_b('test').visit('v1');
-	a_b('test').visit('v2');
-	a_b('test').convert('v1');
-	a_b('test').convert('v2');
-	equals(called, 2);
-});
-
-test("should only send one request after a number of simultaneous calls", function() {
-	expect(1);
-	stop();
-	a_b('test').visit('v1');
-	a_b('test').convert('v1');
-	setTimeout(function() {
-		start();
-		equals(requested, 1);
-	}, 100);
-});
+// var called, requested, timer;
+// module('delayedRequest', {
+// 	setup: function() {
+// 		setup();
+// 		called = 0;
+// 		requested = 0;
+// 		// This should resemble delayedRequest without the json-p call
+// 		A_B.overwriteFunction('delayedRequest', function() {
+// 			called += 1;
+// 			clearTimeout(timer);
+// 			timer = setTimeout(function() { requested += 1; }, 10);
+// 		});
+// 	}
+// });
+// 
+// test("should be called when the data structure changes", function() {
+// 	expect(1);
+// 	a_b('test').visit('v1');
+// 	a_b('test').visit('v2');
+// 	a_b('test').convert('v1');
+// 	a_b('test').convert('v2');
+// 	equals(called, 2);
+// });
+// 
+// test("should only send one request after a number of simultaneous calls", function() {
+// 	expect(1);
+// 	stop();
+// 	a_b('test').visit('v1');
+// 	a_b('test').convert('v1');
+// 	setTimeout(function() {
+// 		start();
+// 		equals(requested, 1);
+// 	}, 100);
+// });

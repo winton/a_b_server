@@ -6,38 +6,33 @@ window.A_B = new function() {
 	
 	var API, Cookies, Datastore, Test;
 	
-	API = new function() {
-		function delayedRequest() {
-			// Don't forget to modify the tests if you modify this code
-			clearTimeout(timer);
-			timer = setTimeout(function() {
-				$.ajax({
-					data: { j: jsonForRequest() },
-					dataType: 'jsonp',
-					success: sent,
-					type: 'GET',
-					url: url + '/a_b.js'
-				});
-			}, 10);
-		}
+	API = function() {
+		return new function() {
+			request();
 		
-		function jsonForRequest() {
-			var data = load();
-			// Request id
-			if (!data.i) {
-				data.i = (Math.random() + '').substring(2);
-				cookie('a_b', toJson(data));
+			function request() {
+				var json = Cookies.get('a_b_s');
+				if (json) {
+					Cookies.set('a_b_s', null);
+					$.ajax({
+						data: { j: json, i: identifier() },
+						dataType: 'jsonp',
+						type: 'GET',
+						url: url + '/a_b.js'
+					});
+				}
+				setTimeout(request, 100);
 			}
-			// Remove sent flag, unnecessary for request
-			delete data.s;
-			return toJson(data);
-		}
-
-		function sent() {
-			var data = load();
-			delete data.s;
-			cookie('a_b', toJson(data));
-		}
+	
+			function identifier() {
+				var id = Cookies.get('a_b_i');
+				if (!id) {
+					id = (Math.random() + '').substring(2);
+					Cookies.set('a_b_i', id);
+				}
+				return id;
+			}
+		};
 	};
 	
 	Cookies = new function() {
@@ -86,35 +81,40 @@ window.A_B = new function() {
 			send = Cookies.get('a_b_s');
 			
 			// Convert from JSON
-			data = eval(data || '{}');
-			send = eval(send || '{}');
+			data = eval('(' + (data || '{}') + ')');
+			send = eval('(' + (send || '{}') + ')');
 			
-			function diff(a1, a2)
-			{
+			function diffArray(a1, a2) {
 				var a = [], diff = [];
 				for(var i = 0; i < a1.length; i++)
-					a[a1[i]] = true;
+					a[a1[i]] = a1[i];
 				for(i = 0; i < a2.length; i++) {
 					if (a[a2[i]]) delete a[a2[i]];
-					else a[a2[i]] = true;
+					else a[a2[i]] = a2[i];
 				}
 				for(var k in a)
-					diff.push(k);
+					diff.push(a[k]);
 				return diff;
 			}
 
 			function get(key) {
 				return (data[key] || []);
 			}
+			
+			function objEmpty(obj) {
+			  for(var i in obj)
+			    return false;
+			  return true;
+			}
 
-			function set(key, value) {
+			function set(key, value, no_api) {
 				if (!value) return;
 				data[key] = data[key] || [];
 				// Store current version for later comparison
-				old = data[key].slice(0);
+				var old = data[key].slice(0);
 				// If hash, grab keys that have true values
 				if (value.constructor == Object) {
-					var new_value;
+					var new_value = [];
 					for(var k in value) {
 						if (value[k]) new_value.push(k);
 					}
@@ -122,51 +122,63 @@ window.A_B = new function() {
 				}
 				// Array
 				if (value.constructor == Array)
-					data[key].concat(value);
+					data[key] = data[key].concat(value);
 				// Other value
-				else
+				else {
 					data[key].push(value);
-				data[key] = uniq(data[key]);
+				}
+				data[key] = uniqArray(data[key]);
 				// Add difference to send
-				diff = diff(data[key], old);
+				var diff = diffArray(data[key], old);
 				if (diff.length) {
 					send[key] = send[key] || [];
-					send[key].concat(diff);
-					send[key] = uniq(send[key]);
+					send[key] = send[key].concat(diff);
+					send[key] = uniqArray(send[key]);
 				}
 				// Export data to cookies
-				to_cookies();
+				toCookies();
 			}
 
-			function to_cookies() {
-				if (data.length)
-					Cookies.set('a_b', to_json(data));
-				if (send.length)
-					Cookies.set('a_b_s', to_json(send));
+			function toCookies() {
+				if (!objEmpty(data))
+					Cookies.set('a_b', toJson(data));
+				if (!objEmpty(send))
+					Cookies.set('a_b_s', toJson(send));
 			}
 	
-			function to_json(obj) {
-				var json = [ '{' ];
-				for (var name in obj) {
-					json.push('"' + name + '"');
-					json.push(':');
-					if (typeof obj[name] == 'object')
-						json.push(to_json(obj[name]));
-					else if (typeof obj[name] == 'string')
-						json.push('"' + obj[name] + '"');
-					else if (typeof obj[name] == 'number')
-						json.push(obj[name]);
-					json.push(',');
-				}
-				json.pop();
-				json.push('}');
+			function toJson(obj) {
+				var json = [];
+				if (obj.constructor == Object) {
+					json.push('{');
+					for (var name in obj) {
+						json.push('"' + name + '"');
+						json.push(':');
+						json.push(toJson(obj[name]));
+						json.push(',');
+					}
+					if (json[json.length - 1] == ',')
+						json.pop();
+					json.push('}');
+				} else if (obj.constructor == Array) {
+					json.push('[');
+					for(var i = 0, l = obj.length; i < l; i++) {
+						json.push(toJson(obj[i]));
+						json.push(',');
+					}
+					if (json[json.length - 1] == ',')
+						json.pop();
+					json.push(']');
+				} else if (typeof obj == 'string')
+					json.push('"' + obj + '"');
+				else if (typeof obj == 'number')
+					json.push(obj);
 				return json.join('');
 			}
 			
-			function uniq(array) {
+			function uniqArray(array) {
 				 var u = {}, a = [];
-				 for(var i = 0, l = this.length; i < l; ++i) {
-						if(array[i] in u) continue;
+				 for(var i = 0, l = array.length; i < l; i++) {
+						if (u[array[i]]) continue;
 						a.push(array[i]);
 						u[array[i]] = 1;
 				 }
@@ -178,17 +190,23 @@ window.A_B = new function() {
 	Test = function(name) {
 		return new function() {
 			
-			this.convert = convert;
-			this.overwriteFunction = overwriteFunction;
-			this.visit = visit;
-			
 			var data = Datastore();
-			var test = grep(tests, function(t) {
+			var test = grep((tests || []), function(t) {
 				return (
 					t.name == name ||
 					symbolizeName(t.name) == name
 				);
 			})[0];
+			
+			if (test) {
+				this.convert = convert;
+				this.visit = visit;
+				this.overwriteFn = overwriteFn;
+			} else {
+				this.convert = function() {};
+				this.visit = function() {};
+				return;
+			}
 
 			function convert(name, extra, fn) {
 				if (!test) return null;
@@ -219,8 +237,8 @@ window.A_B = new function() {
 					conversion = visit;
 
 				if (conversion && (!name || conversion == variant)) {
-					data.set('c', conversion);
-					data.set('v', conversion);
+					data.set('c', conversion.id);
+					data.set('v', conversion.id);
 					data.set('e' + conversion.id, extra);
 
 					if (fn)
@@ -264,7 +282,7 @@ window.A_B = new function() {
 				}
 
 				if (visit && (!name || visit == variant)) {
-					data.set('v', visit);
+					data.set('v', visit.id);
 					data.set('e' + visit.id, extra);
 
 					if (fn)
@@ -298,7 +316,7 @@ window.A_B = new function() {
 				return ret;
 			}
 
-			function overwriteFunction(name, fn) {
+			function overwriteFn(name, fn) {
 				fn = fn || function() {};
 				eval(name + ' = fn');
 			}
@@ -312,17 +330,12 @@ window.A_B = new function() {
 	// Public methods
 	
 	window.a_b = function(name) {
-		if (!tests)
-			return {
-				convert: function() {},
-				visit: function() {}
-			};
-		
 		return Test(name);
 	};
 	
 	window.a_b_setup = function(options) {
 		tests = options.tests;
 		url = options.url;
+		API();
 	};
 };
