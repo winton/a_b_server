@@ -2,8 +2,10 @@ class ABPlugin
   class Test
     
     def initialize(test)
+      @data = Datastore.new
       @test = ABPlugin.tests.detect do |t|
-        t['name'] == test || symbolize_name(t['name']) == test
+        t['name'] == test ||
+        symbolize_name(t['name']) == test
       end
     end
     
@@ -15,8 +17,8 @@ class ABPlugin
         name = nil
       end
       
-      conversion = variant(Cookies.get(:conversions, @test))
-      visit = variant(Cookies.get(:visits, @test))
+      conversion = variant(@data.get(:c))
+      visit = variant(@data.get(:v))
       variant = variant(name)
       
       unless visit
@@ -28,8 +30,9 @@ class ABPlugin
       end
       
       if conversion && (!name || conversion == variant)
-        Cookies.set(:conversions, @test, conversion, extra)
-        Cookies.set(:visits, @test, conversion, extra)
+        @data.set(:c, conversion['id'])
+        @data.set(:v, conversion['id'])
+        @data.set("e#{conversion['id']}".intern, extra)
         
         if block_given?
           block.call(symbolize_name(conversion['name']))
@@ -47,7 +50,7 @@ class ABPlugin
         name = nil
       end
       
-      visit = variant(Cookies.get(:visits, @test))
+      visit = variant(@data.get(:v))
       variant = variant(name)
       
       already_recorded = (visit && visit == variant) || (!name && visit)
@@ -65,7 +68,8 @@ class ABPlugin
       
       if visit && (!name || visit == variant)
         visit['visits'] += 1 unless already_recorded
-        Cookies.set(:visits, @test, visit, extra)
+        @data.set(:v, visit['id'])
+        @data.set("e#{visit['id']}".intern, extra)
         
         if block_given?
           block.call symbolize_name(visit['name'])
@@ -81,12 +85,15 @@ class ABPlugin
       name.downcase.gsub(/[^a-zA-Z0-9\s]/, '').gsub(/\s+/, '_').intern
     end
     
-    def variant(id_or_name)
-      return unless id_or_name && @test
+    def variant(ids_or_name)
+      return unless ids_or_name && @test
       @test['variants'].detect do |v|
-        v['id'] == id_or_name ||
-        v['name'] == id_or_name ||
-        symbolize_name(v['name']) == id_or_name
+        if ids_or_name.respond_to?(:flatten)
+          ids_or_name.detect { |id| id == v['id'] }
+        else
+          v['name'] == ids_or_name ||
+          symbolize_name(v['name']) == ids_or_name
+        end
       end
     end
   end

@@ -10,14 +10,12 @@ class SinatraApp < Sinatra::Base
   
   get "/get_cookie" do
     ABPlugin.instance = self
-    ABPlugin::Cookies::Cookie.new['c']['1'].to_s
+    ABPlugin::Cookies.get('a_b')
   end
   
   get "/set_cookie" do
     ABPlugin.instance = self
-    cookie = ABPlugin::Cookies::Cookie.new
-    cookie['c'] = { 1 => 1 }
-    cookie.sync
+    ABPlugin::Cookies.set('a_b', 'test')
     nil
   end
 end

@@ -18,14 +18,12 @@ class ApplicationController < ActionController::Base
   
   def get_cookie
     ABPlugin.instance = self
-    render :text => ABPlugin::Cookies::Cookie.new['c']['1']
+    render :text => ABPlugin::Cookies.get('a_b')
   end
   
   def set_cookie
     ABPlugin.instance = self
-    cookie = ABPlugin::Cookies::Cookie.new
-    cookie['c'] = { 1 => 1 }
-    cookie.sync
+    ABPlugin::Cookies.set('a_b', 'test')
     render :nothing => true
   end
 end

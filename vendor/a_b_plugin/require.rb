@@ -31,6 +31,7 @@ Require do
     require "lib/a_b_plugin/api"
     require "lib/a_b_plugin/config"
     require "lib/a_b_plugin/cookies"
+    require "lib/a_b_plugin/datastore"
     require "lib/a_b_plugin/helper"
     require "lib/a_b_plugin/test"
     require "lib/a_b_plugin/yaml"

@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ABPlugin::Cookies::Cookie do
+describe ABPlugin::Cookies do
   
   include Rack::Test::Methods
   
@@ -14,14 +14,13 @@ describe ABPlugin::Cookies::Cookie do
       get "/set_cookie"
       set_cookie = last_response['Set-Cookie']
       set_cookie.include?('path=/').should == true
-      cookie = JSON(CGI::unescape(set_cookie.split('a_b=')[1].split(';')[0]))
-      cookie['c'].should == { '1' => 1 }
+      set_cookie.split('a_b=')[1].split(';')[0].should == 'test'
     end
     
     it "should get cookie" do
       get "/set_cookie"
       get "/get_cookie"
-      last_response.body.should == '1'
+      last_response.body.should == 'test'
     end
   end
   
@@ -35,14 +34,13 @@ describe ABPlugin::Cookies::Cookie do
       get "/set_cookie"
       set_cookie = last_response['Set-Cookie']
       set_cookie.include?('path=/').should == true
-      cookie = JSON(CGI::unescape(set_cookie.split('a_b=')[1].split(';')[0]))
-      cookie['c'].should == { '1' => 1 }
+      set_cookie.split('a_b=')[1].split(';')[0].should == 'test'
     end
     
     it "should get cookie" do
       get "/set_cookie"
       get "/get_cookie"
-      last_response.body.should == '1'
+      last_response.body.should == 'test'
     end
   end
 end
