@@ -1,7 +1,0 @@
-.DS_Store
-*.gem
-*.gemspec
-coverage
-pkg
-spec/db/log/*.log
-tmp

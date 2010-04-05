@@ -39,7 +39,6 @@ Require do
     gem :sinatra
     load_path 'vendor/a_b_plugin/lib'
     require 'a_b_plugin'
-    require 'vendor/acts_as_archive/init'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
     require 'lib/a_b/boot/active_wrapper'
@@ -52,7 +51,6 @@ Require do
     gem :sinatra
     load_path 'vendor/a_b_plugin/lib'
     require 'a_b_plugin'
-    require 'vendor/acts_as_archive/init'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
     require 'lib/a_b/boot/active_wrapper'
@@ -68,7 +66,6 @@ Require do
     gem :newrelic_rpm
     load_path 'vendor/a_b_plugin/lib'
     require 'a_b_plugin'
-    require 'vendor/acts_as_archive/init'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
     require 'lib/a_b/boot/active_wrapper'
@@ -84,7 +81,6 @@ Require do
     gem(:rspec) { require 'spec/rake/spectask' }
     gem :sinatra
     require 'require/tasks'
-    require 'vendor/acts_as_archive/init'
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
     require 'lib/a_b/boot/active_wrapper'

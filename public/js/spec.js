@@ -6,6 +6,7 @@ function cookieToJson() {
 function setup() {
 	reset_a_b();
 	$.cookie('a_b', null);
+	$.cookie('a_b_i', null);
 	$.cookie('a_b_s', null);
 }
 

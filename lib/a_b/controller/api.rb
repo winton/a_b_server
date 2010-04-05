@@ -4,13 +4,12 @@ Application.class_eval do
   
   get '/a_b.js' do
     content_type :js
-    data = JSON params[:j]
-    identifier = data.delete 'i'
-    req = ABRequest.find_by_identifier_and_ip(identifier, request.ip)
-    req ||= ABRequest.new(:identifier => identifier, :ip => request.ip)
-    req.increment :count
-    req.data = data
-    req.save
+    ip = IP.create_or_increment(request.ip)
+    unless ip.limited?
+      data = JSON(params[:j])
+      visits, conversions = ABVariant.record(data)
+      ABRequest.record(params[:i], request.ip, visits, conversions)
+    end
     nil
   end
   

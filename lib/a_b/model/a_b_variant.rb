@@ -6,6 +6,49 @@ class ABVariant < ActiveRecord::Base
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
   serialize :extras
   
+  def self.record(data)
+    extra = {}
+    data.each do |key, value|
+      if key =~ /\d/
+        extra[key.gsub(/\D/, '')] = value
+      end
+    end
+    
+    ids = data['c'] + data['v'] + extra.keys
+    ids = ids.compact.uniq
+    
+    visit = []
+    convert = []
+    
+    variants = ABVariant.find_all_by_id(ids)
+    variants.each do |variant|
+      visit.push(variant) if data['v'].include?(variant.id)
+      convert.push(variant) if data['c'].include?(variant.id)
+    end
+    
+    visit.each do |v|
+      v.increment(:visits)
+      v.extras ||= {}
+      (extra[v.id] || []).each do |key|
+        v.extras[key] ||= 0
+        v.extras[key] += 1
+      end
+    end
+    
+    convert.each do |c|
+      c.increment(:conversions)
+      c.extras ||= {}
+      (extra[c.id] || []).each do |key|
+        c.extras[key] ||= 0
+        c.extras[key] += 1
+      end
+    end
+    
+    variants.each(&:save)
+    
+    [ visit.length, convert.length ]
+  end
+  
   def self.reset!
     ABVariant.find(:all).each do |variant|
       variant.reset!

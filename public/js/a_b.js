@@ -140,9 +140,8 @@ window.A_B = new function() {
 				if (value.constructor == Array)
 					data[key] = data[key].concat(value);
 				// Other value
-				else {
+				else
 					data[key].push(value);
-				}
 				data[key] = uniqArray(data[key]);
 				// Add difference to send
 				var diff = diffArray(data[key], old);
