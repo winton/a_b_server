@@ -1,5 +1,7 @@
 window.A_B = new function() {
 	
+	// Global variables
+	
 	var tests, url;
 	
 	// Classes
@@ -26,9 +28,11 @@ window.A_B = new function() {
 				var json = Cookies.get('a_b_s');
 				if (json) {
 					Cookies.set('a_b_s', null);
-					var src = url + '/a_b.js?' +
-						'j=' + encodeURIComponent(json) +
-						'&i=' + encodeURIComponent(identifier());
+					var src = [
+						url, '/a_b.js?',
+						'j=', encodeURIComponent(json), '&',
+						'i=', encodeURIComponent(identifier())
+					].join('');
 					var head = document.getElementsByTagName("head")[0] ||
 						document.documentElement;
 					var script = document.createElement('script');
@@ -238,7 +242,7 @@ window.A_B = new function() {
 					fn = extra;
 					extra = null;
 				}
-
+				
 				var conversion = findVariant(data.get('c'));
 				var visit = findVariant(data.get('v'));
 				var variant = findVariant(name);
@@ -280,9 +284,14 @@ window.A_B = new function() {
 					fn = extra;
 					extra = null;
 				}
-
+				
 				var visit = findVariant(data.get('v'));
 				var variant = findVariant(name);
+				
+				var already_recorded = (
+					(visit && visit == variant) ||
+					(!name && visit)
+				);
 
 				if (!visit && test.variants.length) {
 					if (typeof test.variants[0].visits != 'undefined') {
@@ -297,6 +306,9 @@ window.A_B = new function() {
 				}
 
 				if (visit && (!name || visit == variant)) {
+					if (!already_recorded)
+						visit.visits += 1;
+					
 					data.set('v', visit.id);
 					data.set('e' + visit.id, extra);
 
@@ -311,14 +323,18 @@ window.A_B = new function() {
 
 			// Private
 
-			function findVariant(id_or_name) {
-				if (!id_or_name || !test) return null;
+			function findVariant(ids_or_name) {
+				if (!ids_or_name || !test) return null;
 				return grep(test.variants, function(v) {
-					return (
-						v.id == id_or_name ||
-						v.name == id_or_name ||
-						symbolizeName(v.name) == id_or_name
-					);
+					if (ids_or_name.constructor == Array)
+						return grep(ids_or_name, function(id) {
+							return (id == v.id);
+						})[0];
+					else
+						return (
+							v.name == ids_or_name ||
+							symbolizeName(v.name) == ids_or_name
+						);
 				})[0];
 			}
 
@@ -339,8 +355,6 @@ window.A_B = new function() {
 			}
 		};
 	};
-	
-	// Class methods
 	
 	this.API = API;
 	this.Cookies = Cookies;
