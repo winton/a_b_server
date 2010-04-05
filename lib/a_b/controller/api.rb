@@ -11,7 +11,7 @@ Application.class_eval do
     req.increment :count
     req.data = data
     req.save
-    "#{params[:callback]}();"
+    nil
   end
   
   get '/boot.json' do

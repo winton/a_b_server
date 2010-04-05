@@ -6,33 +6,37 @@ window.A_B = new function() {
 	
 	var API, Cookies, Datastore, Test;
 	
-	API = function() {
-		return new function() {
-			request();
+	API = new function() {
+		this.request = request;
 		
-			function request() {
+		var timer;
+		
+		function identifier() {
+			var id = Cookies.get('a_b_i');
+			if (!id) {
+				id = (Math.random() + '').substring(2);
+				Cookies.set('a_b_i', id);
+			}
+			return id;
+		}
+		
+		function request() {
+			clearTimeout(timer);
+			timer = setTimeout(function() {
 				var json = Cookies.get('a_b_s');
 				if (json) {
 					Cookies.set('a_b_s', null);
-					$.ajax({
-						data: { j: json, i: identifier() },
-						dataType: 'jsonp',
-						type: 'GET',
-						url: url + '/a_b.js'
-					});
+					var src = url + '/a_b.js?' +
+						'j=' + encodeURIComponent(json) +
+						'&i=' + encodeURIComponent(identifier());
+					var head = document.getElementsByTagName("head")[0] ||
+						document.documentElement;
+					var script = document.createElement('script');
+					script.setAttribute('src', src);
+					head.appendChild(script); 
 				}
-				setTimeout(request, 100);
-			}
-	
-			function identifier() {
-				var id = Cookies.get('a_b_i');
-				if (!id) {
-					id = (Math.random() + '').substring(2);
-					Cookies.set('a_b_i', id);
-				}
-				return id;
-			}
-		};
+			}, 10);
+		}
 	};
 	
 	Cookies = new function() {
@@ -42,18 +46,25 @@ window.A_B = new function() {
 		
 		function cookie(name, value) {
 			if (!name) return null;
-			if (typeof value != 'undefined')
-				document.cookie = [
-					name, '=', encodeURIComponent(value), '; path=/'
-				].join('');
-			else {
+			if (typeof value != 'undefined') {
+				if (value === null)
+					document.cookie = [
+						name, '=', '; expires=-1; path=/'
+					].join('');
+				else
+					document.cookie = [
+						name, '=', encodeURIComponent(value), '; path=/'
+					].join('');
+			} else {
 				var cookie_value = null;
 				if (document.cookie && document.cookie != '') {
 					var cookies = document.cookie.split(';');
 					for (var i = 0; i < cookies.length; i++) {
 						var cookie = trim(cookies[i]);
 						if (cookie.substring(0, name.length + 1) == (name + '=')) {
-							cookie_value = decodeURIComponent(cookie.substring(name.length + 1));
+							cookie_value = decodeURIComponent(
+								cookie.substring(name.length + 1)
+							);
 							break;
 						}
 					}
@@ -64,7 +75,8 @@ window.A_B = new function() {
 		}
 		
 		function trim(text) {
-			return (text || "").replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, "");
+			return (text || "")
+				.replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, "");
 		}
 	};
 	
@@ -136,14 +148,16 @@ window.A_B = new function() {
 					send[key] = uniqArray(send[key]);
 				}
 				// Export data to cookies
-				toCookies();
+				toCookies(diff.length);
 			}
 
-			function toCookies() {
+			function toCookies(make_request) {
 				if (!objEmpty(data))
 					Cookies.set('a_b', toJson(data));
 				if (!objEmpty(send))
 					Cookies.set('a_b_s', toJson(send));
+				if (make_request)
+					API.request();
 			}
 	
 			function toJson(obj) {
@@ -201,7 +215,6 @@ window.A_B = new function() {
 			if (test) {
 				this.convert = convert;
 				this.visit = visit;
-				this.overwriteFn = overwriteFn;
 			} else {
 				this.convert = function() {};
 				this.visit = function() {};
@@ -278,7 +291,9 @@ window.A_B = new function() {
 						});
 						visit = variants[0];
 					} else
-						visit = test.variants[Math.floor(Math.random() * test.variants.length)];
+						visit = test.variants[
+							Math.floor(Math.random() * test.variants.length)
+						];
 				}
 
 				if (visit && (!name || visit == variant)) {
@@ -316,18 +331,23 @@ window.A_B = new function() {
 				return ret;
 			}
 
-			function overwriteFn(name, fn) {
-				fn = fn || function() {};
-				eval(name + ' = fn');
-			}
-
 			function symbolizeName(name) {
-				return name.toLowerCase().replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_');
+				return name
+					.toLowerCase()
+					.replace(/[^a-z0-9\s]/gi, '')
+					.replace(/\s+/g, '_');
 			}
 		};
 	};
 	
-	// Public methods
+	// Class methods
+	
+	this.API = API;
+	this.Cookies = Cookies;
+	this.Datastore = Datastore;
+	this.Test = Test;
+	
+	// Global methods
 	
 	window.a_b = function(name) {
 		return Test(name);
@@ -336,6 +356,6 @@ window.A_B = new function() {
 	window.a_b_setup = function(options) {
 		tests = options.tests;
 		url = options.url;
-		API();
+		API.request();
 	};
 };
