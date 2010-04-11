@@ -143,24 +143,30 @@ window.A_B = new function() {
 				else
 					data[key].push(value);
 				data[key] = uniqArray(data[key]);
-				// Add difference to send
-				var diff = diffArray(data[key], old);
-				if (diff.length) {
-					send[key] = send[key] || [];
-					send[key] = send[key].concat(diff);
-					send[key] = uniqArray(send[key]);
+				var diff = [];
+				if (key != 'e') {
+					// Add difference to send
+					diff = diffArray(data[key], old);
+					if (diff.length) {
+						send[key] = send[key] || [];
+						send[key] = send[key].concat(diff);
+						send[key] = uniqArray(send[key]);
+					}
 				}
+				if (!objEmpty(send) && data['e'])
+					send['e'] = data['e'];
 				// Export data to cookies
-				toCookies(diff.length);
+				toCookies();
+				// Make request
+				if (diff.length)
+					API.request();
 			}
 
-			function toCookies(make_request) {
+			function toCookies() {
 				if (!objEmpty(data))
 					Cookies.set('a_b', toJson(data));
 				if (!objEmpty(send))
 					Cookies.set('a_b_s', toJson(send));
-				if (make_request)
-					API.request();
 			}
 	
 			function toJson(obj) {
@@ -217,14 +223,16 @@ window.A_B = new function() {
 			
 			if (test) {
 				this.convert = convert;
+				this.extra = extra;
 				this.visit = visit;
 			} else {
 				this.convert = function() {};
+				this.extra = function() {};
 				this.visit = function() {};
 				return;
 			}
 
-			function convert(name, extra, fn) {
+			function convert(name, extras, fn) {
 				if (!test) return null;
 
 				if (typeof name == 'function') {
@@ -233,13 +241,13 @@ window.A_B = new function() {
 				}
 
 				if (typeof name == 'object') {
-					extra = name;
+					extras = name;
 					name = null;
 				}
 
-				if (typeof extra == 'function') {
-					fn = extra;
-					extra = null;
+				if (typeof extras == 'function') {
+					fn = extras;
+					extras = null;
 				}
 				
 				var conversion = findVariant(data.get('c'));
@@ -255,7 +263,7 @@ window.A_B = new function() {
 				if (conversion && (!name || conversion == variant)) {
 					data.set('c', conversion.id);
 					data.set('v', conversion.id);
-					data.set('e' + conversion.id, extra);
+					data.set('e', extras);
 
 					if (fn)
 						fn(symbolizeName(conversion.name));
@@ -265,8 +273,14 @@ window.A_B = new function() {
 
 				return null;
 			}
+			
+			function extra(extras) {
+				if (test)
+					data.set('e', extras);
+				return null;
+			}
 
-			function visit(name, extra, fn) {
+			function visit(name, extras, fn) {
 				if (!test) return null;
 
 				if (typeof name == 'function') {
@@ -275,13 +289,13 @@ window.A_B = new function() {
 				}
 
 				if (typeof name == 'object') {
-					extra = name;
+					extras = name;
 					name = null;
 				}
 
-				if (typeof extra == 'function') {
-					fn = extra;
-					extra = null;
+				if (typeof extras == 'function') {
+					fn = extras;
+					extras = null;
 				}
 				
 				var visit = findVariant(data.get('v'));
@@ -309,7 +323,7 @@ window.A_B = new function() {
 						visit.visits += 1;
 					
 					data.set('v', visit.id);
-					data.set('e' + visit.id, extra);
+					data.set('e', extras);
 
 					if (fn)
 						fn(symbolizeName(visit.name));

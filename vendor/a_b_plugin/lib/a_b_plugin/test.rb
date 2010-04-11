@@ -9,11 +9,11 @@ class ABPlugin
       end
     end
     
-    def convert(name=nil, extra=nil, &block)
+    def convert(name=nil, extras=nil, &block)
       return unless @test
       
       if name.respond_to?(:keys)
-        extra = name
+        extras = name
         name = nil
       end
       
@@ -32,7 +32,7 @@ class ABPlugin
       if conversion && (!name || conversion == variant)
         @data.set(:c, conversion['id'])
         @data.set(:v, conversion['id'])
-        @data.set("e#{conversion['id']}".intern, extra)
+        @data.set(:e, extras)
         
         if block_given?
           block.call(symbolize_name(conversion['name']))
@@ -42,11 +42,16 @@ class ABPlugin
       end
     end
     
-    def visit(name=nil, extra=nil, &block)
+    def extra(extras)
+      return unless @test
+      @data.set(:e, extras)
+    end
+    
+    def visit(name=nil, extras=nil, &block)
       return unless @test
       
       if name.respond_to?(:keys)
-        extra = name
+        extras = name
         name = nil
       end
       
@@ -69,7 +74,7 @@ class ABPlugin
       if visit && (!name || visit == variant)
         visit['visits'] += 1 unless already_recorded
         @data.set(:v, visit['id'])
-        @data.set("e#{visit['id']}".intern, extra)
+        @data.set(:e, extras)
         
         if block_given?
           block.call symbolize_name(visit['name'])

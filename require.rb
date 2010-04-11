@@ -10,6 +10,7 @@ Require do
   gem(:haml, '=2.2.17') { require %w(haml sass) }
   gem(:lilypad, '=0.3.0') { require 'lilypad' }
   gem(:rake, '=0.8.7') { require 'rake' }
+  gem(:'rack-test', '=0.5.3') { require 'rack/test' }
   gem :require, '=0.2.2'
   gem :rspec, '=1.3.0'
   gem(:newrelic_rpm, '=2.10.6') { require 'newrelic_rpm' }
@@ -88,6 +89,7 @@ Require do
   end
   
   spec_helper do
+    gem :'rack-test'
     require 'require/spec_helper'
     require 'lib/a_b'
     require 'pp'

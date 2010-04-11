@@ -7,14 +7,7 @@ class ABVariant < ActiveRecord::Base
   serialize :extras
   
   def self.record(data)
-    extra = {}
-    data.each do |key, value|
-      if key =~ /\d/
-        extra[key.gsub(/\D/, '')] = value
-      end
-    end
-    
-    ids = data['c'] + data['v'] + extra.keys
+    ids = data['c'] + data['v']
     ids = ids.compact.uniq
     
     visit = []
@@ -28,19 +21,23 @@ class ABVariant < ActiveRecord::Base
     
     visit.each do |v|
       v.increment(:visits)
-      v.extras ||= {}
-      (extra[v.id] || []).each do |key|
-        v.extras[key] ||= 0
-        v.extras[key] += 1
+      if data['e'] && !data['e'].empty?
+        v.visit_extras ||= {}
+        (data['e'] || []).each do |key|
+          v.visit_extras[key] ||= 0
+          v.visit_extras[key] += 1
+        end
       end
     end
     
     convert.each do |c|
       c.increment(:conversions)
-      c.extras ||= {}
-      (extra[c.id] || []).each do |key|
-        c.extras[key] ||= 0
-        c.extras[key] += 1
+      if data['e'] && !data['e'].empty?
+        c.conversion_extras ||= {}
+        (data['e'] || []).each do |key|
+          c.conversion_extras[key] ||= 0
+          c.conversion_extras[key] += 1
+        end
       end
     end
     

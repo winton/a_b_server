@@ -36,13 +36,16 @@ class ABPlugin
         @data[key] << value
       end
       @data[key].uniq!
-      # Add difference to @send
-      diff = @data[key] - old
-      unless diff.empty?
-        @send[key] ||= []
-        @send[key] += diff
-        @send[key].uniq!
+      unless key == :e
+        # Add difference to @send
+        diff = @data[key] - old
+        unless diff.empty?
+          @send[key] ||= []
+          @send[key] += diff
+          @send[key].uniq!
+        end
       end
+      @send[:e] = @data[:e] if !@send.empty? && @data[:e]
       # Export data to cookies
       to_cookies
     end

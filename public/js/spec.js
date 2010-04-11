@@ -63,9 +63,9 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').visit('v1', { e: true });
-	same(cookieToJson(), { "v": [2], "e2": ["e"] });
+	same(cookieToJson(), { "v": [2], "e": ["e"] });
 	a_b('test').visit({ e2: true });
-	same(cookieToJson(), { "v": [2], "e2": ["e", "e2"] });
+	same(cookieToJson(), { "v": [2], "e": ["e", "e2"] });
 });
 
 module('convert', {
@@ -126,9 +126,9 @@ test("should not call a block for a specific variant if the variant is not selec
 
 test("should accept a hash with extra boolean values", function() {
 	a_b('test').convert('v1', { e: true });
-	same(cookieToJson(), { "v": [2], "c": [2], "e2": ["e"] });
+	same(cookieToJson(), { "v": [2], "c": [2], "e": ["e"] });
 	a_b('test').convert({ e2: true });
-	same(cookieToJson(), { "v": [2], "c": [2], "e2": ["e", "e2"] });
+	same(cookieToJson(), { "v": [2], "c": [2], "e": ["e", "e2"] });
 });
 
 var called, requested, timer;
@@ -137,7 +137,7 @@ module('API', {
 		setup();
 		called = 0;
 		requested = 0;
-		// This should resemble delayedRequest without the json-p call
+		// This should resemble API.request without the json-p call
 		A_B.API.request = function() {
 			called += 1;
 			clearTimeout(timer);
