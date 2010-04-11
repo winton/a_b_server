@@ -4,7 +4,8 @@ class ABVariant < ActiveRecord::Base
   
   after_destroy :save_test
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
-  serialize :extras
+  serialize :conversion_extras
+  serialize :visit_extras
   
   def self.record(data)
     ids = data['c'] + data['v']
@@ -43,7 +44,7 @@ class ABVariant < ActiveRecord::Base
     
     variants.each(&:save)
     
-    [ visit.length, convert.length ]
+    [ visit.collect(&:id), convert.collect(&:id) ]
   end
   
   def self.reset!

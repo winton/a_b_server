@@ -8,7 +8,7 @@ Application.class_eval do
     if !ip.limited? && params[:j] && params[:i]
       data = JSON(params[:j])
       visits, conversions = ABVariant.record(data)
-      ABRequest.record(params[:i], request.ip, visits, conversions)
+      ABRequest.record(params[:i], request, visits, conversions)
     end
     nil
   end
