@@ -1,28 +1,38 @@
 class ABPlugin
   class Test
     
-    def initialize(test)
-      @data = Datastore.new
-      @test = ABPlugin.tests.detect do |t|
-        t['name'] == test ||
-        symbolize_name(t['name']) == test
+    def initialize(c, t=nil, e=nil, &block)
+      # c, t, e = category, test, extras
+      
+      if c.respond_to?(:keys)
+        e, c = c, nil
       end
+      
+      @data = Datastore.new
+      @extras = @data.get(:e)
+      @extras.merge!(e) if e
+      
+      if c && t
+        @category = category(c)
+        @test = test(t)
+      else
+        @data.set(:e, @extras)
+      end
+      
+      yield(self) if block_given?
     end
     
-    def convert(name=nil, extras=nil, &block)
+    def convert(name=nil, &block)
       return unless @test
-      
-      if name.respond_to?(:keys)
-        extras = name
-        name = nil
-      end
       
       conversion = variant(@data.get(:c))
       visit = variant(@data.get(:v))
       variant = variant(name)
+      visited = true
       
       unless visit
         visit = variant
+        visited = false
       end
       
       unless conversion
@@ -30,9 +40,8 @@ class ABPlugin
       end
       
       if conversion && (!name || conversion == variant)
-        @data.set(:c, conversion['id'])
-        @data.set(:v, conversion['id'])
-        @data.set(:e, extras)
+        @data.set(:c, conversion['id'], @extras)
+        @data.set(:v, conversion['id'], @extras) unless visited
         
         if block_given?
           block.call(symbolize_name(conversion['name']))
@@ -42,39 +51,22 @@ class ABPlugin
       end
     end
     
-    def extra(extras)
+    def visit(name=nil, &block)
       return unless @test
-      @data.set(:e, extras)
-    end
-    
-    def visit(name=nil, extras=nil, &block)
-      return unless @test
-      
-      if name.respond_to?(:keys)
-        extras = name
-        name = nil
-      end
       
       visit = variant(@data.get(:v))
       variant = variant(name)
       
-      already_recorded = (visit && visit == variant) || (!name && visit)
-      
       if !visit && !@test['variants'].empty?
-        if @test['variants'][0]['visits']
-          variants = @test['variants'].sort do |a, b|
-            a['visits'] <=> b['visits']
-          end
-          visit = variants.first
+        if $testing
+          visit = @test['variants'][0]
         else
           visit = @test['variants'][rand(@test['variants'].size)]
         end
       end
       
       if visit && (!name || visit == variant)
-        visit['visits'] += 1 unless already_recorded
-        @data.set(:v, visit['id'])
-        @data.set(:e, extras)
+        @data.set(:v, visit['id'], @extras)
         
         if block_given?
           block.call symbolize_name(visit['name'])
@@ -86,8 +78,23 @@ class ABPlugin
     
     private
     
+    def category(name)
+      ABPlugin.categories.detect do |c|
+        c['name'] == name ||
+        symbolize_name(c['name']) == name
+      end
+    end
+    
     def symbolize_name(name)
       name.downcase.gsub(/[^a-zA-Z0-9\s]/, '').gsub(/\s+/, '_').intern
+    end
+    
+    def test(name)
+      return unless @category
+      @category['tests'].detect do |t|
+        t['name'] == name ||
+        symbolize_name(t['name']) == name
+      end
     end
     
     def variant(ids_or_name)

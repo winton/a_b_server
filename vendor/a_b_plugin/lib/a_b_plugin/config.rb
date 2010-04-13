@@ -21,6 +21,11 @@ class ABPlugin
         @root
       end
       
+      def site(site=nil)
+        @site = site unless site.nil?
+        @site
+      end
+      
       def url(url=nil)
         @url = url unless url.nil?
         @url

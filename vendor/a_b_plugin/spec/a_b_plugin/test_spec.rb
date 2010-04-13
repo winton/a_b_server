@@ -15,43 +15,37 @@ describe ABPlugin::Test do
   describe 'visit' do
     
     it "should return the variant name" do
-      a_b(:test).visit.should == :v1
+      a_b(:category, :test).visit.should == :v1
     end
     
     it "should return the variant name every time" do
-      a_b(:test).visit
-      a_b(:test).visit.should == :v1
+      a_b(:category, :test).visit
+      a_b(:category, :test).visit.should == :v1
     end
     
     it "should set cookie" do
-      a_b(:test).visit
+      a_b(:category, :test).visit
       JSON($cookies['a_b_s']).should == {"v"=>[2]}
     end
     
-    it "should increment variant visits" do
-      a_b(:test).visit
-      ABPlugin.tests[0]['variants'][0]['visits'].should == 1
-    end
-    
     it "should maintain state if called more than once" do
-      a_b(:test).visit
-      a_b(:test).visit
-      ABPlugin.tests[0]['variants'][0]['visits'].should == 1
+      a_b(:category, :test).visit
+      a_b(:category, :test).visit
       JSON($cookies['a_b_s']).should == {"v"=>[2]}
     end
     
     it "should return the variant name if variant specified and selected" do
-      a_b(:test).visit(:v1).should == :v1
+      a_b(:category, :test).visit(:v1).should == :v1
     end
     
     it "should return nil if variant specified and not selected" do
-      a_b(:test).visit(:v1)
-      a_b(:test).visit(:v2).should == nil
+      a_b(:category, :test).visit(:v1)
+      a_b(:category, :test).visit(:v2).should == nil
     end
     
     it "should accept a block and pass the selected variant name to it" do
       ran = false
-      a_b(:test).visit do |variant|
+      a_b(:category, :test).visit do |variant|
         ran = true
         variant.should == :v1
       end
@@ -60,7 +54,7 @@ describe ABPlugin::Test do
     
     it "should accept a block for a specific variant" do
       ran = false
-      a_b(:test).visit(:v1) do
+      a_b(:category, :test).visit(:v1) do
         ran = true
       end
       ran.should == true
@@ -68,58 +62,56 @@ describe ABPlugin::Test do
     
     it "should not call a block for a specific variant if the variant is not selected" do
       ran = false
-      a_b(:test).visit(:v2) do
+      a_b(:category, :test).visit(:v2) do
         ran = true
       end
       ran.should == false
     end
     
     it "should accept a hash with extra boolean values" do
-      a_b(:test).visit(:v1, :e => true)
-      JSON($cookies['a_b_s']).should == {"v"=>[2],"e"=>["e"]}
-      a_b(:test).visit(:e2 => true)
-      JSON($cookies['a_b_s']).should == {"v"=>[2],"e"=>["e","e2"]}
+      a_b(:category, :test, :e => true).visit(:v1)
+      JSON($cookies['a_b_s']).should == {"v"=>[2],"e"=>{"e" => true}}
     end
   end
   
   describe 'convert' do
     
     before(:each) do
-      a_b(:test).visit
+      a_b(:category, :test).visit
     end
     
     it "should return the variant name" do
-      a_b(:test).convert.should == :v1
+      a_b(:category, :test).convert.should == :v1
     end
     
     it "should return the variant name every time" do
-      a_b(:test).convert
-      a_b(:test).convert.should == :v1
+      a_b(:category, :test).convert
+      a_b(:category, :test).convert.should == :v1
     end
     
     it "should set cookie" do
-      a_b(:test).convert
+      a_b(:category, :test).convert
       JSON($cookies['a_b_s']).should == {"v"=>[2], "c"=>[2]}
     end
     
     it "should maintain state if called more than once" do
-      a_b(:test).convert
-      a_b(:test).convert
+      a_b(:category, :test).convert
+      a_b(:category, :test).convert
       JSON($cookies['a_b_s']).should == {"v"=>[2], "c"=>[2]}
     end
     
     it "should return the variant name if variant specified and selected" do
-      a_b(:test).convert(:v1).should == :v1
+      a_b(:category, :test).convert(:v1).should == :v1
     end
     
     it "should return nil if variant specified and not selected" do
-      a_b(:test).convert(:v1)
-      a_b(:test).convert(:v2).should == nil
+      a_b(:category, :test).convert(:v1)
+      a_b(:category, :test).convert(:v2).should == nil
     end
     
     it "should accept a block and pass the selected variant name to it" do
       ran = false
-      a_b(:test).convert do |variant|
+      a_b(:category, :test).convert do |variant|
         ran = true
         variant.should == :v1
       end
@@ -128,7 +120,7 @@ describe ABPlugin::Test do
     
     it "should accept a block for a specific variant" do
       ran = false
-      a_b(:test).convert(:v1) do
+      a_b(:category, :test).convert(:v1) do
         ran = true
       end
       ran.should == true
@@ -136,17 +128,15 @@ describe ABPlugin::Test do
     
     it "should not call a block for a specific variant if the variant is not selected" do
       ran = false
-      a_b(:test).convert(:v2) do
+      a_b(:category, :test).convert(:v2) do
         ran = true
       end
       ran.should == false
     end
     
     it "should accept a hash with extra boolean values" do
-      a_b(:test).convert(:v1, :e => true)
-      JSON($cookies['a_b_s']).should == {"v"=>[2],"c"=>[2],"e"=>["e"]}
-      a_b(:test).convert(:e2 => true)
-      JSON($cookies['a_b_s']).should == {"v"=>[2],"c"=>[2],"e"=>["e","e2"]}
+      a_b(:category, :test, :e => true).convert(:v1)
+      JSON($cookies['a_b_s']).should == {"v"=>[2],"c"=>[2],"e"=>{"e" => true}}
     end
   end
 end

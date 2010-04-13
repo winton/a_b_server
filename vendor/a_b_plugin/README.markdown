@@ -9,35 +9,34 @@ Install
 -------
 
 <pre>
-sudo gem install a_b_plugin --source http://gemcutter.org
+sudo gem install a_b_plugin
 </pre>
 
 Setup
 -----
 
-### Assets
-
-Copy [this javascript file](http://github.com/winton/a_b/raw/master/public/js/a_b.js) into the directory where you keep your javascript assets.
-
 ### Configuration
 
-Execute the following code when you app boots.
+Create <code>config/a_b.yml</code>:
 
 <pre>
-ABPlugin.token = 'kTJkI8e56OisQrexuChW' # Persistence token from one of your a_b users
-ABPlugin.url = 'http://ab.mydomain.com' # The URL to your a_b server
+development: &base
+  site: My Site
+  token: token_goes_here
+  url: http://ab.mydomain.com
+staging:
+  &lt;&lt;: *base
+production:
+  &lt;&lt;: *base
 </pre>
 
-For Rails apps, you would place this at the bottom of your <code>environment.rb</code> file.
-
 ### Layout
-
-In your HTML layout, you will need a call to <code>a\_b\_script_tag</code> with the path to the javascript file you created earlier.
 
 <pre>
 &lt;html&gt;
   &lt;body&gt;
-    &lt;%= a_b_script_tag '/javascripts/a_b.js' %&gt;
+    &lt;script src="http://github.com/winton/a_b/raw/master/public/js/a_b.js" type="text/javascript"&gt;&lt;/script&gt;
+    &lt;%= a_b %&gt;
   &lt;/body&gt;
 &lt;/html&gt;
 </pre>
@@ -50,27 +49,38 @@ Before using the examples below, create a test and some variants from the <code>
 ### Ruby
 
 <pre>
-a_b(:my_test).visit   # :my_variant
-a_b(:my_test).convert # :my_variant
-</pre>
-
-<pre>
-a_b(:my_test).visit(:my_variant)        # :my_variant
-a_b(:my_test).convert(:my_variant)      # :my_variant
-a_b(:my_test).visit(:my_other_variant)  # nil (:my_variant already selected)
-</pre>
-
-<pre>
-a_b(:my_test).visit do |variant|
-end
-a_b(:my_test).convert do |variant|
+a_b(:my_category, :my_test) do |test|
+  test.visit    # returns :my_variant
+  test.convert  # returns :my_variant
 end
 </pre>
 
 <pre>
-a_b(:my_test).visit(:my_variant) do
+a_b(:my_category, :my_test).visit   # returns :my_variant
+a_b(:my_category, :my_test).convert # returns :my_variant
+</pre>
+
+<pre>
+a_b(:my_category, :my_test).visit(:my_variant)        # returns :my_variant
+a_b(:my_category, :my_test).convert(:my_variant)      # returns :my_variant
+a_b(:my_category, :my_test).visit(:my_other_variant)  # returns nil (:my_variant already selected)
+</pre>
+
+<pre>
+a_b(:my_category, :my_test).visit do |variant|
+  # variant == :my_variant
 end
-a_b(:my_test).convert(:my_variant) do
+a_b(:my_category, :my_test).convert do |variant|
+  # variant == :my_variant
+end
+</pre>
+
+<pre>
+a_b(:my_category, :my_test).visit(:my_variant) do
+  # executes if :my_variant selected
+end
+a_b(:my_category, :my_test).convert(:my_variant) do
+  # executes if :my_variant selected
 end
 </pre>
 
@@ -79,27 +89,90 @@ You can use the <code>a\_b</code> method in the controller or the view.
 ### Javascript
 
 <pre>
-a_b('my_test').visit();   # 'my_variant'
-a_b('my_test').convert(); # 'my_variant'
-</pre>
-
-<pre>
-a_b('my_test').visit('my_variant');   # true
-a_b('my_test').convert('my_variant'); # true
-</pre>
-
-<pre>
-a_b('my_test').visit(function(variant) {
-});
-a_b('my_test').convert(function(variant) {
+a_b('my_category', 'my_test', function(test) {
+  test.visit();    # returns 'my_variant'
+  test.convert();  # returns 'my_variant'
 });
 </pre>
 
 <pre>
-a_b('my_test').visit('my_variant', function(variant) {
+a_b('my_category', 'my_test').visit();   # returns 'my_variant'
+a_b('my_category', 'my_test').convert(); # returns 'my_variant'
+</pre>
+
+<pre>
+a_b('my_category', 'my_test').visit('my_variant');   # returns 'my_variant'
+a_b('my_category', 'my_test').convert('my_variant'); # returns 'my_variant'
+</pre>
+
+<pre>
+a_b('my_category', 'my_test').visit(function(variant) {
+  // variant == 'my_variant'
 });
-a_b('my_test').convert('my_variant', function(variant) {
+a_b('my_category', 'my_test').convert(function(variant) {
+  // variant == 'my_variant'
 });
+</pre>
+
+<pre>
+a_b('my_category', 'my_test').visit('my_variant', function() {
+  // executes if 'my_variant' selected
+});
+a_b('my_category', 'my_test').convert('my_variant', function() {
+  // executes if 'my_variant' selected
+});
+</pre>
+
+Conditions
+----------
+
+With <code>a_b</code> it is possible to record, per variant, the percentage of visits or conversions that were recorded in a certain condition.
+
+For example, to tell <code>a_b</code> if a user is logged in, was referred by Google, or is using Firefox:
+
+### Ruby
+
+<pre>
+a_b('Logged in' => true, 'From Google' => true)
+a_b('Firefox' => true)
+  # Conditions now contain three values
+
+a_b.reset
+  # Conditions now contain no values
+</pre>
+
+### Javascript
+
+<pre>
+a_b({ 'Logged in': true, 'From Google': true });
+a_b({ 'Firefox': true });
+  // Conditions now contain three values
+
+a_b.reset();
+  // Conditions now contain no values
+</pre>
+
+* Conditions stick around for the entire session
+* Conditions must be a hash with values that evaluate as boolean
+* New conditions merge with existing conditions
+* If a condition is specified in one session and not in another, all others are assumed to be false
+
+You can also set conditions on a temporary (non-session) basis:
+
+### Ruby
+
+<pre>
+a_b(:my_category, :my_test, 'My condition' => true).visit
+a_b(:my_category, :my_test).convert
+  # 'My condition' is assumed false for conversion
+</pre>
+
+### Javascript
+
+<pre>
+a_b('my_category', 'my_test', { 'My condition': true }).visit();
+a_b('my_category', 'my_test').convert();
+  # 'My condition' is assumed false for conversion
 </pre>
 
 That's it!

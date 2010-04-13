@@ -13,6 +13,7 @@ class ABPlugin
     
     def configure_api
       if @data && Config.env && @data[Config.env]
+        ABPlugin::Config.site @data[Config.env]['site']
         ABPlugin::Config.token @data[Config.env]['token']
         ABPlugin::Config.url @data[Config.env]['url']
       end

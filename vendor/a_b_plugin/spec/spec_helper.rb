@@ -1,37 +1,37 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../require")
 Require.spec_helper!
 
+$testing = true
+
 Spec::Runner.configure do |config|
   include ABPlugin::Helper
 end
 
 def setup_variables
-  @tests = [{
-    "id" => 1,
-    "name" => "Test",
-    "variants" => [
-      {
-        "id" => 2,
-        "name" => "v1",
-        "visits" => 0
-      },
-      {
-        "id" => 3,
-        "name" => "v2",
-        "visits" => 0
-      },
-      {
-        "id" => 4,
-        "name" => "v3",
-        "visits" => 0
-      }
-    ]
+  @categories = [{
+    "name" => "Category",
+    "tests" => [{
+      "id" => 1,
+      "name" => "Test",
+      "variants" => [
+        {
+          "id" => 2,
+          "name" => "v1"
+        },
+        {
+          "id" => 3,
+          "name" => "v2"
+        },
+        {
+          "id" => 4,
+          "name" => "v3"
+        }
+      ]
+    }]
   }]
 end
 
 def stub_api_boot
   setup_variables
-  ABPlugin::API.stub!(:boot).and_return(
-    "tests" => @tests
-  )
+  ABPlugin::API.stub!(:categories).and_return(@categories)
 end

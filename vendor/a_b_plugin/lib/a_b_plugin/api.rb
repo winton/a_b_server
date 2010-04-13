@@ -3,10 +3,10 @@ class ABPlugin
     
     include HTTParty
     
-    def self.boot
+    def self.categories
       return unless Config.url && Config.token
       base_uri Config.url
-      get('/tests.json', :query => { :token => Config.token })
+      get('/categories.json', :query => { :token => Config.token })
     end
   end
 end
