@@ -1,15 +1,14 @@
 development:
   url: http://127.0.0.1:9393
-tests: 
-- name: Test
-  id: 1
-  variants: 
-  - name: v1
-    id: 2
-    visits: 0
-  - name: v2
-    id: 3
-    visits: 0
-  - name: v3
-    id: 4
-    visits: 0
+categories:
+  - name: Category
+    tests: 
+    - id: 1
+      name: Test
+      variants: 
+      - id: 2
+        name: v1
+      - id: 3
+        name: v2
+      - id: 4
+        name: v3

@@ -2,7 +2,7 @@ window.A_B = new function() {
 	
 	// Global variables
 	
-	var tests, url;
+	var categories, url;
 	
 	// Classes
 	
@@ -114,7 +114,7 @@ window.A_B = new function() {
 			}
 
 			function get(key) {
-				return (data[key] || []);
+				return (data[key] || (key == 'e' ? {} : []));
 			}
 			
 			function objEmpty(obj) {
@@ -123,21 +123,16 @@ window.A_B = new function() {
 			  return true;
 			}
 
-			function set(key, value, no_api) {
+			function set(key, value, extras) {
 				if (!value) return;
 				data[key] = data[key] || [];
 				// Store current version for later comparison
 				var old = data[key].slice(0);
 				// If hash, grab keys that have true values
-				if (value.constructor == Object) {
-					var new_value = [];
-					for(var k in value) {
-						if (value[k]) new_value.push(k);
-					}
-					value = new_value;
-				}
+				if (value.constructor == Object)
+					data[key] = value;
 				// Array
-				if (value.constructor == Array)
+				else if (value.constructor == Array)
 					data[key] = data[key].concat(value);
 				// Other value
 				else
@@ -151,10 +146,10 @@ window.A_B = new function() {
 						send[key] = send[key] || [];
 						send[key] = send[key].concat(diff);
 						send[key] = uniqArray(send[key]);
+						if (!objEmpty(extras))
+							send['e'] = extras;
 					}
 				}
-				if (!objEmpty(send) && data['e'])
-					send['e'] = data['e'];
 				// Export data to cookies
 				toCookies();
 				// Make request
@@ -195,6 +190,8 @@ window.A_B = new function() {
 					json.push('"' + obj + '"');
 				else if (typeof obj == 'number')
 					json.push(obj);
+				else
+					json.push(obj + '');
 				return json.join('');
 			}
 			
@@ -210,60 +207,66 @@ window.A_B = new function() {
 		};
 	};
 	
-	Test = function(name) {
+	Test = function(c, t, e, fn) {
 		return new function() {
 			
-			var data = Datastore();
-			var test = grep((tests || []), function(t) {
-				return (
-					t.name == name ||
-					symbolizeName(t.name) == name
-				);
-			})[0];
+			var category, data, extras, test;
 			
-			if (test) {
+			if (typeof c == 'object') {
+				e = c;
+				c = null;
+			}
+			
+			data = Datastore();
+			extras = data.get('e');
+			
+			if (e) {
+				for (attr in e)
+					extras[attr] = e[attr];
+			}
+			
+			if (c && t) {
+				category = findCategory(c);
+				test = findTest(t);
+			} else
+				data.set('e', extras);
+			
+			if (category) {
 				this.convert = convert;
-				this.extra = extra;
 				this.visit = visit;
 			} else {
 				this.convert = function() {};
-				this.extra = function() {};
 				this.visit = function() {};
 				return;
 			}
+			
+			if (fn) fn(this);
 
-			function convert(name, extras, fn) {
+			function convert(name, fn) {
 				if (!test) return null;
 
 				if (typeof name == 'function') {
 					fn = name;
 					name = null;
 				}
-
-				if (typeof name == 'object') {
-					extras = name;
-					name = null;
-				}
-
-				if (typeof extras == 'function') {
-					fn = extras;
-					extras = null;
-				}
 				
 				var conversion = findVariant(data.get('c'));
 				var visit = findVariant(data.get('v'));
 				var variant = findVariant(name);
+				var visited = true;
 
-				if (!visit)
+				if (!visit) {
 					visit = variant;
+					visited = false;
+				}
 
 				if (!conversion)
 					conversion = visit;
 
 				if (conversion && (!name || conversion == variant)) {
-					data.set('c', conversion.id);
-					data.set('v', conversion.id);
-					data.set('e', extras);
+					data.set('c', conversion.id, extras);
+					if (!visited)
+						data.set('v', conversion.id, extras);
 
 					if (fn)
 						fn(symbolizeName(conversion.name));
@@ -273,57 +276,29 @@ window.A_B = new function() {
 
 				return null;
 			}
-			
-			function extra(extras) {
-				if (test)
-					data.set('e', extras);
-				return null;
-			}
 
-			function visit(name, extras, fn) {
+			function visit(name, fn) {
 				if (!test) return null;
 
 				if (typeof name == 'function') {
 					fn = name;
 					name = null;
 				}
-
-				if (typeof name == 'object') {
-					extras = name;
-					name = null;
-				}
-
-				if (typeof extras == 'function') {
-					fn = extras;
-					extras = null;
-				}
 				
 				var visit = findVariant(data.get('v'));
 				var variant = findVariant(name);
-				
-				var already_recorded = (
-					(visit && visit == variant) ||
-					(!name && visit)
-				);
 
 				if (!visit && test.variants.length) {
-					if (typeof test.variants[0].visits != 'undefined') {
-						var variants = test.variants.sort(function(a, b) {
-							return (a.visits - b.visits);
-						});
-						visit = variants[0];
-					} else
+					if (window.testing)
+						visit = test.variants[0];
+					else
 						visit = test.variants[
 							Math.floor(Math.random() * test.variants.length)
 						];
 				}
 
 				if (visit && (!name || visit == variant)) {
-					if (!already_recorded)
-						visit.visits += 1;
-					
-					data.set('v', visit.id);
-					data.set('e', extras);
+					data.set('v', visit.id, extras);
 
 					if (fn)
 						fn(symbolizeName(visit.name));
@@ -335,6 +310,26 @@ window.A_B = new function() {
 			}
 
 			// Private
+			
+			function findCategory(name) {
+				return grep(categories, function(c) {
+					return (
+						c.name == name ||
+						symbolizeName(c.name) == name
+					);
+				})[0];
+			}
+			
+			function findTest(name) {
+				if (!category)
+					return null;
+				return grep(category.tests, function(t) {
+					return (
+						t.name == name ||
+						symbolizeName(t.name) == name
+					);
+				})[0];
+			}
 
 			function findVariant(ids_or_name) {
 				if (!ids_or_name || !test) return null;
@@ -376,12 +371,12 @@ window.A_B = new function() {
 	
 	// Global methods
 	
-	window.a_b = function(name) {
-		return Test(name);
+	window.a_b = function(c, t, e) {
+		return Test(c, t, e);
 	};
 	
 	window.a_b_setup = function(options) {
-		tests = options.tests;
+		categories = options.categories;
 		url = options.url;
 		API.request();
 	};
