@@ -12,6 +12,7 @@ class ABPlugin
       elsif ABPlugin.categories && Config.url
         "a_b_setup(#{{
           :categories => ABPlugin.categories,
+          :env => Config.env,
           :site => Config.site,
           :url => Config.url
         }.to_json});"
