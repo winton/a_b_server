@@ -3,10 +3,7 @@ class Variants < ActiveRecord::Migration
     create_table :variants do |t|
       t.string :name
       t.boolean :control, :default => false
-      t.integer :conversions, :default => 0
-      t.string :conversion_extras, :limit => 2048
-      t.integer :visits, :default => 0
-      t.string :visit_extras, :limit => 2048
+      t.string :data, :limit => 4096
       t.integer :test_id
       t.timestamps
     end

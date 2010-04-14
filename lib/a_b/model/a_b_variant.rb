@@ -2,12 +2,33 @@ class ABVariant < ActiveRecord::Base
   
   set_table_name :variants
   
-  after_destroy :save_test
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
-  serialize :conversion_extras
-  serialize :visit_extras
   
-  def self.record(data)
+  attr_reader :env
+  attr_accessor :conversions, :visits
+  attr_accessor :visit_conditions, :conversion_conditions
+  
+  # Callbacks
+  
+  after_destroy :save_test
+  before_save :update_env_data
+  
+  def save_test
+    self.test.save if self.test
+  end
+  
+  def update_env_data
+    if self.env
+      self.env_data[:conversions] = self.conversions
+      self.env_data[:visits] = self.visits
+      self.env_data[:visit_conditions] = self.visit_conditions
+      self.env_data[:conversion_conditions] = self.conversion_conditions
+    end
+  end
+  
+  # Class methods
+  
+  def self.record(env, data)
     ids = data['c'] + data['v']
     ids = ids.compact.uniq
     
@@ -16,28 +37,29 @@ class ABVariant < ActiveRecord::Base
     
     variants = ABVariant.find_all_by_id(ids)
     variants.each do |variant|
+      variant.env = env
       visit.push(variant) if data['v'].include?(variant.id)
       convert.push(variant) if data['c'].include?(variant.id)
     end
     
     visit.each do |v|
-      v.increment(:visits)
+      v.visits += 1
       if data['e'] && !data['e'].empty?
-        v.visit_extras ||= {}
+        v.visit_conditions ||= {}
         (data['e'] || []).each do |key|
-          v.visit_extras[key] ||= 0
-          v.visit_extras[key] += 1
+          v.visit_conditions[key] ||= 0
+          v.visit_conditions[key] += 1
         end
       end
     end
     
     convert.each do |c|
-      c.increment(:conversions)
+      c.conversions += 1
       if data['e'] && !data['e'].empty?
-        c.conversion_extras ||= {}
+        c.conversion_conditions ||= {}
         (data['e'] || []).each do |key|
-          c.conversion_extras[key] ||= 0
-          c.conversion_extras[key] += 1
+          c.conversion_conditions[key] ||= 0
+          c.conversion_conditions[key] += 1
         end
       end
     end
@@ -52,6 +74,8 @@ class ABVariant < ActiveRecord::Base
       variant.reset!
     end
   end
+  
+  # Instance methods
   
   def confidence
     cumulative_normal_distribution(z_score(self.test.control))
@@ -72,6 +96,22 @@ class ABVariant < ActiveRecord::Base
   
   def conversion_rate_ok?
     conversion_rate > self.test.control.conversion_rate
+  end
+  
+  def env_data
+    raise 'ABVariant#env not set' unless self.env
+    hash = {}
+    hash[self.env] = {}
+    self.data ||= hash
+    self.data[self.env]
+  end
+  
+  def env=(e)
+    @env = e
+    self.conversions = self.env_data[:conversions] || 0
+    self.visits = self.env_data[:visits] || 0
+    self.visit_conditions = self.env_data[:visit_conditions] || {}
+    self.conversion_conditions = self.env_data[:conversion_conditions] || {}
   end
   
   def pretty_confidence
@@ -168,10 +208,6 @@ class ABVariant < ActiveRecord::Base
     rescue Exception => e
       0
     end
-  end
-  
-  def save_test
-    self.test.save if self.test
   end
   
   def z_score(control)

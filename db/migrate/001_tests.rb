@@ -3,7 +3,7 @@ class Tests < ActiveRecord::Migration
     create_table :tests do |t|
       t.string :name
       t.string :ticket_url
-      t.integer :user_id
+      t.integer :category_id
       t.timestamps
     end
     add_index :tests, :name

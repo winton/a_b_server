@@ -2,7 +2,7 @@ window.A_B = new function() {
 	
 	// Global variables
 	
-	var categories, url;
+	var categories, env, url;
 	
 	// Classes
 	
@@ -30,8 +30,9 @@ window.A_B = new function() {
 					Cookies.set('a_b_s', null);
 					var src = [
 						url, '/a_b.js?',
-						'j=', encodeURIComponent(json), '&',
-						'i=', encodeURIComponent(identifier())
+						'e=', encodeURIComponent(env), '&',
+						'i=', encodeURIComponent(identifier()), '&',
+						'j=', encodeURIComponent(json)
 					].join('');
 					var head = document.getElementsByTagName("head")[0] ||
 						document.documentElement;
@@ -377,6 +378,7 @@ window.A_B = new function() {
 	
 	window.a_b_setup = function(options) {
 		categories = options.categories;
+		env = options.env;
 		url = options.url;
 		API.request();
 	};

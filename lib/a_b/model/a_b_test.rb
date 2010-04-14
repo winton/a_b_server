@@ -6,8 +6,8 @@ class ABTest < ActiveRecord::Base
   after_save :create_variants
   after_save :set_control
   
-  belongs_to :user
-  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'test_id', :dependent => :delete_all
+  belongs_to :category
+  has_many :variants, :class_name => 'ABVariant', :foreign_key => 'test_id', :dependent => :destroy
   
   def control
     self.variants.find_by_control true

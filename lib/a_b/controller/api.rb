@@ -7,21 +7,23 @@ Application.class_eval do
     ip = IP.create_or_increment(request.ip)
     if !ip.limited? && params[:j] && params[:i]
       data = JSON(params[:j])
-      visits, conversions = ABVariant.record(data)
+      visits, conversions = ABVariant.record(params[:e], data)
       ABRequest.record(params[:i], request, visits, conversions)
     end
     nil
   end
   
-  get '/tests.json' do
+  get '/categories.json' do
     content_type :json
     @user = allow?
-    @tests = @user ? @user.tests : []
-    @tests = { :tests => @tests }
-    @tests.to_json(
-      :include => :variants,
-      :only => [ :id, :tests, :variants, :name, :visits ]
-    )
+    if @user
+      @user.categories.to_json(
+        :include => [ :tests, :variants ],
+        :only => [ :id, :category_id, :name, :tests, :variants ]
+      )
+    else
+      {}.to_json
+    end
   end
   
   get '/tests/:id/destroy.json' do
