@@ -9,7 +9,7 @@ class ABPlugin
       if category || test || extra
         Test.new(category, test, extra)
       
-      elsif ABPlugin.tests && Config.url
+      elsif ABPlugin.categories && Config.url
         "a_b_setup(#{{
           :categories => ABPlugin.categories,
           :site => Config.site,
