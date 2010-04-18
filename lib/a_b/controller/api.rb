@@ -7,7 +7,7 @@ Application.class_eval do
     ip = IP.create_or_increment(request.ip)
     if !ip.limited? && params[:j] && params[:i]
       data = JSON(params[:j])
-      visits, conversions = ABVariant.record(params[:e], data)
+      visits, conversions = Variant.record(params[:e], data)
       ABRequest.record(params[:i], request, visits, conversions)
     end
     nil
@@ -62,7 +62,7 @@ Application.class_eval do
   
   get '/variants/:id/destroy.json' do
     content_type :json
-    @variant = ABVariant.find params[:id]
+    @variant = Variant.find params[:id]
     if @variant && allow?(@variant.test)
       @variant.destroy
       true.to_json

@@ -4,6 +4,7 @@ class Categories < ActiveRecord::Migration
       t.string :name
       t.integer :user_id
     end
+    add_index :categories, :user_id
   end
 
   def self.down

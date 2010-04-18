@@ -5,6 +5,7 @@ class Ips < ActiveRecord::Migration
       t.date :date
       t.integer :count, :default => 0
     end
+    add_index :ips, :ip
   end
 
   def self.down

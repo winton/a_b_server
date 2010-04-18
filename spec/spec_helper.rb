@@ -11,25 +11,42 @@ def setup_tests
     :token => 'token'
   )
   @user.id = 1
+  @category = Category.new(
+    :name => 'category',
+    :user_id => @user.id
+  )
+  @category.id = 1
+  @env = Env.new(
+    :name => 'env',
+    :user_id => @user.id
+  )
+  @env.id = 1
   @test = ABTest.new(
     :name => 'test',
+    :category_id => @category.id,
     :user_id => @user.id
   )
   @test.id = 1
-  @variant = ABVariant.new(
+  @variant = Variant.new(
     :name => 'variant',
-    :test_id => @test.id
+    :category_id => @category.id,
+    :test_id => @test.id,
+    :user_id => @user.id
   )
   @variant.id = 1
-  @user.save
+  @category.save
+  @env.save
   @test.save
+  @user.save
   @variant.save
 end
 
 def teardown_tests
-  IP.delete_all
   ABRequest.delete_all
   ABTest.delete_all
+  Category.delete_all
+  Env.delete_all
+  IP.delete_all
   User.delete_all
-  ABVariant.delete_all
+  Variant.delete_all
 end

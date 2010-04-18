@@ -6,7 +6,7 @@ class ABRequest < ActiveRecord::Base
   serialize :visit_ids
   
   def self.record(identifier, request, visits, conversions)
-    r = ABRequest.find_or_create_by_identifier_and_ip(
+    r = ABRequest.find_or_initialize_by_identifier_and_ip(
       identifier, request.ip
     )
     r.agent = request.env["HTTP_USER_AGENT"]
@@ -21,5 +21,6 @@ class ABRequest < ActiveRecord::Base
     r.visit_ids += visits
     r.conversion_ids += conversions
     r.save
+    r
   end
 end

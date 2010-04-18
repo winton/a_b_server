@@ -1,8 +1,10 @@
-class ABVariant < ActiveRecord::Base
+class Variant < ActiveRecord::Base
   
-  set_table_name :variants
-  
+  belongs_to :category
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
+  belongs_to :user
+  
+  serialize :data
   
   attr_reader :env
   attr_accessor :conversions, :visits
@@ -32,10 +34,13 @@ class ABVariant < ActiveRecord::Base
     ids = data['c'] + data['v']
     ids = ids.compact.uniq
     
+    variants = Variant.find_all_by_id(ids)
+    envs = Env.names_by_user_id(variants[0].user_id)
+    return [ [], [] ] if variants.empty? || !envs.include?(env)
+    
     visit = []
     convert = []
     
-    variants = ABVariant.find_all_by_id(ids)
     variants.each do |variant|
       variant.env = env
       visit.push(variant) if data['v'].include?(variant.id)
@@ -46,9 +51,9 @@ class ABVariant < ActiveRecord::Base
       v.visits += 1
       if data['e'] && !data['e'].empty?
         v.visit_conditions ||= {}
-        (data['e'] || []).each do |key|
+        (data['e'] || {}).each do |key, value|
           v.visit_conditions[key] ||= 0
-          v.visit_conditions[key] += 1
+          v.visit_conditions[key] += 1 if value
         end
       end
     end
@@ -57,9 +62,9 @@ class ABVariant < ActiveRecord::Base
       c.conversions += 1
       if data['e'] && !data['e'].empty?
         c.conversion_conditions ||= {}
-        (data['e'] || []).each do |key|
+        (data['e'] || {}).each do |key, value|
           c.conversion_conditions[key] ||= 0
-          c.conversion_conditions[key] += 1
+          c.conversion_conditions[key] += 1 if value
         end
       end
     end
@@ -70,7 +75,7 @@ class ABVariant < ActiveRecord::Base
   end
   
   def self.reset!
-    ABVariant.find(:all).each do |variant|
+    Variant.find(:all).each do |variant|
       variant.reset!
     end
   end
@@ -99,7 +104,7 @@ class ABVariant < ActiveRecord::Base
   end
   
   def env_data
-    raise 'ABVariant#env not set' unless self.env
+    raise 'Variant#env not set' unless self.env
     hash = {}
     hash[self.env] = {}
     self.data ||= hash
