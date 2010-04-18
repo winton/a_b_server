@@ -28,7 +28,8 @@ describe Variant do
   describe :record do
     
     before(:each) do
-      @ids = Variant.record('env', { 'v' => [ 1 ], 'c' => [ 1 ], 'e' => { 'e1' => true }})
+      @data = { 'v' => [ 1 ], 'c' => [ 1 ], 'e' => { 'e1' => true }}
+      @ids = Variant.record('env', @data)
     end
     
     it "should return visit and conversion ids" do
@@ -50,6 +51,28 @@ describe Variant do
       v.category_id.should == 1
       v.test_id.should == 1
       v.user_id.should == 1
+    end
+    
+    it "should increment a record" do
+      Variant.record('env', @data)
+      v = Variant.last
+      v.name.should == "variant"
+      v.control.should == false
+      v.data.should == {
+        "env" => {
+          :visit_conditions => { "e1" => 2 },
+          :conversion_conditions => { "e1" => 2 },
+          :visits => 2,
+          :conversions => 2
+        }
+      }
+      v.category_id.should == 1
+      v.test_id.should == 1
+      v.user_id.should == 1
+    end
+    
+    it "should do nothing if env does not exist" do
+      Variant.record('does_not_exist', @data).should == [ [], [] ]
     end
   end
 end

@@ -1,8 +1,0 @@
-#!/usr/bin/env ruby
-
-require File.expand_path("#{File.dirname(__FILE__)}/../require")
-Require.daemon!
-
-# this is not really running as a daemon, there are issues with ruby's Daemon and monit
-# this is running in he foreground and there's a bash script along with monit that controls this
-ABDaemon.new(ARGV).run("a_b_daemon")

@@ -3,7 +3,7 @@ Application.class_eval do
     
     def allow_admin?
       user = User.find_by_token params[:token]
-      user if user.admin?
+      user if user && user.admin?
     end
     
     def allow?(test=nil)

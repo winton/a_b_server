@@ -5,11 +5,11 @@ class ABRequest < ActiveRecord::Base
   serialize :conversion_ids
   serialize :visit_ids
   
-  def self.record(identifier, request, visits, conversions)
+  def self.record(agent, identifier, ip, visits, conversions)
     r = ABRequest.find_or_initialize_by_identifier_and_ip(
-      identifier, request.ip
+      identifier, ip
     )
-    r.agent = request.env["HTTP_USER_AGENT"]
+    r.agent = agent
     r.visits += visits.length
     r.conversions += conversions.length
     r.visit_ids ||= []
