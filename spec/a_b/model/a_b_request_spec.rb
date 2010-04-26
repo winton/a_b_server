@@ -8,7 +8,13 @@ describe ABRequest do
     end
     
     it "should create a record" do
-      r = ABRequest.record('user agent', 'identifier', '127.0.0.1', [ 1 ], [ 1 ])
+      r = ABRequest.record(
+        :agent => 'user agent',
+        :identifier => 'identifier',
+        :ip => '127.0.0.1',
+        :visits => [ 1 ],
+        :conversions => [ 1 ]
+      )
       r.agent.should == 'user agent'
       r.found_duplicate.should == false
       r.identifier.should == "identifier"
@@ -20,8 +26,20 @@ describe ABRequest do
     end
     
     it "should record duplicates" do
-      ABRequest.record('user agent', 'identifier', '127.0.0.1', [ 1 ], [ 1 ])
-      r = ABRequest.record('user agent', 'identifier', '127.0.0.1', [ 1 ], [ 1 ])
+      ABRequest.record(
+        :agent => 'user agent',
+        :identifier => 'identifier',
+        :ip => '127.0.0.1',
+        :visits => [ 1 ],
+        :conversions => [ 1 ]
+      )
+      r = ABRequest.record(
+        :agent => 'user agent',
+        :identifier => 'identifier',
+        :ip => '127.0.0.1',
+        :visits => [ 1 ],
+        :conversions => [ 1 ]
+      )
       r.agent.should == 'user agent'
       r.found_duplicate.should == true
       r.identifier.should == "identifier"

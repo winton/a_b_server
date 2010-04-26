@@ -4,12 +4,13 @@ Application.class_eval do
   
   get '/a_b.js' do
     content_type :js
-    ip = IP.create_or_increment(request.ip)
-    if !ip.limited? && params[:j] && params[:i]
-      data = JSON(params[:j])
-      visits, conversions = Variant.record(params[:e], data)
-      ABRequest.record(params[:i], request, visits, conversions)
-    end
+    Delayed::Job.enqueue Job::Increment[
+      :agent => request.env["HTTP_USER_AGENT"],
+      :env => params[:e],
+      :identifier => params[:i],
+      :ip => request.ip,
+      :json => params[:j]
+    ]
     nil
   end
   

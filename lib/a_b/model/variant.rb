@@ -30,7 +30,9 @@ class Variant < ActiveRecord::Base
   
   # Class methods
   
-  def self.record(env, data)
+  def self.record(options)
+    env, data = options[:env], options[:data]
+    
     ids = data['c'] + data['v']
     ids = ids.compact.uniq
     
