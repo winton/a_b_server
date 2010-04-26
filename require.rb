@@ -14,7 +14,7 @@ Require do
   gem :rspec, '=1.3.0'
   gem(:newrelic_rpm, '=2.10.6') { require 'newrelic_rpm' }
   gem(:sinatra, '=0.9.4') { require 'sinatra/base' }
-  gem(:with_pid, '=0.1.0') { require 'with_pid' }
+  gem(:with_pid, '=0.1.2') { require 'with_pid' }
   
   gemspec do
     author 'Winton Welsh'

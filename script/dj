@@ -1,11 +1,14 @@
-require "#{File.dirname(__FILE__)}/require"
+#!/usr/bin/env ruby
+
+require File.expand_path(File.dirname(__FILE__) + "/../require")
 Require.dj!
 
-with_pid(
+tmp = File.expand_path(File.dirname(__FILE__) + '/../') + "/tmp"
+
+puts with_pid(
   :action => ARGV[0], # start or stop
-  :command => File.dirname(__FILE__) + "/runner 'Delayed::Worker.new.start'",
+  :command => File.expand_path(File.dirname(__FILE__)) + "/runner 'Delayed::Worker.new.start'",
   :name => "dj",
-  :pid => "/var/run/dj/dj.pid",
-  :tmp => File.expand_path(File.dirname(__FILE__) + '/../') + "tmp",
-  :user => "deploy"
+  :pid => tmp + "/dj.pid",
+  :tmp => tmp
 )
