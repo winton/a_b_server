@@ -44,6 +44,7 @@ Require do
     require 'lib/a_b/boot/application'
     require 'lib/a_b/boot/sinatra'
     require 'lib/a_b/boot/active_wrapper'
+    require 'lib/a_b/boot/job'
     require 'lib/a_b/boot/model'
   end
   
