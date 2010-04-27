@@ -14,6 +14,11 @@ describe Variant do
       @variant.category.should == @category
     end
     
+    it "should belong to a site" do
+      @variant.site.nil?.should == false
+      @variant.site.should == @site
+    end
+    
     it "should belong to a test" do
       @variant.test.nil?.should == false
       @variant.test.should == @test

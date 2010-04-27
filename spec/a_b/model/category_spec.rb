@@ -9,14 +9,19 @@ describe Category do
   
   describe :associations do
     
-    it "should belong to a user" do
-      @category.user.nil?.should == false
-      @category.user.should == @user
+    it "should belong to a site" do
+      @category.site.nil?.should == false
+      @category.site.should == @site
     end
     
     it "should have many tests" do
       @category.tests.empty?.should == false
       @category.tests.should == [ @test ]
+    end
+    
+    it "should belong to a user" do
+      @category.user.nil?.should == false
+      @category.user.should == @user
     end
     
     it "should destroy tests after destroy" do

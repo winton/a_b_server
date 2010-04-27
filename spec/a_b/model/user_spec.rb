@@ -14,19 +14,14 @@ describe User do
       @user.categories.should == [ @category ]
     end
     
-    it "should destroy categories after destroy" do
-      @user.destroy
-      Category.count(:conditions => { :user_id => @user.id }).should == 0
-    end
-    
     it "should have many envs" do
       @user.envs.empty?.should == false
       @user.envs.should == [ @env ]
     end
     
-    it "should delete all envs after destroy" do
-      @user.destroy
-      Env.count(:conditions => { :user_id => @user.id }).should == 0
+    it "should have many sites" do
+      @user.sites.empty?.should == false
+      @user.sites.should == [ @site ]
     end
     
     it "should have many tests" do

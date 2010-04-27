@@ -4,9 +4,12 @@ class ABPlugin
     include HTTParty
     
     def self.categories
-      return unless Config.url && Config.token
+      return unless Config.site && Config.token && Config.url
       base_uri Config.url
-      get('/categories.json', :query => { :token => Config.token })
+      get('/categories.json', :query => {
+        :site => Config.site,
+        :token => Config.token
+      })
     end
   end
 end

@@ -21,6 +21,7 @@ describe ABPlugin do
       ABPlugin.instance.should == nil
       ABPlugin.categories.should == nil
       
+      ABPlugin::Config.site.should == nil
       ABPlugin::Config.token.should == nil
       ABPlugin::Config.url.should == nil
     end
@@ -45,7 +46,8 @@ describe ABPlugin do
       ABPlugin.cached_at.to_s.should == (Time.now - 9 * 60).to_s
       ABPlugin.instance.should == nil
       ABPlugin.categories.should == nil
-
+      
+      ABPlugin::Config.site.should == nil
       ABPlugin::Config.token.should == nil
       ABPlugin::Config.url.should == nil
     end
@@ -66,6 +68,7 @@ describe ABPlugin do
       ABPlugin.instance.should == nil
       ABPlugin.categories.should == nil
       
+      ABPlugin::Config.site.should == 'site'
       ABPlugin::Config.token.should == 'token'
       ABPlugin::Config.url.should == 'url'
     end
@@ -87,6 +90,7 @@ describe ABPlugin do
       ABPlugin.instance.should == nil
       ABPlugin.categories.should == @categories
       
+      ABPlugin::Config.site.should == nil
       ABPlugin::Config.token.should == nil
       ABPlugin::Config.url.should == nil
     end
@@ -108,6 +112,7 @@ describe ABPlugin do
       ABPlugin.instance.should == nil
       ABPlugin.categories.should == @categories
       
+      ABPlugin::Config.site.should == 'site'
       ABPlugin::Config.token.should == 'token'
       ABPlugin::Config.url.should == 'url'
     end
@@ -125,7 +130,11 @@ describe ABPlugin do
       end
       
       it "should call API.get" do
-        ABPlugin::API.should_receive(:get).with('/categories.json', :query => { :token => 'token' }).and_return(nil)
+        ABPlugin::API.should_receive(:get).with('/categories.json',
+          :query => {
+            :site => 'site',
+            :token => 'token'
+          }).and_return(nil)
         ABPlugin.new
       end
       

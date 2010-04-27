@@ -1,6 +1,7 @@
 class Variant < ActiveRecord::Base
   
   belongs_to :category
+  belongs_to :site
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
   belongs_to :user
   

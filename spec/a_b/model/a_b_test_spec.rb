@@ -14,6 +14,11 @@ describe ABTest do
       @test.category.should == @category
     end
     
+    it "should belong to a site" do
+      @test.site.nil?.should == false
+      @test.site.should == @site
+    end
+    
     it "should belong to a user" do
       @test.user.nil?.should == false
       @test.user.should == @user

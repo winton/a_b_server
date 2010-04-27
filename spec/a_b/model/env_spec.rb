@@ -9,6 +9,11 @@ describe Env do
   
   describe :associations do
     
+    it "should belong to a site" do
+      @env.site.nil?.should == false
+      @env.site.should == @site
+    end
+    
     it "should belong to a user" do
       @env.user.nil?.should == false
       @env.user.should == @user
