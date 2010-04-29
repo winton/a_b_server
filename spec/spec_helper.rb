@@ -16,6 +16,11 @@ def setup_tests
     :user_id => @user.id
   )
   @site.id = 1
+  @collaboration = Collaboration.new(
+    :site_id => @site.id,
+    :user_id => @user.id
+  )
+  @collaboration.id = 1
   @category = Category.new(
     :name => 'category',
     :site_id => @site.id,
@@ -44,6 +49,7 @@ def setup_tests
   )
   @variant.id = 1
   @category.save
+  @collaboration.save
   @env.save
   @site.save
   @test.save
@@ -55,6 +61,7 @@ def teardown_tests
   ABRequest.delete_all
   ABTest.delete_all
   Category.delete_all
+  Collaboration.delete_all
   Env.delete_all
   IP.delete_all
   Site.delete_all

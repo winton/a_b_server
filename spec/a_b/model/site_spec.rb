@@ -24,6 +24,16 @@ describe Site do
       Category.count(:conditions => { :user_id => @site.id }).should == 0
     end
     
+    it "should have many collaborations" do
+      @site.collaborations.empty?.should == false
+      @site.collaborations.should == [ @collaboration ]
+    end
+    
+    it "should have many collaborative users" do
+      @site.collab_users.empty?.should == false
+      @site.collab_users.should == [ @user ]
+    end
+    
     it "should have many envs" do
       @site.envs.empty?.should == false
       @site.envs.should == [ @env ]
