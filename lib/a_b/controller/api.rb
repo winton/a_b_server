@@ -6,6 +6,7 @@ Application.class_eval do
     content_type :js
     Delayed::Job.enqueue Job::Increment[
       :agent => request.env["HTTP_USER_AGENT"],
+      :date => Date.today,
       :env => params[:e],
       :identifier => params[:i],
       :ip => request.ip,

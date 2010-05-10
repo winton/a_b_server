@@ -5,13 +5,13 @@ class IP < ActiveRecord::Base
   
   before_save :set_date
   
-  def self.create_or_increment(ip)
-    existing = self.find_by_ip_and_date(ip, Date.today)
+  def self.create_or_increment(ip, date=Date.today)
+    existing = self.find_by_ip_and_date(ip, date)
     if existing
       existing.increment!(:count)
       existing
     else
-      self.create(:ip => ip, :count => 1)
+      self.create(:count => 1, :date => date, :ip => ip)
     end
   end
   

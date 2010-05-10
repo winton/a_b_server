@@ -2,7 +2,7 @@ module Job
   class Increment < Hash
 
     def perform
-      ip = IP.create_or_increment(self[:ip])
+      ip = IP.create_or_increment(self[:ip], self[:date])
       if !ip.limited? && self[:json] && self[:identifier]
         data = JSON(self[:json])
         visits, conversions = Variant.record(
