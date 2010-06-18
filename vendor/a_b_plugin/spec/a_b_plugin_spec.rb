@@ -88,7 +88,7 @@ describe ABPlugin do
       
       ABPlugin.cached_at.to_s.should == Time.now.to_s
       ABPlugin.instance.should == nil
-      ABPlugin.categories.should == @categories
+      ABPlugin.categories.should == @site['categories']
       
       ABPlugin::Config.site.should == nil
       ABPlugin::Config.token.should == nil
@@ -110,7 +110,7 @@ describe ABPlugin do
       
       ABPlugin.cached_at.to_s.should == Time.now.to_s
       ABPlugin.instance.should == nil
-      ABPlugin.categories.should == @categories
+      ABPlugin.categories.should == @site['categories']
       
       ABPlugin::Config.site.should == 'site'
       ABPlugin::Config.token.should == 'token'
@@ -130,9 +130,11 @@ describe ABPlugin do
       end
       
       it "should call API.get" do
-        ABPlugin::API.should_receive(:get).with('/categories.json',
+        ABPlugin::API.should_receive(:get).with('/site.json',
           :query => {
-            :site => 'site',
+            :include => { :categories => { :tests => :variants } },
+            :only => [ :id, :category_id, :name, :tests, :variants ],
+            :name => 'site',
             :token => 'token'
           }).and_return(nil)
         ABPlugin.new
@@ -144,7 +146,7 @@ describe ABPlugin do
           stub_api_boot
           ABPlugin.new
           yaml = ABPlugin::Yaml.new(ABPlugin::Config.yaml)
-          yaml['categories'].should == @categories
+          yaml['categories'].should == @site['categories']
         ensure
           File.open(ABPlugin::Config.yaml, 'w') do |f|
             f.write(data)

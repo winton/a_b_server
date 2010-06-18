@@ -8,30 +8,32 @@ Spec::Runner.configure do |config|
 end
 
 def setup_variables
-  @categories = [{
-    "name" => "Category",
-    "tests" => [{
-      "id" => 1,
-      "name" => "Test",
-      "variants" => [
-        {
-          "id" => 2,
-          "name" => "v1"
-        },
-        {
-          "id" => 3,
-          "name" => "v2"
-        },
-        {
-          "id" => 4,
-          "name" => "v3"
-        }
-      ]
+  @site = {
+    "categories" => [{
+      "name" => "Category",
+      "tests" => [{
+        "id" => 1,
+        "name" => "Test",
+        "variants" => [
+          {
+            "id" => 2,
+            "name" => "v1"
+          },
+          {
+            "id" => 3,
+            "name" => "v2"
+          },
+          {
+            "id" => 4,
+            "name" => "v3"
+          }
+        ]
+      }]
     }]
-  }]
+  }
 end
 
 def stub_api_boot
   setup_variables
-  ABPlugin::API.stub!(:categories).and_return(@categories)
+  ABPlugin::API.stub!(:site).and_return(@site)
 end

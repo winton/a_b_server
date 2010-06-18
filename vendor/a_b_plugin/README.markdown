@@ -20,14 +20,9 @@ Setup
 Create <code>config/a_b.yml</code>:
 
 <pre>
-development: &base
-  site: My Site
-  token: token_goes_here
-  url: http://ab.mydomain.com
-staging:
-  &lt;&lt;: *base
-production:
-  &lt;&lt;: *base
+site: My Site
+token: token_goes_here
+url: http://ab.mydomain.com
 </pre>
 
 ### Layout

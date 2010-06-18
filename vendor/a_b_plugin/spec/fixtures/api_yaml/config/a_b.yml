@@ -1,4 +1,3 @@
-testing:
-  site: site
-  token: token
-  url: url
+site: site
+token: token
+url: url
