@@ -3,17 +3,16 @@ gem 'require'
 require 'require'
 
 Require do
-  
   gem(:active_wrapper, '=0.2.5') { require 'active_wrapper' }
   gem :cucumber, '=0.6.2'
   gem(:haml, '=2.2.17') { require %w(haml sass) }
   gem(:lilypad, '=0.3.0') { require 'lilypad' }
-  gem(:rake, '=0.8.7') { require 'rake' }
-  gem(:'rack-test', '=0.5.3') { require 'rack/test' }
-  gem :require, '=0.2.2'
-  gem :rspec, '=1.3.0'
   gem(:newrelic_rpm, '=2.10.6') { require 'newrelic_rpm' }
-  gem(:sinatra, '=0.9.4') { require 'sinatra/base' }
+  gem(:'rack-test', '=0.5.3') { require 'rack/test' }
+  gem(:rake, '=0.8.7') { require 'rake' }
+  gem :require, '=0.2.7'
+  gem :rspec, '=1.3.0'
+  gem(:sinatra, '=1.0') { require 'sinatra/base' }
   gem(:with_pid, '=0.1.2') { require 'with_pid' }
   
   gemspec do
