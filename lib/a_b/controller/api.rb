@@ -21,6 +21,22 @@ Application.class_eval do
     @category = Category.new params[:category]
     @category.user_id = @user.id
     if @user && @category.save
+      @category.to_json
+    else
+      false.to_json
+    end
+  end
+  
+  delete '/categories.json' do
+    content_type :json
+    @user = allow?
+    if params[:category] && params[:category][:id]
+      @category = @user.categories.find_by_id(params[:category][:id])
+    elsif params[:category] && params[:category][:name]
+      @category = @user.categories.find_by_name(params[:category][:name])
+    end
+    if @category
+      @category.destroy
       true.to_json
     else
       false.to_json
@@ -108,7 +124,33 @@ Application.class_eval do
     end
   end
   
-  get '/tests/:id/destroy.json' do
+  post '/tests.json' do
+    content_type :json
+    @user = allow?
+    category = params[:test].delete('category')
+    variants = params[:test].delete('variants')
+    category = @user.categories.find_by_name(category)
+    ids = {
+      :category_id => category.id,
+      :site_id => category.site.id,
+      :user_id => @user.id
+    }
+    @test = ABTest.new params[:test].merge(ids)
+    if @user && @test.save
+      variants.each_with_index do |v, i|
+        next if v.empty?
+        @test.variants.create({
+          :name => v,
+          :control => i == 0
+        }.merge(ids))
+      end
+      @test.to_json
+    else
+      false.to_json
+    end
+  end
+  
+  delete '/tests.json' do
     content_type :json
     @test = ABTest.find params[:id]
     if @test && allow?(@test)
@@ -119,23 +161,11 @@ Application.class_eval do
     end
   end
   
-  post '/tests/:id/update.json' do
+  put '/tests.json' do
     content_type :json
     @test = ABTest.find params[:id]
     if @test && allow?(@test)
       @test.update_attributes params[:test]
-      true.to_json
-    else
-      false.to_json
-    end
-  end
-  
-  post '/tests/create.json' do
-    content_type :json
-    @user = allow?
-    @test = ABTest.new params[:test]
-    @test.user_id = @user.id
-    if @user && @test.save
       true.to_json
     else
       false.to_json

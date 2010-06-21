@@ -52,7 +52,6 @@ Require do
   lib do
     gem :active_wrapper
     gem :haml
-    gem :rack, "1.0.1"
     gem :sinatra
     gem :newrelic_rpm
     load_path 'vendor/a_b_plugin/lib'
