@@ -49,14 +49,17 @@ class ABPlugin
     def write_yaml
       yaml = Yaml.new(Config.yaml)
       yaml.configure_api
-      site = API.site(
-        :include => { :categories => { :tests => :variants } },
-        :only => [ :id, :category_id, :name, :tests, :variants ]
-      )
-      if site
-        yaml.data['categories'] = site['categories']
-        File.open(Config.yaml, 'w') do |f|
-          f.write(yaml.data.to_yaml)
+      if Config.site
+        site = API.sites(
+          :include => { :categories => { :tests => :variants } },
+          :only => [ :id, :category_id, :name, :tests, :variants ],
+          :name => Config.site
+        )
+        if site
+          yaml.data['categories'] = site['categories']
+          File.open(Config.yaml, 'w') do |f|
+            f.write(yaml.data.to_yaml)
+          end
         end
       end
     end
