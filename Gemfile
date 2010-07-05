@@ -5,7 +5,9 @@ v = {
   :bundler => '=1.0.0.beta.2',
   :cucumber => '=0.6.2',
   :haml => '=2.2.17',
+  :httparty => '=0.5.2',
   :lilypad => '=0.3.0',
+  :mysql => '=2.8.1',
   :newrelic_rpm => '=2.10.6',
   :rack_test => '=0.5.3',
   :rake => '=0.8.7',
@@ -38,8 +40,10 @@ group :gemspec_dev do
 end
 
 group :lib do
+  gem 'mysql', v[:mysql]
   gem 'active_wrapper', v[:active_wrapper], :require => %w(active_wrapper)
   gem 'haml', v[:haml], :require => %w(haml sass)
+  gem 'httparty', v[:httparty], :require => %w(httparty)
   gem 'lilypad', v[:lilypad], :require => %w(lilypad)
   gem 'newrelic_rpm', v[:newrelic_rpm], :require => %w(newrelic_rpm)
   gem 'rack-flash', v[:rack_flash], :require => %w(rack-flash)

@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require File.dirname(__FILE__) + '/spec_helper'
 
 describe ABPlugin do
   
@@ -130,13 +130,14 @@ describe ABPlugin do
       end
       
       it "should call API.get" do
-        ABPlugin::API.should_receive(:get).with('/site.json',
+        ABPlugin::API.should_receive(:get).with('/sites.json',
           :query => {
-            :include => { :categories => { :tests => :variants } },
             :only => [ :id, :category_id, :name, :tests, :variants ],
-            :name => 'site',
-            :token => 'token'
-          }).and_return(nil)
+            :site => { :name => "site" },
+            :include => { :categories => { :tests => :variants }
+          },
+          :token=>"token"
+        }).and_return(nil)
         ABPlugin.new
       end
       

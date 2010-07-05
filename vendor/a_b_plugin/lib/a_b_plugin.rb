@@ -1,5 +1,20 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../require")
-Require.lib!
+require 'rubygems'
+require 'bundler'
+require 'yaml'
+
+Bundler.require(:lib)
+
+$:.unshift File.dirname(__FILE__) + '/a_b_plugin'
+
+require 'version'
+
+require 'api'
+require 'config'
+require 'cookies'
+require 'datastore'
+require 'helper'
+require 'test'
+require File.dirname(__FILE__) + '/a_b_plugin/yaml'
 
 class ABPlugin
   
@@ -70,5 +85,5 @@ def ABPlugin(&block)
   ABPlugin::Config.class_eval &block
 end
 
-require File.dirname(__FILE__) + "/a_b_plugin/adapters/rails" if defined?(Rails)
-require File.dirname(__FILE__) + "/a_b_plugin/adapters/sinatra" if defined?(Sinatra)
+require 'adapters/rails' if defined?(Rails)
+require 'adapters/sinatra' if defined?(Sinatra)

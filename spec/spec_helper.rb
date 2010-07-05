@@ -3,6 +3,7 @@ require 'bundler'
 
 Bundler.require(:spec)
 
+ENV['RACK_ENV'] = 'test'
 SPEC = File.dirname(__FILE__)
 
 require "#{Bundler.root}/lib/a_b"
