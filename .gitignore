@@ -1,7 +1,6 @@
 .DS_Store
 .sass-cache
 *.gem
-*.gemspec
 *.log
 config/cloud_info.yml
 config/database.yml

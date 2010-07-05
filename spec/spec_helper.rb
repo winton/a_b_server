@@ -1,7 +1,21 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../require")
-Require.spec_helper!
+require 'rubygems'
+require 'bundler'
+
+Bundler.require(:spec)
+
+SPEC = File.dirname(__FILE__)
+
+require "#{Bundler.root}/lib/a_b"
+require 'pp'
 
 Spec::Runner.configure do |config|
+end
+
+# For use with rspec textmate bundle
+def debug(object)
+  puts "<pre>"
+  puts object.pretty_inspect.gsub('<', '&lt;').gsub('>', '&gt;')
+  puts "</pre>"
 end
 
 def setup_tests

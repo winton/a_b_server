@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
-require File.expand_path(File.dirname(__FILE__) + "/../require")
-Require.dj!
+require 'rubygems'
+require 'bundler'
+
+Bundler.require(:dj)
 
 tmp = File.expand_path(File.dirname(__FILE__) + '/../') + "/tmp"
 
