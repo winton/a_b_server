@@ -4,6 +4,8 @@ require 'yaml'
 
 Bundler.require(:lib)
 
+require 'httparty'
+
 $:.unshift File.dirname(__FILE__) + '/a_b_plugin'
 
 require 'version'

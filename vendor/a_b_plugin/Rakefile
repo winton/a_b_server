@@ -5,7 +5,7 @@ Bundler.require(:rake)
 
 def gemspec
   @gemspec ||= begin
-    file = File.expand_path('../gem_template.gemspec', __FILE__)
+    file = File.expand_path('../a_b_plugin.gemspec', __FILE__)
     eval(File.read(file), binding, file)
   end
 end
