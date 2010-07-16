@@ -84,6 +84,7 @@ Application.class_eval do
       end
     end
     if @sites
+      $log.info(symbolize(params[:include]));
       @sites.to_json(
         :include => symbolize(params[:include]),
         :only => symbolize(params[:only])

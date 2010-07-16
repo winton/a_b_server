@@ -6,6 +6,7 @@ v = {
   :cucumber => '=0.6.2',
   :haml => '=2.2.17',
   :httparty => '=0.5.2',
+  :json => '=1.4.3',
   :lilypad => '=0.3.0',
   :mysql => '=2.8.1',
   :newrelic_rpm => '=2.10.6',
@@ -29,7 +30,10 @@ group :gemspec do
   gem 'active_wrapper', v[:active_wrapper], :require => %w(active_wrapper)
   gem 'bundler', v[:bundler]
   gem 'haml', v[:haml]
+  gem 'json', v[:json]
   gem 'lilypad', v[:lilypad]
+  gem 'mysql', v[:mysql]
+  gem 'newrelic_rpm', v[:newrelic_rpm]
   gem 'sinatra', v[:sinatra]
 end
 
@@ -40,6 +44,7 @@ group :gemspec_dev do
 end
 
 group :lib do
+  gem 'json', v[:json]
   gem 'mysql', v[:mysql]
   gem 'active_wrapper', v[:active_wrapper], :require => %w(active_wrapper)
   gem 'haml', v[:haml], :require => %w(haml sass)

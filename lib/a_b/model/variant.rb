@@ -122,12 +122,33 @@ class Variant < ActiveRecord::Base
     self.conversion_conditions = self.env_data[:conversion_conditions] || {}
   end
   
+  def for_dashboard
+    (self.data || {}).keys.inject({}) do |hash, key|
+      env = key
+      hash[key] = {
+        :confidence => pretty_confidence,
+        :conversion_rate => pretty_conversion_rate,
+        :suggested_visits => pretty_suggested_visits,
+        :visits => pretty_visits
+      }
+      hash
+    end
+  end
+  
   def pretty_confidence
     pretty confidence
   end
   
   def pretty_conversion_rate
     pretty conversion_rate
+  end
+  
+  def pretty_suggested_visits
+    commafy suggested_visits
+  end
+  
+  def pretty_visits
+    commafy visits
   end
   
   def reset!
@@ -152,14 +173,6 @@ class Variant < ActiveRecord::Base
     else
       visits > sample_size(self.test.control)
     end
-  end
-  
-  def suggested_visits_with_commas
-    commafy suggested_visits
-  end
-  
-  def visits_with_commas
-    commafy visits
   end
   
   private

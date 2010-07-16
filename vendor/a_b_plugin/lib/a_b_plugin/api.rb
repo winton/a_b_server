@@ -57,7 +57,7 @@ class ABPlugin
       base_uri Config.url
       delete('/categories.json', :query => compress(
         :token => attributes.delete(:token) || Config.token,
-        :categories => attributes
+        :category => attributes
       ))
     end
     
