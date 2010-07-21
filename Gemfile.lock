@@ -6,10 +6,9 @@ GEM
     actionpack (2.3.5)
       activesupport (= 2.3.5)
       rack (~> 1.0.0)
-    active_wrapper (0.3.1)
+    active_wrapper (0.3.2)
       actionmailer (= 2.3.5)
       activerecord (= 2.3.5)
-      bundler (= 1.0.0.beta.5)
       mysql
     activerecord (2.3.5)
       activesupport (= 2.3.5)
@@ -52,10 +51,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_wrapper (= 0.3.1)
-  active_wrapper (= 0.3.1)
-  active_wrapper (= 0.3.1)
-  active_wrapper (= 0.3.1)
+  active_wrapper (= 0.3.2)
+  active_wrapper (= 0.3.2)
+  active_wrapper (= 0.3.2)
+  active_wrapper (= 0.3.2)
   bundler (= 1.0.0.beta.5)
   cucumber (= 0.6.2)
   haml (= 2.2.17)
