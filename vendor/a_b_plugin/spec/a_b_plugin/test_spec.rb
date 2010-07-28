@@ -4,7 +4,7 @@ describe ABPlugin::Test do
   
   before(:each) do
     ABPlugin do
-      root "#{$root}/spec/fixtures/tests_yaml"
+      root SPEC + '/fixtures/tests_yaml'
     end
   end
   
