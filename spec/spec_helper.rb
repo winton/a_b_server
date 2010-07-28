@@ -1,7 +1,7 @@
 $root = File.expand_path('../../', __FILE__)
-require "#{$root}/lib/gem_template/gems"
+require "#{$root}/lib/a_b/gems"
 
-GemTemplate::Gems.require(:spec)
+AB::Gems.require(:spec)
 
 require 'rack/test'
 

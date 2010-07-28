@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/a_b/gems'
 
-GemTemplate::Gems.require(:lib)
+AB::Gems.require(:lib)
 
 require 'json'
 

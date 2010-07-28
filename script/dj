@@ -2,7 +2,7 @@
 
 require File.expand_path('../../lib/a_b/gems', __FILE__)
 
-GemTemplate::Gems.require(:dj)
+AB::Gems.require(:dj)
 
 require 'with_pid'
 
