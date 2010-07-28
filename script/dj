@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'bundler'
+require File.expand_path('../../lib/a_b/gems', __FILE__)
 
-Bundler.require(:dj)
+GemTemplate::Gems.require(:dj)
 
-tmp = File.expand_path(File.dirname(__FILE__) + '/../') + "/tmp"
+require 'with_pid'
+
+tmp = File.expand_path('../../tmp', __FILE__)
 
 puts with_pid(
   :action => ARGV[0], # start or stop

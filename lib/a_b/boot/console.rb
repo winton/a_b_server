@@ -1,14 +1,11 @@
-require 'rubygems'
-require 'bundler'
+require File.expand_path('../../gems', __FILE__)
 
-Bundler.require(:console)
+GemTemplate::Gems.require(:console)
 
 $:.unshift File.dirname(__FILE__) + '/../'
-$:.unshift File.expand_path(File.dirname(__FILE__) + '../../../../vendor/a_b_plugin/lib')
-$:.unshift File.expand_path(File.dirname(__FILE__) + '../../../../vendor/delayed_job/lib')
 
-require 'a_b_plugin'
-require 'delayed_job'
+require 'boot/a_b_plugin'
+require 'boot/delayed_job'
 
 require 'boot/application'
 require 'boot/sinatra'

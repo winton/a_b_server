@@ -1,12 +1,13 @@
-require 'rubygems'
-require 'bundler'
+$root = File.expand_path('../../', __FILE__)
+require "#{$root}/lib/gem_template/gems"
 
-Bundler.require(:spec)
+GemTemplate::Gems.require(:spec)
+
+require 'rack/test'
 
 ENV['RACK_ENV'] = 'test'
-SPEC = File.dirname(__FILE__)
 
-require "#{Bundler.root}/lib/a_b"
+require "#{$root}/lib/a_b"
 require 'pp'
 
 Spec::Runner.configure do |config|
