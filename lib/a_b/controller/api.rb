@@ -145,7 +145,10 @@ Application.class_eval do
           :control => i == 0
         }.merge(ids))
       end
-      @test.to_json
+      @test.to_json(
+        :include => symbolize(params[:include]),
+        :only => symbolize(params[:only])
+      )
     else
       false.to_json
     end
