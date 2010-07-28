@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/lib/gem_template/gems'
+require File.dirname(__FILE__) + '/lib/a_b/gems'
 
-GemTemplate::Gems.require(:rake)
+AB::Gems.require(:rake)
 
 require 'rake'
 require 'active_wrapper/tasks'

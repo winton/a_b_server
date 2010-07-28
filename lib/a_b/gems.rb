@@ -1,8 +1,8 @@
-unless defined?(GemTemplate::Gems)
+unless defined?(AB::Gems)
   
   require 'rubygems'
   
-  module GemTemplate
+  module AB
     class Gems
     
       VERSIONS = {
