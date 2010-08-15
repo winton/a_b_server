@@ -2,9 +2,8 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
+require 'a_b_plugin/gems'
 require 'a_b_plugin/version'
-require 'rubygems'
-require 'bundler'
 
 Gem::Specification.new do |s|
   s.name = "a_b_plugin"
@@ -16,12 +15,12 @@ Gem::Specification.new do |s|
   s.summary = "Talk to a_b from your Rails or Sinatra app"
   s.description = "Provides the a_b method to your application controller and helper"
 
-  Bundler.definition.dependencies.each do |dep|
-    if dep.groups.include?(:gemspec)
-      s.add_dependency dep.name, dep.requirement
-    elsif dep.groups.include?(:gemspec_dev)
-      s.add_development_dependency dep.name, dep.requirement
-    end
+  ABPlugin::Gems::TYPES[:gemspec].each do |g|
+    s.add_dependency g.to_s, ABPlugin::Gems::VERSIONS[g]
+  end
+  
+  ABPlugin::Gems::TYPES[:gemspec_dev].each do |g|
+    s.add_development_dependency g.to_s, ABPlugin::Gems::VERSIONS[g]
   end
 
   s.files = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.md)

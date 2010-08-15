@@ -1,3 +1,5 @@
+require 'sinatra/base'
+
 class SinatraApp < Sinatra::Base
   
   get "/controller/respond_to/:method" do

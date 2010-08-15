@@ -36,7 +36,7 @@ describe ABPlugin do
     
     before(:each) do
       ABPlugin do
-        root SPEC + '/does_not_exist'
+        root "#{$root}/spec/does_not_exist"
       end
     end
   
@@ -57,7 +57,7 @@ describe ABPlugin do
     
     before(:each) do
       ABPlugin do
-        root SPEC + '/fixtures/api_yaml'
+        root "#{$root}/spec/fixtures/api_yaml"
       end
     end
   
@@ -79,7 +79,7 @@ describe ABPlugin do
     before(:each) do
       setup_variables
       ABPlugin do
-        root SPEC + '/fixtures/tests_yaml'
+        root "#{$root}/spec/fixtures/tests_yaml"
       end
     end
     
@@ -101,7 +101,7 @@ describe ABPlugin do
     before(:each) do
       setup_variables
       ABPlugin do
-        root SPEC + '/fixtures/both_yaml'
+        root "#{$root}/spec/fixtures/both_yaml"
       end
     end
     
@@ -125,7 +125,7 @@ describe ABPlugin do
         setup_variables
         ABPlugin do
           binary true
-          root SPEC + '/fixtures/api_yaml'
+          root "#{$root}/spec/fixtures/api_yaml"
         end
       end
       

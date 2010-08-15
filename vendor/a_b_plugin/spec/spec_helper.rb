@@ -1,19 +1,20 @@
-require 'rubygems'
-require 'bundler'
+$root = File.expand_path('../../', __FILE__)
+$testing = true
 
-Bundler.require(:spec)
+require "#{$root}/lib/a_b_plugin/gems"
 
-SPEC = File.dirname(__FILE__)
+ABPlugin::Gems.require(:spec)
 
-require SPEC + '/fixtures/rails/config/environment'
-require SPEC + '/fixtures/sinatra'
-
-require "#{Bundler.root}/lib/a_b_plugin"
+require 'json'
+require 'rack/test'
 require 'pp'
 
-require "#{Bundler.root}/rails/init"
+require "#{$root}/spec/fixtures/rails/config/environment"
+require "#{$root}/spec/fixtures/sinatra"
 
-$testing = true
+require "#{$root}/lib/a_b_plugin"
+
+require "#{$root}/rails/init"
 
 Spec::Runner.configure do |config|
   include ABPlugin::Helper

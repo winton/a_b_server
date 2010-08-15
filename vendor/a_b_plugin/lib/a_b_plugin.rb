@@ -1,8 +1,6 @@
-require 'rubygems'
-require 'bundler'
-require 'yaml'
+require File.dirname(__FILE__) + '/a_b_plugin/gems'
 
-Bundler.require(:lib)
+ABPlugin::Gems.require(:lib)
 
 require 'httparty'
 
