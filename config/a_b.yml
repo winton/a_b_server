@@ -1,5 +1,5 @@
-development:
-  url: http://127.0.0.1:9393
+url: http://winton-ubuntu.local:9395
+site: test
 categories:
   - name: Category
     tests: 

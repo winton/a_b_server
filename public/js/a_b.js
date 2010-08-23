@@ -49,40 +49,39 @@ window.A_B = new function() {
 		this.get = cookie;
 		this.set = cookie;
 		
-		function cookie(name, value) {
-			if (!name) return null;
+		function cookie(key, value, options) {
+
+			options = options || {};
+
+			if (!key)
+				return null;
+
 			if (typeof value != 'undefined') {
+
 				if (value === null)
-					document.cookie = [
-						name, '=', '; expires=-1; path=/'
-					].join('');
-				else
-					document.cookie = [
-						name, '=', encodeURIComponent(value), '; path=/'
-					].join('');
-			} else {
-				var cookie_value = null;
-				if (document.cookie && document.cookie != '') {
-					var cookies = document.cookie.split(';');
-					for (var i = 0; i < cookies.length; i++) {
-						var cookie = trim(cookies[i]);
-						if (cookie.substring(0, name.length + 1) == (name + '=')) {
-							cookie_value = decodeURIComponent(
-								cookie.substring(name.length + 1)
-							);
-							break;
-						}
-					}
+					options.expires = -1;
+
+				if (typeof options.expires === 'number') {
+					var days = options.expires, t = options.expires = new Date();
+					t.setDate(t.getDate() + days);
 				}
-				return cookie_value;
-			}
-			return null;
-		}
-		
-		function trim(text) {
-			return (text || "")
-				.replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, "");
-		}
+
+				document.cookie = [
+					key + '=' + encodeURIComponent(value),
+					'path=' + (options.path ? options.path : '/'),
+					options.domain ? 'domain=' + options.domain : '',
+					options.expires ? 'expires=' + options.expires.toUTCString() : '',
+					options.secure ? 'secure' : ''
+				].join('; ');
+
+			} else
+				options = value || options;
+
+		  var result = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)')
+				.exec(document.cookie);
+
+		  return result ? decodeURIComponent(result[1]) : null;
+		};
 	};
 	
 	Datastore = function() {
