@@ -1,6 +1,3 @@
-a_b_plugin:
-  repo: git@github.com:winton/a_b_plugin.git
-  path: vendor
 delayed_job:
   repo: git://github.com/collectiveidea/delayed_job.git
   path: vendor
