@@ -76,12 +76,15 @@ Application.class_eval do
     @user = allow?
     if @user
       if params[:site] && params[:site][:id]
-        @sites = @user.sites.find_by_id(params[:site][:id])
+        @sites = Site.find_by_id(params[:site][:id])
       elsif params[:site] && params[:site][:name]
-        @sites = @user.sites.find_by_name(params[:site][:name])
+        @sites = Site.find_by_name(params[:site][:name])
       else
         @sites = @user.sites
       end
+    end
+    if @sites.respond_to?(:user_id) && !@user.admin? && @sites.user_id != @user.id
+      @sites = nil
     end
     if @sites
       @sites.to_json(

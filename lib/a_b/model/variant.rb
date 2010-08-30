@@ -124,7 +124,7 @@ class Variant < ActiveRecord::Base
   
   def for_dashboard
     (self.data || {}).keys.inject({}) do |hash, key|
-      env = key
+      self.env = key
       hash[key] = {
         :confidence => pretty_confidence,
         :conversion_rate => pretty_conversion_rate,
