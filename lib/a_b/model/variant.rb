@@ -7,7 +7,7 @@ class Variant < ActiveRecord::Base
   
   serialize :data
   
-  attr_reader :env
+  attr_reader :condition, :env
   attr_accessor :conversions, :visits
   attr_accessor :visit_conditions, :conversion_conditions
   
@@ -86,8 +86,19 @@ class Variant < ActiveRecord::Base
   
   # Instance methods
   
+  def condition=(c)
+    @condition = c
+    if @condition
+      self.conversions = self.env_data[:conversion_conditions][c] || 0
+      self.visits = self.env_data[:visit_conditions][c] || 0
+      self.visit_conditions = {}
+      self.conversion_conditions = {}
+    end
+  end
+  
   def confidence
     self.test.control.env = @env
+    self.test.control.condition = @condition
     cumulative_normal_distribution(z_score(self.test.control))
   end
   
@@ -125,8 +136,18 @@ class Variant < ActiveRecord::Base
         :suggested_visits => pretty_suggested_visits,
         :visits => pretty_visits
       }
-      # condition_keys = (self.visit_conditions.keys + self.conversion_conditions).keys
-      # hash[:conditions] = 
+      condition_keys = (self.visit_conditions.keys + self.conversion_conditions.keys).uniq
+      hash[key][:conditions] = condition_keys.inject({}) do |h, k|
+        self.condition = k
+        h[k] = {
+          :confidence => pretty_confidence,
+          :conversion_rate => pretty_conversion_rate,
+          :conversions => pretty_conversions,
+          :suggested_visits => pretty_suggested_visits,
+          :visits => pretty_visits
+        }
+        h
+      end
       hash
     end
   end
@@ -160,6 +181,7 @@ class Variant < ActiveRecord::Base
   
   def suggested_visits
     self.test.control.env = @env
+    self.test.control.condition = @condition
     size = sample_size(self.test.control)
     if conversion_rate == 0 || size < 100
       100
