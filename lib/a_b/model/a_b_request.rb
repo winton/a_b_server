@@ -14,6 +14,7 @@ class ABRequest < ActiveRecord::Base
       options[:ip]
     )
     r.agent = options[:agent]
+    r.referer = options[:referer]
     r.visits += visits.length
     r.conversions += conversions.length
     r.visit_ids ||= []

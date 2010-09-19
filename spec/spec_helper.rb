@@ -28,7 +28,7 @@ def setup_tests
   )
   @user.id = 1
   @site = Site.new(
-    :name => 'Site',
+    :name => 'site.com',
     :user_id => @user.id
   )
   @site.id = 1

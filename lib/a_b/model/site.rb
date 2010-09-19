@@ -8,4 +8,13 @@ class Site < ActiveRecord::Base
   has_many :envs, :dependent => :delete_all
   has_many :tests, :class_name => 'ABTest'
   has_many :variants
+  
+  def referer_match?(referer)
+    begin
+      referer = referer.match(/:\/\/([^:\/]+)/)[1]
+      referer[(-1*name.length)..-1] == name
+    rescue Exception => e
+      false
+    end
+  end
 end

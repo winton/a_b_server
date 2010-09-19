@@ -10,7 +10,8 @@ Application.class_eval do
       :env => params[:e],
       :identifier => params[:i],
       :ip => request.ip,
-      :json => params[:j]
+      :json => params[:j],
+      :referer => request.env["HTTP_REFERER"]
     ]
     nil
   end
@@ -158,7 +159,7 @@ Application.class_eval do
   
   delete '/tests.json' do
     content_type :json
-    @test = ABTest.find params[:id]
+    @test = ABTest.find params[:test][:id]
     if @test && allow?(@test)
       @test.destroy
       true.to_json

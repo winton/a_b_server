@@ -5,6 +5,7 @@ class Requests < ActiveRecord::Migration
       t.boolean :found_duplicate
       t.string :identifier
       t.string :ip
+      t.string :referer
       t.integer :visits, :default => 0
       t.integer :conversions, :default => 0
       t.string :visit_ids, :limit => 1024

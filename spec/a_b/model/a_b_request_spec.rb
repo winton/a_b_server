@@ -12,6 +12,7 @@ describe ABRequest do
         :agent => 'user agent',
         :identifier => 'identifier',
         :ip => '127.0.0.1',
+        :referer => 'http://site.com',
         :visits => [ 1 ],
         :conversions => [ 1 ]
       )
@@ -19,6 +20,7 @@ describe ABRequest do
       r.found_duplicate.should == false
       r.identifier.should == "identifier"
       r.ip.should == "127.0.0.1"
+      r.referer.should == "http://site.com"
       r.visits.should == 1
       r.conversions.should == 1
       r.visit_ids.should == [ 1 ]
@@ -30,6 +32,7 @@ describe ABRequest do
         :agent => 'user agent',
         :identifier => 'identifier',
         :ip => '127.0.0.1',
+        :referer => 'http://site.com',
         :visits => [ 1 ],
         :conversions => [ 1 ]
       )
@@ -37,6 +40,7 @@ describe ABRequest do
         :agent => 'user agent',
         :identifier => 'identifier',
         :ip => '127.0.0.1',
+        :referer => 'http://site.com',
         :visits => [ 1 ],
         :conversions => [ 1 ]
       )
@@ -44,6 +48,7 @@ describe ABRequest do
       r.found_duplicate.should == true
       r.identifier.should == "identifier"
       r.ip.should == "127.0.0.1"
+      r.referer.should == "http://site.com"
       r.visits.should == 2
       r.conversions.should == 2
       r.visit_ids.should == [ 1, 1 ]

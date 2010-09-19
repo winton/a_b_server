@@ -37,7 +37,7 @@ class Variant < ActiveRecord::Base
     ids = data['c'] + data['v']
     ids = ids.compact.uniq
     
-    variants = Variant.find_all_by_id(ids)
+    variants = Variant.find_all_by_id(ids, :include => :site)
     envs = Env.names_by_user_id(variants[0].user_id)
     return [ [], [] ] if variants.empty? || !envs.include?(env)
     
@@ -45,6 +45,7 @@ class Variant < ActiveRecord::Base
     convert = []
     
     variants.each do |variant|
+      next unless variant.site.referer_match?(options[:referer])
       variant.env = env
       visit.push(variant) if data['v'].include?(variant.id)
       convert.push(variant) if data['c'].include?(variant.id)
@@ -86,12 +87,8 @@ class Variant < ActiveRecord::Base
   # Instance methods
   
   def confidence
+    self.test.control.env = @env
     cumulative_normal_distribution(z_score(self.test.control))
-  end
-  
-  def confidence_ok?
-    c = cumulative_normal_distribution(z_score(self.test.control))
-    c != 'n/a' && c >= 0.95
   end
   
   def conversion_rate
@@ -100,10 +97,6 @@ class Variant < ActiveRecord::Base
     else
       0.0
     end
-  end
-  
-  def conversion_rate_ok?
-    conversion_rate > self.test.control.conversion_rate
   end
   
   def env_data
@@ -128,19 +121,26 @@ class Variant < ActiveRecord::Base
       hash[key] = {
         :confidence => pretty_confidence,
         :conversion_rate => pretty_conversion_rate,
+        :conversions => pretty_conversions,
         :suggested_visits => pretty_suggested_visits,
         :visits => pretty_visits
       }
+      # condition_keys = (self.visit_conditions.keys + self.conversion_conditions).keys
+      # hash[:conditions] = 
       hash
     end
   end
   
   def pretty_confidence
-    pretty confidence
+    pretty confidence, true
   end
   
   def pretty_conversion_rate
-    pretty conversion_rate
+    pretty conversion_rate, true
+  end
+  
+  def pretty_conversions
+    commafy conversions
   end
   
   def pretty_suggested_visits
@@ -159,19 +159,12 @@ class Variant < ActiveRecord::Base
   end
   
   def suggested_visits
+    self.test.control.env = @env
     size = sample_size(self.test.control)
     if conversion_rate == 0 || size < 100
       100
     else
       commafy size
-    end
-  end
-  
-  def suggested_visits_ok?
-    if suggested_visits == 100
-      false
-    else
-      visits > sample_size(self.test.control)
     end
   end
   
@@ -195,28 +188,28 @@ class Variant < ActiveRecord::Base
 
       if z >= 0.0
         t = 1.0 / (1.0 + p * z)
-        (1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
+        d = (1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
       else
         t = 1.0 / (1.0 - p * z)
-        (c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
+        d = (c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
       end
     rescue Exception => e
-      'n/a'
+      0.0
     end
+    d.nan? ? 0.0 : d
   end
   
-  def pretty(num)
+  def pretty(num, pct=false)
     if num.respond_to?(:strip)
       num
     elsif num.nan?
       'n/a'
+    elsif pct
+      (num * 100).round.to_s + '%'
+    elsif num == 0 || num == 0.0
+      '0'
     else
-      str = sprintf("%.3f", num)[1..-1]
-      if str[0..1] == '.0' && num > 0.9
-        sprintf("%.2f", num)
-      else
-        str
-      end
+      sprintf("%.3f", num)
     end
   end
   

@@ -9,7 +9,7 @@ class ABTest < ActiveRecord::Base
   has_many :variants, :foreign_key => 'test_id', :dependent => :destroy
   
   def control
-    self.variants.find_by_control true
+    @control ||= self.variants.find_by_control true
   end
   
   def sorted_variants
