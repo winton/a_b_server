@@ -137,6 +137,7 @@ class Variant < ActiveRecord::Base
         :visits => pretty_visits
       }
       condition_keys = (self.visit_conditions.keys + self.conversion_conditions.keys).uniq
+      hash[key][:condition_keys] = condition_keys
       hash[key][:conditions] = condition_keys.inject({}) do |h, k|
         self.condition = k
         h[k] = {
