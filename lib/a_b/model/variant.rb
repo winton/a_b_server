@@ -34,7 +34,7 @@ class Variant < ActiveRecord::Base
   def self.record(options)
     env, data = options[:env], options[:data]
     
-    ids = data['c'] + data['v']
+    ids = (data['c'] || []) + (data['v'] || [])
     ids = ids.compact.uniq
     
     variants = Variant.find_all_by_id(ids, :include => :site)
