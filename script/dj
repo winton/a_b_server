@@ -9,7 +9,7 @@ require 'with_pid'
 
 puts with_pid(
   :action => ARGV[0], # start or stop
-  :command => File.expand_path(File.dirname(__FILE__)) + "/runner -e #{ARGV[2]} 'Delayed::Worker.new.start'",
+  :command => File.expand_path(File.dirname(__FILE__)) + "/runner 'Delayed::Worker.new.start'",
   :name => "dj",
   :pid => "/tmp/delayed_job.a_b.#{ARGV[1]}.pid",
   :tmp => "/tmp"
