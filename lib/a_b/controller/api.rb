@@ -128,6 +128,21 @@ Application.class_eval do
     end
   end
   
+  put '/sites.json' do
+    content_type :json
+    @user = allow?
+    @site = Site.find_by_id params[:site][:id]
+    if @user && @site && (@site.user_id == @user.id || allow_admin?)
+      @site.update_attributes params[:site]
+      @site.to_json(
+        :include => symbolize(params[:include]),
+        :only => symbolize(params[:only])
+      )
+    else
+      false.to_json
+    end
+  end
+  
   post '/tests.json' do
     content_type :json
     @user = allow?
@@ -157,22 +172,55 @@ Application.class_eval do
     end
   end
   
-  delete '/tests.json' do
+  put '/tests.json' do
     content_type :json
-    @test = ABTest.find params[:test][:id]
-    if @test && allow?(@test)
-      @test.destroy
-      true.to_json
+    @user = allow?
+    if @user
+      @test = @user.tests.find_by_id params[:test][:id]
+      if @test
+        @test.variants.each_with_index do |variant, i|
+          old_variant = params[:test][:old_variants][variant.id.to_s]
+          if old_variant && old_variant.empty?
+            if variant.control?
+              if @test.variants[i+1]
+                @test.variants[i+1].update_attribute :control, true
+                variant.destroy
+              end
+            else
+              variant.destroy
+            end
+          elsif old_variant && old_variant != variant.name
+            variant.update_attribute :name, old_variant
+          end
+        end
+        params[:test][:variants].each do |variant|
+          next if variant.empty?
+          @test.variants.create({
+            :name => variant,
+            :control => false,
+            :category_id => @test.category_id,
+            :site_id => @test.site_id,
+            :test_id => @test.id,
+            :user_id => @user.id
+          })
+        end
+        @test.reload.to_json(
+          :include => symbolize(params[:include]),
+          :only => symbolize(params[:only])
+        )
+      else
+        false.to_json
+      end
     else
       false.to_json
     end
   end
   
-  put '/tests.json' do
+  delete '/tests.json' do
     content_type :json
-    @test = ABTest.find params[:id]
+    @test = ABTest.find params[:test][:id]
     if @test && allow?(@test)
-      @test.update_attributes params[:test]
+      @test.destroy
       true.to_json
     else
       false.to_json
