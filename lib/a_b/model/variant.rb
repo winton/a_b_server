@@ -45,7 +45,9 @@ class Variant < ActiveRecord::Base
     convert = []
     
     variants.each do |variant|
-      next unless variant.site.referer_match?(options[:referer])
+      if env != 'development' && !variant.site.referer_match?(options[:referer])
+        next
+      end
       variant.env = env
       visit.push(variant) if data['v'].include?(variant.id)
       convert.push(variant) if data['c'].include?(variant.id)
