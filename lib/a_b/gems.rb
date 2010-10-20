@@ -16,7 +16,7 @@ unless defined?(AB::Gems)
         :rake => '=0.8.7',
         :rspec => '=1.3.0',
         :sinatra => '=1.0',
-        :with_pid => '=0.1.2'
+        :with_pid => '=0.1.3'
       }
     
       TYPES = {
