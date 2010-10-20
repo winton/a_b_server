@@ -22,7 +22,7 @@ unless defined?(AB::Gems)
       TYPES = {
         :console => [ :active_wrapper, :sinatra ],
         :dj => [ :with_pid ],
-        :gemspec => [ :active_wrapper, :haml, :json, :lilypad, :newrelic_rpm, :sinatra ],
+        :gemspec => [ :active_wrapper, :haml, :json, :lilypad, :newrelic_rpm, :sinatra, :with_pid ],
         :gemspec_dev => [ :cucumber, :rspec, :'rack-test' ],
         :lib => [ :active_wrapper, :haml, :json, :lilypad, :newrelic_rpm, :sinatra ],
         :rake => [ :active_wrapper, :rake, :rspec ],
