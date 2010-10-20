@@ -19,7 +19,7 @@ end
 
 if %w(app_master app util solo).include?(node[:instance_role])
   # gems for app
-  sudo "cd #{latest_release} && bundle install"
+  sudo "cd #{latest_release} && SUDO=1 rake gems:install"
 
   sudo 'if gem list | grep rack | grep 1.1.0; then gem uninstall rack --version=1.1.0; else echo "dont need to uninstall rack version=1.1.0"; fi'
 
