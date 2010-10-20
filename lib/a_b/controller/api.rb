@@ -13,7 +13,7 @@ Application.class_eval do
       :json => params[:j],
       :referer => request.env["HTTP_REFERER"]
     ]
-    nil
+    'a_b_finished();'
   end
   
   post '/categories.json' do
