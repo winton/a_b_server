@@ -222,7 +222,7 @@ class Variant < ActiveRecord::Base
         d = (c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1))
       end
     rescue Exception => e
-      0.0
+      d = 0.0
     end
     d.nan? ? 0.0 : d
   end
