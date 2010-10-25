@@ -41,17 +41,18 @@ class Variant < ActiveRecord::Base
     ids = ids.compact.uniq
     
     variants = Variant.find_all_by_id(ids, :include => :site)
-    envs = Env.names_by_user_id(variants[0].user_id)
-    return [ [], [] ] if variants.empty? || !envs.include?(env)
+    env = Env.find(:first, :conditions => {
+      :name => env,
+      :user_id => variants[0].user_id
+    })
+    return [ [], [] ] if variants.empty? || !env
     
     visit = []
     convert = []
     
     variants.each do |variant|
-      if env != 'development' && !variant.site.referer_match?(options[:referer])
-        next
-      end
-      variant.env = env
+      next unless env.domain_match?(options[:referer])
+      variant.env = env.name
       visit.push(variant) if data['v'].include?(variant.id)
       convert.push(variant) if data['c'].include?(variant.id)
     end

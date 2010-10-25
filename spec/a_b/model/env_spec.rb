@@ -20,10 +20,16 @@ describe Env do
     end
   end
   
-  describe :names_by_user_id do
+  describe :domain_match? do
     
-    it "should return an array of names" do
-      Env.names_by_user_id(@user.id).should == [ 'env' ]
+    it "should return true if match" do
+      @env.domain_match?('http://localhost:9393/blah').should == true
+      @env.domain_match?('http://test.com').should == true
+    end
+    
+    it "should return false if no match" do
+      @env.domain_match?('http://blah.com:9393/blah').should == false
+      @env.domain_match?('http://blah.com').should == false
     end
   end
 end

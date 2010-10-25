@@ -45,6 +45,7 @@ def setup_tests
   @category.id = 1
   @env = Env.new(
     :name => 'env',
+    :domains => 'localhost,a.site.com,test.com',
     :site_id => @site.id,
     :user_id => @user.id
   )
