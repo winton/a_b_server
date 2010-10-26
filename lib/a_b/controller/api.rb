@@ -56,6 +56,21 @@ Application.class_eval do
     end
   end
   
+  put '/envs.json' do
+    content_type :json
+    @user = allow?
+    if @user
+      @env = @user.envs.find_by_id params[:env][:id]
+      if @env.update_attributes(params[:env])
+        @env.to_json
+      else
+        false.to_json
+      end
+    else
+      false.to_json
+    end
+  end
+  
   delete '/envs.json' do
     content_type :json
     @user = allow?
