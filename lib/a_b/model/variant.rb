@@ -229,6 +229,9 @@ class Variant < ActiveRecord::Base
   end
   
   def pretty(num, pct=false)
+    if num.respond_to?(:infinite?) && num.infinite?
+      num = 0.0
+    end
     if num.respond_to?(:strip)
       num
     elsif num.nan?
