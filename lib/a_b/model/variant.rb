@@ -121,7 +121,7 @@ class Variant < ActiveRecord::Base
     hash = {}
     hash[self.env] = {}
     self.data ||= hash
-    self.data[self.env] || {}
+    self.data[self.env] ||= {}
   end
   
   def env=(e)
