@@ -31,5 +31,11 @@ describe Env do
       @env.domain_match?('http://blah.com:9393/blah').should == false
       @env.domain_match?('http://blah.com').should == false
     end
+    
+    it "should return true if no domains specified" do
+      @env.domains = nil
+      @env.domain_match?('http://blah.com:9393/blah').should == true
+      @env.domain_match?('http://blah.com').should == true
+    end
   end
 end
