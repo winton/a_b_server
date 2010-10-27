@@ -44,6 +44,21 @@ Application.class_eval do
     end
   end
   
+  put '/categories.json' do
+    content_type :json
+    @user = allow?
+    if @user
+      @category = @user.categories.find_by_id params[:category][:id]
+      if @category.update_attributes(params[:category])
+        @category.to_json
+      else
+        false.to_json
+      end
+    else
+      false.to_json
+    end
+  end
+  
   post '/envs.json' do
     content_type :json
     @user = allow?
