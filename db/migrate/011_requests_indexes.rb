@@ -5,6 +5,7 @@ class RequestsIndexes < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :requests_indexes
+    remove_index :requests, :identifier
+    remove_index :requests, :ip
   end
 end
