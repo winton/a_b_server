@@ -1,5 +1,7 @@
 class Env < ActiveRecord::Base
   
+  extend CachedFind
+  
   belongs_to :site
   belongs_to :user
   
