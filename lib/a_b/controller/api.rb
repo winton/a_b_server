@@ -208,6 +208,7 @@ Application.class_eval do
     if @user
       @test = @user.tests.find_by_id params[:test][:id]
       if @test
+        @test.update_attribute :name, params[:test][:name]
         @test.variants.each_with_index do |variant, i|
           old_variant = params[:test][:old_variants][variant.id.to_s]
           if old_variant && old_variant.empty?
