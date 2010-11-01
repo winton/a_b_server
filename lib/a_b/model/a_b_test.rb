@@ -8,6 +8,8 @@ class ABTest < ActiveRecord::Base
   
   has_many :variants, :foreign_key => 'test_id', :dependent => :destroy
   
+  validates_uniqueness_of :name, :scope => :category_id
+  
   def control
     @control ||= self.variants.find_by_control true
   end

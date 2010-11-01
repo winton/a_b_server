@@ -9,6 +9,8 @@ class Variant < ActiveRecord::Base
   
   serialize :data
   
+  validates_uniqueness_of :name, :scope => :test_id
+  
   attr_reader :condition, :env
   attr_accessor :conversions, :visits
   attr_accessor :visit_conditions, :conversion_conditions
@@ -109,9 +111,13 @@ class Variant < ActiveRecord::Base
   end
   
   def confidence
-    self.test.control.env = @env
-    self.test.control.condition = @condition
-    cumulative_normal_distribution(z_score(self.test.control))
+    if self.control?
+      'n/a'
+    else
+      self.test.control.env = @env
+      self.test.control.condition = @condition
+      cumulative_normal_distribution(z_score(self.test.control))
+    end
   end
   
   def conversion_rate
@@ -193,13 +199,17 @@ class Variant < ActiveRecord::Base
   end
   
   def suggested_visits
-    self.test.control.env = @env
-    self.test.control.condition = @condition
-    size = sample_size(self.test.control)
-    if conversion_rate == 0 || size < 100
-      100
+    if self.control?
+      'n/a'
     else
-      commafy size
+      self.test.control.env = @env
+      self.test.control.condition = @condition
+      size = sample_size(self.test.control)
+      if conversion_rate == 0 || size < 100
+        100
+      else
+        commafy size
+      end
     end
   end
   
