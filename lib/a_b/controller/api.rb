@@ -193,7 +193,7 @@ Application.class_eval do
           :control => i == 0
         }.merge(ids))
       end
-      @test.to_json(
+      @test.reload.to_json(
         :include => symbolize(params[:include]),
         :only => symbolize(params[:only])
       )
@@ -273,6 +273,20 @@ Application.class_eval do
     if @variant && allow?(@variant.test)
       @variant.destroy
       true.to_json
+    else
+      false.to_json
+    end
+  end
+  
+  post '/variants/:id/reset.json' do
+    content_type :json
+    @variant = Variant.find params[:id]
+    if @variant && allow?(@variant.test)
+      @variant.update_attribute(:data, nil)
+      @variant.to_json(
+        :include => symbolize(params[:include]),
+        :only => symbolize(params[:only])
+      )
     else
       false.to_json
     end
