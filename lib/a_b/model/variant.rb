@@ -45,10 +45,10 @@ class Variant < ActiveRecord::Base
     ids = ids.compact.uniq
     
     variants = ids.collect do |id|
-      Variant.cached_find(id, :include => :site)
+      Variant.find(id, :include => :site)
     end
     
-    env = Env.cached_find(:first, :conditions => {
+    env = Env.find(:first, :conditions => {
       :name => env,
       :user_id => variants[0].user_id
     })

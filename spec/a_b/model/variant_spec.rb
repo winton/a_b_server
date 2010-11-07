@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 describe Variant do
   
   before(:each) do
-    $cached_find = nil
     teardown_tests
     setup_tests
   end
