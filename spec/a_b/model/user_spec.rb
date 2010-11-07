@@ -14,16 +14,6 @@ describe User do
       @user.categories.should == [ @category ]
     end
     
-    it "should have many collaborations" do
-      @user.collaborations.empty?.should == false
-      @user.collaborations.should == [ @collaboration ]
-    end
-    
-    it "should have many collaborative sites" do
-      @user.collab_sites.empty?.should == false
-      @user.collab_sites.should == [ @site ]
-    end
-    
     it "should have many envs" do
       @user.envs.empty?.should == false
       @user.envs.should == [ @env ]
