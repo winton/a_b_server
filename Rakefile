@@ -84,3 +84,7 @@ end
 
 task :package => :gemspec
 task :default => :spec
+
+Dir[File.dirname(__FILE__) + '/tasks/*.rake'].each do |file|
+  load(file)
+end

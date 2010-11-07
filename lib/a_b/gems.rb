@@ -16,13 +16,14 @@ unless defined?(AB::Gems)
         :rake => '=0.8.7',
         :rspec => '=1.3.0',
         :sinatra => '=1.0',
+        :whenever => '=0.6.2',
         :with_pid => '=0.1.3'
       }
     
       TYPES = {
         :console => [ :active_wrapper, :sinatra ],
         :dj => [ :with_pid ],
-        :gemspec => [ :active_wrapper, :haml, :json, :lilypad, :newrelic_rpm, :sinatra, :with_pid ],
+        :gemspec => [ :active_wrapper, :haml, :json, :lilypad, :newrelic_rpm, :sinatra, :whenever, :with_pid ],
         :gemspec_dev => [ :cucumber, :rspec, :'rack-test' ],
         :lib => [ :active_wrapper, :haml, :json, :lilypad, :newrelic_rpm, :sinatra ],
         :rake => [ :active_wrapper, :rake, :rspec ],
