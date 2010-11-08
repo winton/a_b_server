@@ -1,5 +1,7 @@
 class Variant < ActiveRecord::Base
   
+  extend CachedFind
+  
   belongs_to :category
   belongs_to :site
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
@@ -42,9 +44,11 @@ class Variant < ActiveRecord::Base
     ids = data['c'] + data['v']
     ids = ids.compact.uniq
     
-    variants = Variant.find_all_by_id(ids, :include => :site)
+    variants = ids.collect do |id|
+      Variant.cached_find(id, :include => :site)
+    end
     
-    env = Env.find(:first, :conditions => {
+    env = Env.cached_find(:first, :conditions => {
       :name => env,
       :user_id => variants[0].user_id
     })
