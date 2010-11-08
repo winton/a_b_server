@@ -44,11 +44,9 @@ class Variant < ActiveRecord::Base
     ids = data['c'] + data['v']
     ids = ids.compact.uniq
     
-    variants = ids.collect do |id|
-      Variant.cached_find(id, :include => :site)
-    end
+    variants = Variant.find_all_by_id(ids, :include => :site)
     
-    env = Env.cached_find(:first, :conditions => {
+    env = Env.find(:first, :conditions => {
       :name => env,
       :user_id => variants[0].user_id
     })
