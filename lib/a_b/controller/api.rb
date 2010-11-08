@@ -285,6 +285,7 @@ Application.class_eval do
       @variant.update_attribute(:data, nil)
       @variant.to_json(
         :include => symbolize(params[:include]),
+        :methods => symbolize(params[:methods]),
         :only => symbolize(params[:only])
       )
     else
