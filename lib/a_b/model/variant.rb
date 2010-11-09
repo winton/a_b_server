@@ -1,7 +1,5 @@
 class Variant < ActiveRecord::Base
   
-  extend CachedFind
-  
   belongs_to :category
   belongs_to :site
   belongs_to :test, :class_name => 'ABTest', :foreign_key => 'test_id'
@@ -53,45 +51,39 @@ class Variant < ActiveRecord::Base
     
     return [ [], [] ] if variants.empty? || !env
     
-    begin
-      visit = []
-      convert = []
-    
-      variants.each do |variant|
-        next unless env.domain_match?(options[:referer])
-        variant.env = env.name
-        visit.push(variant) if data['v'].include?(variant.id)
-        convert.push(variant) if data['c'].include?(variant.id)
-      end
-    
-      visit.each do |v|
-        v.visits += 1
-        if data['e'] && !data['e'].empty?
-          v.visit_conditions ||= {}
-          (data['e'] || {}).each do |key, value|
-            v.visit_conditions[key] ||= 0
-            v.visit_conditions[key] += 1 if value
-          end
-        end
-      end
-    
-      convert.each do |c|
-        c.conversions += 1
-        if data['e'] && !data['e'].empty?
-          c.conversion_conditions ||= {}
-          (data['e'] || {}).each do |key, value|
-            c.conversion_conditions[key] ||= 0
-            c.conversion_conditions[key] += 1 if value
-          end
-        end
-      end
-    
-      variants.each(&:save)
-      
-    rescue ActiveRecord::StaleObjectError => e
-      variants.each(&:reload)
-      retry
+    visit = []
+    convert = []
+  
+    variants.each do |variant|
+      next unless env.domain_match?(options[:referer])
+      variant.env = env.name
+      visit.push(variant) if data['v'].include?(variant.id)
+      convert.push(variant) if data['c'].include?(variant.id)
     end
+  
+    visit.each do |v|
+      v.visits += 1
+      if data['e'] && !data['e'].empty?
+        v.visit_conditions ||= {}
+        (data['e'] || {}).each do |key, value|
+          v.visit_conditions[key] ||= 0
+          v.visit_conditions[key] += 1 if value
+        end
+      end
+    end
+  
+    convert.each do |c|
+      c.conversions += 1
+      if data['e'] && !data['e'].empty?
+        c.conversion_conditions ||= {}
+        (data['e'] || {}).each do |key, value|
+          c.conversion_conditions[key] ||= 0
+          c.conversion_conditions[key] += 1 if value
+        end
+      end
+    end
+  
+    variants.each(&:save)
     
     [ visit.collect(&:id), convert.collect(&:id) ]
   end
