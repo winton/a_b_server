@@ -258,6 +258,22 @@ Application.class_eval do
     end
   end
   
+  post '/tests/:id/reset.json' do
+    content_type :json
+    @test = ABTest.find params[:id]
+    if @test && allow?(@test)
+      @test.variants.each do |variant|
+        variant.update_attribute(:data, nil)
+      end
+      @test.to_json(
+        :include => symbolize(params[:include]),
+        :only => symbolize(params[:only])
+      )
+    else
+      false.to_json
+    end
+  end
+  
   post '/users.json' do
     content_type :json
     if allow_admin?
