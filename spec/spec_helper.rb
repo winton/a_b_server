@@ -1,13 +1,13 @@
 $root = File.expand_path('../../', __FILE__)
-require "#{$root}/lib/a_b/gems"
+require "#{$root}/lib/a_b_server/gems"
 
-AB::Gems.require(:spec)
+ABServer::Gems.require(:spec)
 
 require 'rack/test'
 
 ENV['RACK_ENV'] = 'test'
 
-require "#{$root}/lib/a_b"
+require "#{$root}/lib/a_b_server"
 require 'pp'
 
 Spec::Runner.configure do |config|

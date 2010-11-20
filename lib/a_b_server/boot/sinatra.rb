@@ -5,5 +5,5 @@ Application.class_eval do
   set :public, "#{root}/public"
   set :logging, true
   set :static, true
-  set :views, "#{root}/lib/a_b/view"
+  set :views, "#{root}/lib/a_b_server/view"
 end

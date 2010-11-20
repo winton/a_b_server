@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-lib = File.expand_path(File.dirname(__FILE__) + "/../lib/a_b")
+lib = File.expand_path(File.dirname(__FILE__) + "/../lib/a_b_server")
 exec "irb -r #{lib}/boot/console"

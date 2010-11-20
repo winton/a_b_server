@@ -1,6 +1,6 @@
 require File.expand_path('../../gems', __FILE__)
 
-AB::Gems.require(:console)
+ABServer::Gems.require(:console)
 
 $:.unshift File.dirname(__FILE__) + '/../'
 

@@ -1,10 +1,10 @@
-require File.dirname(__FILE__) + '/a_b/gems'
+require File.dirname(__FILE__) + '/a_b_server/gems'
 
-AB::Gems.require(:lib)
+ABServer::Gems.require(:lib)
 
 require 'json'
 
-$:.unshift File.dirname(__FILE__) + '/a_b'
+$:.unshift File.dirname(__FILE__) + '/a_b_server'
 
 require 'version'
 

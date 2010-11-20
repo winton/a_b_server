@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 require 'fileutils'
-require File.expand_path('../../lib/a_b/gems', __FILE__)
+require File.expand_path('../../lib/a_b_server/gems', __FILE__)
 
-AB::Gems.require(:dj)
+ABServer::Gems.require(:dj)
 
 require 'with_pid'
 
@@ -12,6 +12,6 @@ puts with_pid(
   :command => File.expand_path(File.dirname(__FILE__)) + "/runner 'Delayed::Worker.new.start'",
   :environment => ARGV[2] || 'development',
   :name => "dj",
-  :pid => "/tmp/delayed_job.a_b.#{ARGV[1] || 0}.pid",
+  :pid => "/tmp/delayed_job.a_b_server.#{ARGV[1] || 0}.pid",
   :tmp => "/tmp"
 )

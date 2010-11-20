@@ -1,8 +1,8 @@
-unless defined?(AB::Gems)
+unless defined?(ABServer::Gems)
   
   require 'rubygems'
   
-  module AB
+  module ABServer
     class Gems
     
       VERSIONS = {

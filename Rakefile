@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/lib/a_b/gems'
+require File.dirname(__FILE__) + '/lib/a_b_server/gems'
 
-AB::Gems.require(:rake)
+ABServer::Gems.require(:rake)
 
 require 'rake'
 require 'active_wrapper/tasks'
@@ -9,7 +9,7 @@ require 'spec/rake/spectask'
 
 def gemspec
   @gemspec ||= begin
-    file = File.expand_path('../a_b.gemspec', __FILE__)
+    file = File.expand_path('../a_b_server.gemspec', __FILE__)
     eval(File.read(file), binding, file)
   end
 end
@@ -54,10 +54,10 @@ namespace :gems do
         end
       end
     else
-      gems = AB::Gems::TYPES[:gemspec]
-      gems = AB::Gems::TYPES[:gemspec_dev] if ENV['DEV'] == '1'
+      gems = ABServer::Gems::TYPES[:gemspec]
+      gems = ABServer::Gems::TYPES[:gemspec_dev] if ENV['DEV'] == '1'
       gems.collect! do |g|
-        [ g.to_s, AB::Gems::VERSIONS[g] ]
+        [ g.to_s, ABServer::Gems::VERSIONS[g] ]
       end
     end
     

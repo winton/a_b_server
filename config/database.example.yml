@@ -1,6 +1,6 @@
 development:
   adapter: mysql
-  database: a_b
+  database: a_b_server
   username: root
   password:
   host: localhost
