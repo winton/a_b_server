@@ -6,18 +6,18 @@ unless defined?(ABServer::Gems)
     class Gems
     
       VERSIONS = {
-        :active_wrapper => '=0.3.3',
-        :cucumber => '=0.6.2',
-        :haml => '=2.2.17',
-        :json => '=1.4.3',
-        :lilypad => '=0.3.0',
-        :newrelic_rpm => '=2.10.6',
-        :'rack-test' => '=0.5.3',
+        :active_wrapper => '=0.3.4',
+        :cucumber => '=0.9.4',
+        :haml => '=3.0.24',
+        :json => '=1.4.6',
+        :lilypad => '=0.3.1',
+        :newrelic_rpm => '=2.13.3',
+        :'rack-test' => '=0.5.6',
         :rake => '=0.8.7',
-        :rspec => '=1.3.0',
-        :sinatra => '=1.0',
+        :rspec => '=1.3.1',
+        :sinatra => '=1.1.0',
         :whenever => '=0.6.2',
-        :with_pid => '=0.1.3'
+        :with_pid => '=0.1.5'
       }
     
       TYPES = {
